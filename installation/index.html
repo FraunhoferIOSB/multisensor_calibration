@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Installation - Multi-Sensor Calibration</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Installation";
+        var mkdocs_page_input_path = "installation.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Multi-Sensor Calibration
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Installation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#official-ros-2-package">Official ROS 2 Package</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#build-from-source">Build from Source</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#ros-1">ROS 1</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ros-2">ROS 2</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">Tutorial</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../calibration_target/">Calibration Target</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data_processing/">Data Processing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workspaces/">Workspace Handling</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../nodes_and_nodelets/">Nodes and Nodelets</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/multisensor_calibration/CHANGELOG.rst">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">Contributing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Multi-Sensor Calibration</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/doc/user_docs/installation.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
+<p>The Multi-Sensor Calibration Toolbox is released as an <a href="#official-ros-2-package">official package for ROS 2</a>, named <code>multisensor_calibration</code>.
+Since ROS 1 is soon end-of-life, there will be no official release for ROS 1.</p>
+<p>In addition to the official release, <code>multisensor_calibration</code> can also be <a href="#build-from-source">build from source</a> for ROS 1 and ROS 2 as described below.</p>
+<h2 id="official-ros-2-package">Official ROS 2 Package<a class="headerlink" href="#official-ros-2-package" title="Permanent link">&para;</a></h2>
+<pre><code class="language-text">sudo apt install ros-$ROS_DISTRO-multisensor-calibration
+</code></pre>
+<h2 id="build-from-source">Build from Source<a class="headerlink" href="#build-from-source" title="Permanent link">&para;</a></h2>
+<h3 id="ros-1">ROS 1<a class="headerlink" href="#ros-1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+Initialize catkin workspace, if required:
+
+
+<pre><code class="language-bash">mkdir -p calibration_ws/src
+catkin init --workspace calibration_ws
+</code></pre>
+
+</li>
+
+<li>
+Clone repository and checkout `noetic` branch:
+
+
+<pre><code class="language-bash">cd calibration_ws/src
+git clone https://github.com/FraunhoferIOSB/multisensor_calibration.git
+cd multisensor_calibration
+git checkout noetic
+cd ../../
+</code></pre>
+
+</li>
+
+<li>
+Initialize `rosdep` and install dependencies:
+
+
+<pre><code class="language-bash">sudo rosdep init
+rosdep update
+rosdep install --from-paths src -y --ignore-src
+</code></pre>
+
+</li>
+
+<li>
+(OPTIONAL) Copy custom example robot workspaces and populate resource file (see Workspace) page)
+
+
+<pre><code class="language-bash">src/multisensor_calibration/scripts/populate_robot_workspaces_qrc.sh &lt;custom_robot_ws_directory&gt;
+</code></pre>
+
+</li>
+
+<li>
+(OPTIONAL) Copy custom launch files
+
+
+<pre><code class="language-bash">src/multisensor_calibration/scripts/copy_launch_files.sh &lt;custom_launch_directory&gt;
+</code></pre>
+
+</li>
+
+<li>
+Run `catkin` to build from source:<br>
+To build in 'Debug' mode add `-DCMAKE_BUILD_TYPE=Debug` to catkin command.
+If 'CMAKE_BUILD_TYPE' omitted, multisensor_calibration will be build in 'Release' mode.
+
+
+<pre><code class="language-bash">catkin build -j8 -DCMAKE_BUILD_TYPE=Release multisensor_calibration
+</code></pre>
+
+</li>
+
+</ol>
+
+<h3 id="ros-2">ROS 2<a class="headerlink" href="#ros-2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+Create workspace folder, if required:
+
+
+<pre><code class="language-bash">mkdir -p calibration_ws/src
+</code></pre>
+
+</li>
+
+<li>
+Clone repository:
+
+
+<pre><code class="language-bash">cd calibration_ws/src
+git clone https://github.com/FraunhoferIOSB/multisensor_calibration.git
+</code></pre>
+
+</li>
+
+<li>
+Initialize `rosdep` and install dependencies:
+
+
+<pre><code class="language-bash">sudo rosdep init
+rosdep update
+rosdep install --from-paths src -y --ignore-src
+</code></pre>
+
+</li>
+
+<li>
+(OPTIONAL) Copy custom example robot workspaces and populate resource file (see Workspace page)
+
+
+<pre><code class="language-bash">src/multisensor_calibration/scripts/populate_robot_workspaces_qrc.sh &lt;custom_robot_ws_directory&gt;
+</code></pre>
+
+</li>
+
+<li>
+(OPTIONAL) Copy custom launch files
+
+
+<pre><code class="language-bash">src/multisensor_calibration/scripts/copy_launch_files.sh &lt;custom_launch_directory&gt;
+</code></pre>
+
+</li>
+
+<li>
+Run 'colcon' to build from source:<br>
+To build in 'Debug' mode add '--cmake-args -DCMAKE_BUILD_TYPE=Debug' to colcon command.
+If 'CMAKE_BUILD_TYPE' omitted, multisensor_calibration will be build in 'Release' mode.
+
+
+<pre><code class="language-bash">colcon build --symlink-install --packages-up-to multisensor_calibration
+</code></pre>
+
+</li>
+
+</ol>
+
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
+<p>Apart from the basic catkin requirements, <code>multisensor_calibration</code> depends on the following third party libraries.</p>
+<ul>
+<li><a href="https://pointclouds.org/"><strong>PCL</strong></a></li>
+<li><a href="https://opencv.org/"><strong>OpenCV</strong></a></li>
+<li><a href="https://www.qt.io/"><strong>Qt</strong></a></li>
+<li><a href="https://github.com/koide3/small_gicp"><strong>small_gicp</strong></a>: The package <code>small_gicp_vendor</code> wraps this library to make it available for other ROS components. This is a common practice for third-party libraries without available deb sources. It is licensed under the MIT-License.</li>
+<li><a href="https://www.openmp.org/"><strong>OpenMP</strong></a> (optional): This is used to parallelize and speed up the processing of each point in the point cloud. If not found by CMake the processing will be done sequentially.</li>
+<li><a href="https://www.doxygen.nl/"><strong>Doxygen</strong></a> (optional): If available, this Doxygen documentation will be build automatically.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tutorial/" class="btn btn-neutral float-right" title="Tutorial">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright 2024 - 2025 Fraunhofer IOSB and contributors</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="../tutorial/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../js/tables.js"></script>
+      <script src="../js/mathjax.js"></script>
+      <script src="../js/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
