@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Workspace Handling - Multi-Sensor Calibration</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Workspace Handling";
+        var mkdocs_page_input_path = "workspaces.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Multi-Sensor Calibration
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">Tutorial</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../calibration_target/">Calibration Target</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data_processing/">Data Processing</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Workspace Handling</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#robot-workspace">Robot Workspace</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#initialize-new-robot-workspace">Initialize New Robot Workspace</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#calibration-workspace">Calibration Workspace</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#workspace-templates">Workspace Templates</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../nodes_and_nodelets/">Nodes and Nodelets</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/multisensor_calibration/CHANGELOG.rst">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">Contributing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Multi-Sensor Calibration</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Workspace Handling</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/doc/user_docs/workspaces.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="workspaces">Workspaces<a class="headerlink" href="#workspaces" title="Permanent link">&para;</a></h1>
+<p>The calibration uses a workspace to store the settings and the calibration results.
+In this, the idea is to use one workspace per robot (<a href="#robot-workspace">Robot Workspace</a>) in which different sub-workspaces (<a href="#calibration-workspace">Calibration Workspace</a>) are created for each sensor and calibration type.</p>
+<p>A typical workspace structure looks as follows:</p>
+<pre><code class="language-text">&lt;RobotName&gt;
+|   settings.ini
+|   &lt;SomeUrdfFile&gt;.urdf   
+|   &lt;SomeUrdfFile&gt;_&lt;LastDateModified&gt;.urdf 
+|
+|----&lt;src_sensor_name&gt;_&lt;ref_sensor_name&gt;_&lt;intrinsic|extrinsic&gt;_calibration
+|   |   settings.ini
+|   |   calibration_results.txt
+|   |   urdf_snippet.txt
+|   |   &lt;calibration_target&gt;.yaml
+|   |   
+|   |---observations
+|   |---_backups
+|   |   |   ...
+|   
+|----&lt;src_sensor_name&gt;_&lt;ref_sensor_name&gt;_&lt;intrinsic|extrinsic&gt;_calibration
+|   |   ...
+|
+| ...
+</code></pre>
+<p>The default root folder of all workspaces is <code>$HOME/multisensor_calibration</code></p>
+<p>Details on the content of the different workspaces are discussed in the following.</p>
+<h2 id="robot-workspace">Robot Workspace<a class="headerlink" href="#robot-workspace" title="Permanent link">&para;</a></h2>
+<p>The root directory (i.e. the robot workspace) as well as each subdirectory (i.e. the calibration workspaces) hold a settings file (<code>settings.ini</code>) which holds the robot and calibration specific settings, respectively.</p>
+<p>The robot settings hold the following parameters:</p>
+<ul>
+<li><code>name</code>: name of the robot</li>
+<li><code>urdf_model_path</code>: Optional path to URDF model of robot. When a relative path is given, it is assumed that this is relative to the robot workspace folder.</li>
+</ul>
+<p>If an URDF Model is provided the extrinsic calibration results are directly written into the URDF file.
+Furthermore, the extrinsic pose computed by the calibration is directly stored into the URDF file if it is available. 
+In this case the existing file is renamed with the date of the last modification appended to the filename.
+The calibration can still be performed, even if no urdf file is provided. 
+A warning message will be emitted nonetheless. </p>
+<h3 id="initialize-new-robot-workspace">Initialize New Robot Workspace<a class="headerlink" href="#initialize-new-robot-workspace" title="Permanent link">&para;</a></h3>
+<p>To initialize a new robot workspace there are two options:</p>
+<ol>
+<li>
+<p>Run the <a href="../tutorial/#calibration-configurator">Calibration Configurator</a> and start a calibration with the parameterization of the new workspace.
+The configurator will create and initialize a new workspace if it doesn't exist.</p>
+</li>
+<li>
+<p>Alternatively, one can use the <a href="../nodes_and_nodelets/#initialize_robot_workspace"><code>initialize_robot_workspace</code></a> node. Simply run:<br></p>
+</li>
+</ol>
+<pre><code class="language-bash">ros2 run multisensor_calibration initialize_robot_workspace --ros-args -p robot_ws_path:=&lt;path_to_ws_dir&gt; -p robot_name:=&lt;robot_name&gt; [-p urdf_model_path:=&lt;path_to_file&gt;]
+</code></pre>
+<h2 id="calibration-workspace">Calibration Workspace<a class="headerlink" href="#calibration-workspace" title="Permanent link">&para;</a></h2>
+<p>The calibration settings comprise the calibration specific settings and correspond to the launch parameters of the different calibration routines as stated below.
+After each calibration the results are stored in a <code>calibration_results.txt</code> file in the corresponding subdirectory.
+In addition to the calibration results, an XML block is written into <code>urdf_snippet.txt</code> with the calibration data which can be copied into a URDF file.</p>
+<p>If specified in the launch configuration of the calibration nodes, the captured observations will be stored in <code>observations</code>.
+At the start of a new calibration previous calibrations will be backed-up and moved into a new subfolder within <code>_backups</code>.</p>
+<p>If a URDF file is specified in the robot settings and if an entry for the calibrated sensor exists in this file, the extrinsic calibration results are directly written into the URDF file.</p>
+<h2 id="workspace-templates">Workspace Templates<a class="headerlink" href="#workspace-templates" title="Permanent link">&para;</a></h2>
+<p>The <a href="../tutorial/#calibration-configurator">Calibration Configurator</a> also allows to install workspace templates. 
+This is especially helpful when running the calibration for the first time.
+By default the calibration configurator has a workspace template for an example robot. 
+If the Multi-Sensor Calibration toolbox is build and installed from source, however, one can provide the configurator with more customized workspace templates.
+To do so:</p>
+<ol>
+<li>Create a folder structure somewhere in the file system with (multiple) robot workspaces, each containing the desired calibration workspaces as depicted above.</li>
+<li>Within each robot workspace folder create a 'settings.ini' file according to this <a href="../assets/workspace_tempaltes/robot_ws_settings_template.ini">template</a>.</li>
+<li>
+<p>And within each calibration workspace create a 'settings.ini' file according to the appropriate template:<br></p>
+<ul>
+<li><a href="../assets/workspace_tempaltes/extrinsic_camera_lidar_calib_ws_settings_template.ini">extrinsic_camera_lidar_workspace_settings_template</a></li>
+<li><a href="../assets/workspace_tempaltes/extrinsic_lidar_lidar_calib_ws_settings_template.ini">extrinsic_lidar_lidar_workspace_settings_template</a></li>
+<li><a href="../assets/workspace_tempaltes/extrinsic_camera_reference_calib_ws_settings_template.ini">extrinsic_camera_reference_workspace_settings_template</a></li>
+<li><a href="../assets/workspace_tempaltes/extrinsic_lidar_reference_calib_ws_settings_template.ini">extrinsic_lidar_reference_workspace_settings_template</a><br><br>
+<strong>NOTE:</strong> In this it is important that the stated workspace type corresponds to the calibration type</li>
+</ul>
+</li>
+<li>
+<p>Call the script within the repository called 'scripts/populate_robot_workspaces_qrc.sh' with the path to the root directory of the custom workspace structure as argument prior to building 'multisensor_calibration'.
+This will copy the custom workspaces an populate the corresponding resource file so that the calibration configurator access them for installation.</p>
+</li>
+</ol>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../data_processing/" class="btn btn-neutral float-left" title="Data Processing"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../nodes_and_nodelets/" class="btn btn-neutral float-right" title="Nodes and Nodelets">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright 2024 - 2025 Fraunhofer IOSB and contributors</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../data_processing/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../nodes_and_nodelets/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../js/tables.js"></script>
+      <script src="../js/mathjax.js"></script>
+      <script src="../js/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
