@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration/ExtrinsicCalibrationBase.h"
+#include "multisensor_calibration/calibration/ExtrinsicCalibrationBase.h"
 
 // Std
 #include <fstream>
@@ -17,10 +17,10 @@
 #include <pcl/common/io.h>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/utils.hpp"
-#include "../../include/multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
-#include "../../include/multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
-#include "../../include/multisensor_calibration/sensor_data_processing/ReferenceDataProcessor3d.h"
+#include "multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/ReferenceDataProcessor3d.h"
 
 namespace multisensor_calibration
 {

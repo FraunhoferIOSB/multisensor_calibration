@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration/ExtrinsicLidarLidarCalibration.h"
+#include "multisensor_calibration/calibration/ExtrinsicLidarLidarCalibration.h"
 
 // Std
 #include <functional>
@@ -26,8 +26,8 @@
 #include <small_gicp/registration/registration_helper.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/common.h"
-#include "../../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/utils.hpp"
 #include <multisensor_calibration_interface/msg/calibration_result.hpp>
 
 namespace multisensor_calibration

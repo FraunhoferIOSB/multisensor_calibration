@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/sensor_data_processing/CameraTargetDetection.h"
+#include "multisensor_calibration/sensor_data_processing/CameraTargetDetection.h"
 
 // Std
 #include <cmath>
@@ -23,8 +23,8 @@
 #include <opencv2/imgproc.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/calibration_target/CalibrationTarget.hpp"
-#include "../../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/calibration_target/CalibrationTarget.hpp"
+#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {

@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/ui/ExtrinsicCameraReferenceConfigWidget.h"
+#include "multisensor_calibration/ui/ExtrinsicCameraReferenceConfigWidget.h"
 
 // ROS
 #include <ament_index_cpp/get_package_share_directory.hpp>

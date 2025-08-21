@@ -12,7 +12,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/io/Workspace.h"
+#include "multisensor_calibration/io/Workspace.h"
 
 #if !defined(TARGET_NAME)
 #define TARGET_NAME ""

@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../include/multisensor_calibration/ui/CalibrationGuiBase.h"
+#include "multisensor_calibration/ui/CalibrationGuiBase.h"
 
 // Std
 #include <future>
@@ -28,8 +28,8 @@
 #include <rclcpp/service.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/common.h"
-#include "../../include/multisensor_calibration/sensor_data_processing/DataProcessor3d.h"
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/sensor_data_processing/DataProcessor3d.h"
 #include "ui_CalibrationControlWindow.h"
 #include <multisensor_calibration/common/utils.hpp>
 #include <multisensor_calibration_interface/srv/capture_calib_target.hpp>

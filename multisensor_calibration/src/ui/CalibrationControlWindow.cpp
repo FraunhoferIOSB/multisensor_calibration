@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/ui/CalibrationControlWindow.h"
+#include "multisensor_calibration/ui/CalibrationControlWindow.h"
 
 // Qt
 #include <QCloseEvent>

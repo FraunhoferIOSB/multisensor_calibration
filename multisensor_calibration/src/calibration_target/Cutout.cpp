@@ -5,9 +5,9 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration_target/Cutout.h"
+#include "multisensor_calibration/calibration_target/Cutout.h"
 
-#include "../../include/multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/common.h"
 
 namespace multisensor_calibration
 {

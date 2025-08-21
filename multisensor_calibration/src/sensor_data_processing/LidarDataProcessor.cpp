@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
 
 // Std
 #include <iostream>
@@ -30,7 +30,7 @@
 #include <pcl_ros/transforms.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {

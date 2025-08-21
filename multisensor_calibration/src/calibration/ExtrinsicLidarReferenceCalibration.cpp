@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration/ExtrinsicLidarReferenceCalibration.h"
+#include "multisensor_calibration/calibration/ExtrinsicLidarReferenceCalibration.h"
 
 // Std
 #include <fstream>

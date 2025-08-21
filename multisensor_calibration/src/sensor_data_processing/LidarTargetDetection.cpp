@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/sensor_data_processing/LidarTargetDetection.h"
+#include "multisensor_calibration/sensor_data_processing/LidarTargetDetection.h"
 
 // Std
 #include <algorithm>

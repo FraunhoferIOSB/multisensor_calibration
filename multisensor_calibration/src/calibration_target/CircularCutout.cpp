@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration_target/CircularCutout.h"
+#include "multisensor_calibration/calibration_target/CircularCutout.h"
 
 namespace multisensor_calibration
 {

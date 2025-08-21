@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/ui/Rviz3dViewDialog.h"
+#include "multisensor_calibration/ui/Rviz3dViewDialog.h"
 
 // ROS
 #include <rviz_common/tool_manager.hpp>

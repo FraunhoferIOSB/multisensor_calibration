@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration/ExtrinsicLidarVehicleCalibration.h"
+#include "multisensor_calibration/calibration/ExtrinsicLidarVehicleCalibration.h"
 
 // Std
 #define USE_MATH_DEFINES
@@ -36,9 +36,9 @@
 #include <small_gicp/registration/registration_helper.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/common.h"
-#include "../../include/multisensor_calibration/common/utils.hpp"
-#include "../../include/multisensor_calibration/sensor_data_processing/LocalPlaneSacModel.h"
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/sensor_data_processing/LocalPlaneSacModel.h"
 
 namespace multisensor_calibration
 {

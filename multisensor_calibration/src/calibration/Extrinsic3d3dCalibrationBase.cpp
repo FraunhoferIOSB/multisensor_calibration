@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration/Extrinsic3d3dCalibrationBase.h"
+#include "multisensor_calibration/calibration/Extrinsic3d3dCalibrationBase.h"
 
 // Std
 #include <thread>
@@ -21,9 +21,9 @@
 #include <small_gicp/registration/registration_helper.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/utils.hpp"
-#include "../../include/multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
-#include "../../include/multisensor_calibration/sensor_data_processing/ReferenceDataProcessor3d.h"
+#include "multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/ReferenceDataProcessor3d.h"
 
 namespace multisensor_calibration
 {

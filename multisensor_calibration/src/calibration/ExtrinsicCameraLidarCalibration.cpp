@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/calibration/ExtrinsicCameraLidarCalibration.h"
+#include "multisensor_calibration/calibration/ExtrinsicCameraLidarCalibration.h"
 
 // Std
 #include <algorithm>
@@ -40,8 +40,8 @@
 #include <Eigen/Eigenvalues>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/common.h"
-#include "../../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {

@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/sensor_data_processing/DataProcessor2d.h"
+#include "multisensor_calibration/sensor_data_processing/DataProcessor2d.h"
 
 // Std
 #include <fstream>

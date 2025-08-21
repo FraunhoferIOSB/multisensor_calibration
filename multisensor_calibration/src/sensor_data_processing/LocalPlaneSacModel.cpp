@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../include/multisensor_calibration/sensor_data_processing/LocalPlaneSacModel.h"
+#include "multisensor_calibration/sensor_data_processing/LocalPlaneSacModel.h"
 
 // Std
 #include <iostream>
@@ -14,8 +14,8 @@
 #include <opencv2/core/eigen.hpp>
 
 // multisensor_calibration
-#include "../include/multisensor_calibration/common/common.h"
-#include "../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {

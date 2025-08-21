@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/sensor_data_processing/ReferenceDataProcessor3d.h"
+#include "multisensor_calibration/sensor_data_processing/ReferenceDataProcessor3d.h"
 
 namespace multisensor_calibration
 {

@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/sensor_data_processing/SensorDataProcessorBase.h"
+#include "multisensor_calibration/sensor_data_processing/SensorDataProcessorBase.h"
 
 // Std
 #include <cmath>
@@ -21,7 +21,7 @@
 #include <opencv2/core/eigen.hpp>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {

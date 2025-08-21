@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/ui/ImageViewDialog.h"
+#include "multisensor_calibration/ui/ImageViewDialog.h"
 
 // Qt
 #include <QCloseEvent>

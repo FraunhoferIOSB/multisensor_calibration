@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../include/multisensor_calibration/guidance/GuidanceBase.h"
+#include "multisensor_calibration/guidance/GuidanceBase.h"
 
 // ROS
 #include <chrono>
@@ -13,8 +13,8 @@
 #include <tf2_ros/transform_listener.h>
 
 // multisensor_calibration
-#include "../include/multisensor_calibration/common/common.h"
-#include "../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/utils.hpp"
 #include <multisensor_calibration_interface/srv/sensor_extrinsics.hpp>
 namespace multisensor_calibration
 {

@@ -12,7 +12,7 @@
 #include <cmath>
 
 // multisensor_calibration
-#include "../../include/multisensor_calibration/common/utils.hpp"
+#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {

@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
 
 // Std
 #include <fstream>

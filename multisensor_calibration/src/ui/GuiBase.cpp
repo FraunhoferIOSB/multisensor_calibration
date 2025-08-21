@@ -5,7 +5,7 @@
  *
  **********************************************************************/
 
-#include "../../include/multisensor_calibration/ui/GuiBase.h"
+#include "multisensor_calibration/ui/GuiBase.h"
 
 // Qt
 #include <QCoreApplication>
