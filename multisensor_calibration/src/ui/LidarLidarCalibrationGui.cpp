@@ -205,9 +205,9 @@ void LidarLidarCalibrationGui::loadVisualizer()
         };
         ros::param::set(visualizerNodeletName_ + "/number_of_clouds", 2);
         ros::param::set(visualizerNodeletName_ + "/distance_measure", 0);
-        ros::param::set(visualizerNodeletName_ + "/max_distance", MAX_POINT_DISTANCE);
-        ros::param::set(visualizerNodeletName_ + "/clamp_distance_threshold", 0.1);
-        ros::param::set(visualizerNodeletName_ + "/num_nearest_neighbors", 20);
+        // ros::param::set(visualizerNodeletName_ + "/max_distance", MAX_POINT_DISTANCE);
+        // ros::param::set(visualizerNodeletName_ + "/clamp_distance_threshold", 0.1);
+        ros::param::set(visualizerNodeletName_ + "/num_nearest_neighbors", 5);
         ros::param::set(visualizerNodeletName_ + "/temp_transform", temporaryTransform.str());
         pNodeletLoader_->load(visualizerNodeletName_,
                               "multisensor_calibration/PointCloud2PointCloudDistanceNodelet",
