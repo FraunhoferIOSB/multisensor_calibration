@@ -1,0 +1,19 @@
+Diagnostics:
+  ClangTidy:
+    Add: [modernize-*, bugprone-*]
+    Remove:
+      [
+        modernize-use-trailing-return-type,
+        modernize-use-auto,
+        modernize-use-default-member-init,
+        modernize-use-using,
+        bugprone-easily-swappable-parameters,
+        bugprone-narrowing-conversions,
+        bugprone-implicit-widening-of-multiplication-result,
+        modernize-avoid-bind,
+        bugprone-unhandled-self-assignment,
+      ]
+CompileFlags:
+  Add:
+    - -Wall
+    - -Wextra
