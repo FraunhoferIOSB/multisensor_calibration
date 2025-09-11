@@ -32,7 +32,6 @@
 // Std
 #include <memory>
 #include <string>
-#include <tuple>
 
 // ROS
 #include <image_transport/image_transport.hpp>
@@ -53,6 +52,9 @@
 #include "../config/LidarTargetDetectionParameters.hpp"
 #include "Extrinsic2d3dCalibrationBase.h"
 #include <multisensor_calibration_interface/srv/camera_intrinsics.hpp>
+
+#include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
 
 namespace multisensor_calibration
 {

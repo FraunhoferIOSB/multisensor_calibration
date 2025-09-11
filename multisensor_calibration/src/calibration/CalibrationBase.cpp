@@ -8,9 +8,7 @@
 #include "multisensor_calibration/calibration/CalibrationBase.h"
 
 // Std
-#include <chrono>
 #include <functional>
-#include <iostream>
 #include <string>
 
 // Qt
@@ -18,9 +16,6 @@
 
 // PCL
 #include <pcl/conversions.h>
-
-// multisensor_calibration
-#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {

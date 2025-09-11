@@ -8,13 +8,9 @@
 #include "multisensor_calibration/calibration/ExtrinsicCameraLidarCalibration.h"
 
 // Std
-#include <algorithm>
 #include <cstring>
-#include <fstream>
 #include <functional>
 #include <future>
-#include <random>
-#include <thread>
 
 // Qt
 #include <QFile>
@@ -817,7 +813,7 @@ bool ExtrinsicCameraLidarCalibration::setDynamicParameter(const rclcpp::Paramete
     {
         return true;
     }
-    else if (registrationParams_.tryToSetParameter(iParameter))
+    if (registrationParams_.tryToSetParameter(iParameter))
     {
         return true;
     }

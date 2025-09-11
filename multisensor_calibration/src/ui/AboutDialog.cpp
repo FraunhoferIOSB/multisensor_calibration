@@ -27,7 +27,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 // Std
-#include <iostream>
 #include <regex>
 
 // Qt

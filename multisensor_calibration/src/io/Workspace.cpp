@@ -14,9 +14,6 @@
 // Qt
 #include <QFile>
 
-// multisensor_calibration
-#include "multisensor_calibration/common/utils.hpp"
-
 namespace multisensor_calibration
 {
 

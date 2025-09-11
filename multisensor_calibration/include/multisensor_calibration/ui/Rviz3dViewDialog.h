@@ -31,7 +31,6 @@
 
 // std
 #include <memory>
-#include <tuple>
 #include <vector>
 
 // Qt

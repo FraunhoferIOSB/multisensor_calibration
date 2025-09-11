@@ -34,7 +34,6 @@
 
 // multisensor_calibration
 #include "CalibrationGuiBase.h"
-#include "ImageViewDialog.h"
 #include "Rviz3dViewDialog.h"
 #include "multisensor_calibration/visualizers/PointCloud2PointCloudDistance.h"
 

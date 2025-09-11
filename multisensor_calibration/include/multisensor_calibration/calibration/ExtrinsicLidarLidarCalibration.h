@@ -32,7 +32,6 @@
 // Std
 #include <memory>
 #include <string>
-#include <tuple>
 
 // ROS
 #include <message_filters/subscriber.h>

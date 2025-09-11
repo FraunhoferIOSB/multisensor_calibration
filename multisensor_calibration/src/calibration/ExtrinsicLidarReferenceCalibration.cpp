@@ -8,10 +8,8 @@
 #include "multisensor_calibration/calibration/ExtrinsicLidarReferenceCalibration.h"
 
 // Std
-#include <fstream>
 #include <functional>
 #include <future>
-#include <thread>
 
 // PCL
 #include <pcl/registration/icp.h>
@@ -636,7 +634,7 @@ bool ExtrinsicLidarReferenceCalibration::setDynamicParameter(const rclcpp::Param
     {
         return true;
     }
-    else if (registrationParams_.tryToSetParameter(iParameter))
+    if (registrationParams_.tryToSetParameter(iParameter))
     {
         return true;
     }

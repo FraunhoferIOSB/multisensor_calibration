@@ -5,9 +5,6 @@
  *
  **********************************************************************/
 
-// Std
-#include <filesystem>
-
 // ROS
 #include <pcl_conversions/pcl_conversions.h>
 #include <rclcpp/rclcpp.hpp>

@@ -8,7 +8,6 @@
 #include "multisensor_calibration/calibration/Extrinsic2d3dCalibrationBase.h"
 
 // Std
-#include <thread>
 #include <vector>
 
 // ROS

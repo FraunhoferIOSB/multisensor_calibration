@@ -684,8 +684,8 @@ namespace lib3d
         double *dataPtr = reinterpret_cast<double *>(mDistortionCoeffs.data);
         for (int i = 0; i < std::max(mDistortionCoeffs.size[0], mDistortionCoeffs.size[1]); i++)
         {
-          if (i < 8 && (i != 2 || i != 3))
-            radialDistCoeffs.push_back(dataPtr[i]);
+            if (i < 8)
+                radialDistCoeffs.push_back(dataPtr[i]);
         }
       }
 

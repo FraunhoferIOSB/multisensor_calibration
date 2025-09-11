@@ -7,9 +7,6 @@
 
 #include "multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
 
-// Std
-#include <iostream>
-
 // ROS
 #include <pcl_conversions/pcl_conversions.h>
 

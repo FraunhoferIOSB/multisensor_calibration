@@ -127,14 +127,14 @@ MultiSensorCalibrationGui::runExtrinsicCalibration()
     std::vector<rclcpp::Parameter> parameterVector = {};
 
     //--- set parameters for calibration node
-    for (auto opt : pCalibConfigDialog_->getBoolTypedCalibrationOptions())
-        parameterVector.push_back(rclcpp::Parameter(opt.first, opt.second));
-    for (auto opt : pCalibConfigDialog_->getDoubleTypedCalibrationOptions())
-        parameterVector.push_back(rclcpp::Parameter(opt.first, opt.second));
-    for (auto opt : pCalibConfigDialog_->getIntTypedCalibrationOptions())
-        parameterVector.push_back(rclcpp::Parameter(opt.first, opt.second));
-    for (auto opt : pCalibConfigDialog_->getStringTypedCalibrationOptions())
-        parameterVector.push_back(rclcpp::Parameter(opt.first, opt.second));
+    for (const auto& opt : pCalibConfigDialog_->getBoolTypedCalibrationOptions())
+        parameterVector.emplace_back(opt.first, opt.second);
+    for (const auto& opt : pCalibConfigDialog_->getDoubleTypedCalibrationOptions())
+        parameterVector.emplace_back(opt.first, opt.second);
+    for (const auto& opt : pCalibConfigDialog_->getIntTypedCalibrationOptions())
+        parameterVector.emplace_back(opt.first, opt.second);
+    for (const auto& opt : pCalibConfigDialog_->getStringTypedCalibrationOptions())
+        parameterVector.emplace_back(opt.first, opt.second);
 
     auto options = rclcpp::NodeOptions(nodeOptions_);
     options.parameter_overrides(parameterVector);

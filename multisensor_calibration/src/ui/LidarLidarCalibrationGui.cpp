@@ -8,9 +8,7 @@
 #include "multisensor_calibration/ui/LidarLidarCalibrationGui.h"
 
 // Std
-#include <future>
 #include <string>
-#include <thread>
 
 // Qt
 #include <QCoreApplication>

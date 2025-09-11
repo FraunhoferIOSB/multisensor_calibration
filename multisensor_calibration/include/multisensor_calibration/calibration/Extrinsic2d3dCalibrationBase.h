@@ -38,8 +38,6 @@
 
 // multisensor_calibration
 #include "../sensor_data_processing/CameraDataProcessor.h"
-#include "../sensor_data_processing/LidarDataProcessor.h"
-#include "../sensor_data_processing/ReferenceDataProcessor3d.h"
 #include "ExtrinsicCalibrationBase.h"
 #include <multisensor_calibration_interface/srv/camera_intrinsics.hpp>
 

@@ -31,7 +31,6 @@
 
 // Std
 #include <cmath>
-#include <memory>
 #include <vector>
 
 // ROS

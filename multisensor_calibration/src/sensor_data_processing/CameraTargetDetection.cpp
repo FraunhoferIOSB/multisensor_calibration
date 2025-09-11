@@ -10,10 +10,6 @@
 // Std
 #include <cmath>
 #include <future>
-#include <iostream>
-#include <thread>
-#include <type_traits>
-
 // ROS
 #include <cv_bridge/cv_bridge.hpp>
 
@@ -23,7 +19,6 @@
 #include <opencv2/imgproc.hpp>
 
 // multisensor_calibration
-#include "multisensor_calibration/calibration_target/CalibrationTarget.hpp"
 #include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration

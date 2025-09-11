@@ -94,7 +94,7 @@ void DataProcessor2d::getOrderedObservations(std::set<uint>& oObservationIds,
          i < tmpNumIterations && capturedMarkerIdsItr != capturedMarkerIds_.end();
          ++i, ++capturedMarkerIdsItr)
     {
-        int calibrationItrIdx = std::distance(capturedMarkerIds_.cbegin(), capturedMarkerIdsItr);
+        auto calibrationItrIdx = std::distance(capturedMarkerIds_.cbegin(), capturedMarkerIdsItr);
 
         //--- loop through all markers in this iteration
         for (uint m = 0; m < capturedMarkerIds_[calibrationItrIdx].size(); ++m)
@@ -107,7 +107,7 @@ void DataProcessor2d::getOrderedObservations(std::set<uint>& oObservationIds,
               oObservationIds.insert(obsId);
 
             // index of marker observation in list
-            int obsIdx = std::distance(oObservationIds.begin(), retVal.first);
+            auto obsIdx = std::distance(oObservationIds.begin(), retVal.first);
 
             //--- loop over corners and insert into list
             for (uchar c = 0; c < 4; ++c)
@@ -224,8 +224,8 @@ void DataProcessor2d::publishLastTargetDetection(const std_msgs::msg::Header& iH
     imgPntsMsg.array.layout.dim[1].size   = imgPntsMsg.array.layout.dim[0].stride;
     imgPntsMsg.array.layout.dim[1].stride = 1;
 
-    imgPntsMsg.array.data.resize(imgPntsMsg.array.layout.dim[0].size *
-                                 imgPntsMsg.array.layout.dim[1].size);
+    imgPntsMsg.array.data.resize(static_cast<unsigned int>(imgPntsMsg.array.layout.dim[0].size *
+                                                           imgPntsMsg.array.layout.dim[1].size));
     int dataItr = 0;
     for (uint i = 0; i < capturedMarkerIds_.size(); ++i)
     {
@@ -324,8 +324,9 @@ void DataProcessor2d::writeMarkerObservationsToFile(
     try
     {
         std::fstream observationsFout(iFilePath, std::ios_base::out);
-        observationsFout << "# 2D image points of the detected marker corners of the calibration target." << std::endl;
-        observationsFout << "#    Marker-ID Top-Left Top-Right Bottom-Right Bottom-Left" << std::endl;
+        observationsFout
+          << "# 2D image points of the detected marker corners of the calibration target." << '\n';
+        observationsFout << "#    Marker-ID Top-Left Top-Right Bottom-Right Bottom-Left" << '\n';
         for (uint m = 0; m < iMarkerIds.size(); ++m)
         {
             observationsFout << iMarkerIds[m];
@@ -333,7 +334,7 @@ void DataProcessor2d::writeMarkerObservationsToFile(
             {
                 observationsFout << " " << iMarkerCorners[m][c];
             }
-            observationsFout << std::endl;
+            observationsFout << '\n';
         }
         observationsFout.close();
     }

@@ -32,7 +32,6 @@
 // Std
 #include <memory>
 #include <string>
-#include <tuple>
 
 // ROS
 #include <geometry_msgs/msg/point_stamped.hpp>

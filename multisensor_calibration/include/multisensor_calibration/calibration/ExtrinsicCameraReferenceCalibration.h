@@ -32,7 +32,6 @@
 // Std
 #include <memory>
 #include <string>
-#include <tuple>
 
 // ROS
 #include <image_transport/image_transport.hpp>
@@ -46,7 +45,9 @@
 // multisensor_calibration
 #include "../common/common.h"
 #include "../config/CameraReferenceRegistrationParameters.hpp"
-#include "Extrinsic2d3dCalibrationBase.h"
+#include "multisensor_calibration/calibration/Extrinsic2d3dCalibrationBase.h"
+#include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/ReferenceDataProcessor3d.h"
 #include <multisensor_calibration_interface/srv/camera_intrinsics.hpp>
 
 namespace multisensor_calibration

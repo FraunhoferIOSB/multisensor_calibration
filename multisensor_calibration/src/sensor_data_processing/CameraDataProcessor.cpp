@@ -7,9 +7,6 @@
 
 #include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
 
-// Std
-#include <fstream>
-
 // ROS
 #include <cv_bridge/cv_bridge.hpp>
 #include <pcl_conversions/pcl_conversions.h>
@@ -45,7 +42,7 @@ CameraDataProcessor::CameraDataProcessor(const std::string& iLoggerName,
     //--- rviz rainbow colormap is actually HSV cropped at 83.33%: https://answers.ros.org/question/182444/rviz-colorbar/
     cv::Mat tmpMap = cv::Mat((markerIdRange_.second - markerIdRange_.first + 1), // row number equals number of marker IDs in range
                              1, CV_8UC1);
-    for (uchar i = markerIdRange_.first; i <= markerIdRange_.second; ++i)
+    for (auto i = markerIdRange_.first; i <= markerIdRange_.second; ++i)
         tmpMap.at<uchar>(i - markerIdRange_.first) = static_cast<uchar>( // normalize into the range [0, 255]
           static_cast<float>(i - markerIdRange_.first) /
           static_cast<float>(markerIdRange_.second - markerIdRange_.first) *
@@ -271,7 +268,7 @@ bool CameraDataProcessor::computeTargetCloud(
                 //--- check that pixel actually lie on target, based on image projections
                 //--- continue to next point if outside the polygon
                 double testResult =
-                  cv::pointPolygonTest(boardCornerImgPnts, cv::Point2f(x, y), false);
+                  cv::pointPolygonTest(boardCornerImgPnts, cv::Point2d(x, y), false);
                 if (testResult < 0) // if point lies outside polygon, test result is -1
                     continue;
 
@@ -382,7 +379,7 @@ void CameraDataProcessor::drawMarkerCornersIntoImage(
     //--- loop over marker IDs
     for (uint i = 0; i < iMarkerIds.size(); ++i)
     {
-        uint markerId         = iMarkerIds[i];
+        auto markerId         = iMarkerIds[i];
         cv::Vec3b markerColor = markerIdColorLookup_.at<cv::Vec3b>(markerId - markerIdRange_.first);
 
         //--- loop over corners for each marker

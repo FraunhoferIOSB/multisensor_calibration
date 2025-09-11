@@ -7,9 +7,6 @@
 
 #include "multisensor_calibration/sensor_data_processing/LocalPlaneSacModel.h"
 
-// Std
-#include <iostream>
-
 // OpenCV
 #include <opencv2/core/eigen.hpp>
 

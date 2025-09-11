@@ -765,7 +765,7 @@ bool ExtrinsicLidarVehicleCalibration::setDynamicParameter(const rclcpp::Paramet
     {
         return true;
     }
-    else if (registrationParams_.tryToSetParameter(iParameter))
+    if (registrationParams_.tryToSetParameter(iParameter))
     {
         return true;
     }

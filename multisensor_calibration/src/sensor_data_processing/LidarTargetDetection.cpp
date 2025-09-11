@@ -8,12 +8,8 @@
 #include "multisensor_calibration/sensor_data_processing/LidarTargetDetection.h"
 
 // Std
-#include <algorithm>
 #include <cmath>
 #include <future>
-#include <iostream>
-#include <numeric>
-#include <thread>
 
 // ROS
 #include <pcl_conversions/pcl_conversions.h>

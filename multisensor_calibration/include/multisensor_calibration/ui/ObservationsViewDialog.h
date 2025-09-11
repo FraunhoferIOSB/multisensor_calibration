@@ -31,8 +31,6 @@
 
 // std
 #include <memory>
-#include <tuple>
-#include <vector>
 
 // ROS
 #include <rclcpp/rclcpp.hpp>

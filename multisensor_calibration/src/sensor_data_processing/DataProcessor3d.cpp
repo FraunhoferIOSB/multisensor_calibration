@@ -9,6 +9,8 @@
 
 // Std
 #include <iostream>
+#include <memory>
+#include <pcl/common/transforms.h>
 #include <regex>
 
 // ROS
@@ -18,9 +20,6 @@
 #include <pcl/conversions.h>
 #include <pcl/io/ply_io.h>
 #include <pcl_ros/transforms.hpp>
-
-// multisensor_calibration
-#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {
@@ -409,7 +408,7 @@ bool DataProcessor3d::onAddMarkerObservations(
     pcl::PointCloud<InputPointType>::Ptr pTargetCloud(new pcl::PointCloud<InputPointType>);
     pcl::io::loadPLYFile(calibrationTarget_.cadModelCloudPath, *pTargetCloud);
 
-    pRoisCloud_.reset(new pcl::PointCloud<InputPointType>());
+    pRoisCloud_ = std::make_shared<pcl::PointCloud<InputPointType>>();
     calibrationTargetCloudPtrs_.push_back(nullptr);
     calibrationTargetCloudPtrs_.back().reset(new pcl::PointCloud<InputPointType>());
     pcl::transformPointCloud(*pTargetCloud, *pRoisCloud_, poseTransform);

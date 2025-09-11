@@ -8,16 +8,17 @@
 #include "multisensor_calibration/ui/CalibrationGuiBase.h"
 
 // Std
-#include <future>
 #include <regex>
 
 // Qt
+#include <QAction>
 #include <QApplication>
 #include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QDirIterator>
 #include <QFileDialog>
 #include <QLocale>
+#include <QMenu>
 #include <QMessageBox>
 #include <QScreen>
 #include <QStyle>
@@ -30,7 +31,6 @@
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/sensor_data_processing/DataProcessor3d.h"
-#include "ui_CalibrationControlWindow.h"
 #include <multisensor_calibration/common/utils.hpp>
 #include <multisensor_calibration_interface/srv/capture_calib_target.hpp>
 #include <multisensor_calibration_interface/srv/finalize_calibration.hpp>

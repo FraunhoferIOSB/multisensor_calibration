@@ -37,14 +37,6 @@
 #include <QSettings>
 #include <Qt>
 
-// multisensor_calibration
-#include "../common/common.h"
-#include "ExtrinsicCameraLidarConfigWidget.h"
-#include "ExtrinsicCameraReferenceConfigWidget.h"
-#include "ExtrinsicLidarLidarConfigWidget.h"
-#include "ExtrinsicLidarReferenceConfigWidget.h"
-#include "InstallWorkspaceDialog.h"
-
 namespace multisensor_calibration
 {
 

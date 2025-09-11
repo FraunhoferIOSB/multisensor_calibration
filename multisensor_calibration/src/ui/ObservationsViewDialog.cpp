@@ -7,10 +7,6 @@
 
 #include "multisensor_calibration/ui/ObservationsViewDialog.h"
 
-// Std
-#include <future>
-#include <thread>
-
 // Qt
 #include <QAction>
 #include <QDialogButtonBox>
