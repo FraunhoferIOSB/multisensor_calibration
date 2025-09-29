@@ -2,6 +2,12 @@
 Changelog for package multisensor_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* refactor: Minor style changes and deprecation removals
+* Prepare for Kilted + Rolling Release
+* Contributors: Miguel Granero
+
 2.0.3 (2025-03-28)
 ------------------
 * refactor: remove unused rviz config files

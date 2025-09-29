@@ -2,6 +2,9 @@
 Changelog for package multisensor_calibration_interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.0.3 (2025-03-28)
 ------------------
 * feat: add LICENSE file to single packages

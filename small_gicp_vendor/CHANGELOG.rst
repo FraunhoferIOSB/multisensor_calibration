@@ -2,6 +2,9 @@
 Changelog for package small_gicp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.0.3 (2025-03-28)
 ------------------
 * fix: fix license name in package.xml
