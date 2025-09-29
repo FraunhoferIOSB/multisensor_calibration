@@ -35,8 +35,8 @@
 #include <unordered_map>
 
 // ROS
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/transform_listener.h>
+#include <tf2_ros/buffer.hpp>
+#include <tf2_ros/transform_listener.hpp>
 
 // Qt
 #include <QComboBox>

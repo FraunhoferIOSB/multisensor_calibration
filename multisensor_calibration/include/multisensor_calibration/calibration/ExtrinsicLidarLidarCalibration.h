@@ -34,18 +34,18 @@
 #include <string>
 
 // ROS
-#include <message_filters/subscriber.h>
-#include <message_filters/sync_policies/approximate_time.h>
-#include <message_filters/sync_policies/exact_time.h>
-#include <message_filters/synchronizer.h>
+#include <message_filters/subscriber.hpp>
+#include <message_filters/sync_policies/approximate_time.hpp>
+#include <message_filters/sync_policies/exact_time.hpp>
+#include <message_filters/synchronizer.hpp>
 #include <rclcpp/node.hpp>
 
 // multisensor_calibration
-#include "../common/common.h"
-#include "../config/LidarLidarRegistrationParameters.hpp"
-#include "../config/LidarTargetDetectionParameters.hpp"
-#include "../sensor_data_processing/LidarDataProcessor.h"
 #include "Extrinsic3d3dCalibrationBase.h"
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/config/LidarLidarRegistrationParameters.hpp"
+#include "multisensor_calibration/config/LidarTargetDetectionParameters.hpp"
+#include "multisensor_calibration/sensor_data_processing/LidarDataProcessor.h"
 
 namespace multisensor_calibration
 {

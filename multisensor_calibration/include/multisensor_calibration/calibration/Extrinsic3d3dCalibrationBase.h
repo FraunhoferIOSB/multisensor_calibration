@@ -30,8 +30,8 @@
 #define MULTISENSORCALIBRATION_EXTRINSIC3D3DCALIBRATIONBASE_H
 
 // ROS
-#include <message_filters/sync_policies/approximate_time.h>
-#include <message_filters/sync_policies/exact_time.h>
+#include <message_filters/sync_policies/approximate_time.hpp>
+#include <message_filters/sync_policies/exact_time.hpp>
 
 // PCL
 #include <pcl/correspondence.h>

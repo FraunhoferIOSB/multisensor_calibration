@@ -48,7 +48,13 @@
 #include <rclcpp/timer.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
+#if __has_include(<urdf/model.hpp>)
+#include <urdf/model.hpp>
+#elif __has_include(<urdf/model.h>)
 #include <urdf/model.h>
+#else
+#error "Could not find urdf model header!"
+#endif
 
 // Tiny XML
 #include <tinyxml2.h>

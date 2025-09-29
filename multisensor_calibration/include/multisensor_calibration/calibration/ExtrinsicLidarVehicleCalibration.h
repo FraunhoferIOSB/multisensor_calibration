@@ -39,7 +39,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/service.hpp>
 #include <rclcpp/subscription.hpp>
-#include <tf2/LinearMath/Transform.h>
+#include <tf2/LinearMath/Transform.hpp>
 
 // OpenCV
 #include <opencv2/core.hpp>

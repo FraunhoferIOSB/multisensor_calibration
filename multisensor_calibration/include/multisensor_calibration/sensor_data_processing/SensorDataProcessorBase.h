@@ -33,9 +33,6 @@
 #include <filesystem>
 #include <vector>
 
-// boost
-#include <boost/smart_ptr/shared_ptr.hpp>
-
 // ROS
 #include <rclcpp/logger.hpp>
 #include <rclcpp/publisher.hpp>

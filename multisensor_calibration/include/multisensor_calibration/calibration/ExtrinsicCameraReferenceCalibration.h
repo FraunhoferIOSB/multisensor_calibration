@@ -37,7 +37,7 @@
 #include <image_transport/image_transport.hpp>
 #include <image_transport/subscriber_filter.hpp>
 #include <rclcpp/node.hpp>
-#include <tf2/LinearMath/Transform.h>
+#include <tf2/LinearMath/Transform.hpp>
 
 // PCL
 #include <pcl/filters/frustum_culling.h>
