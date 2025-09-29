@@ -2,8 +2,8 @@
 Changelog for package multisensor_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.4 (2025-09-29)
+------------------
 * refactor: Minor style changes and deprecation removals
 * Prepare for Kilted + Rolling Release
 * Contributors: Miguel Granero
