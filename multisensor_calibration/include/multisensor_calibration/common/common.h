@@ -220,7 +220,8 @@ enum ECalibrationType
     EXTRINSIC_LIDAR_LIDAR_CALIBRATION,      ///< Extrinsic LiDAR-LiDAR calibration.
     EXTRINSIC_CAMERA_REFERENCE_CALIBRATION, ///< Extrinsic Camera-Reference calibration.
     EXTRINSIC_LIDAR_REFERENCE_CALIBRATION,  ///< Extrinsic LiDAR-Reference calibration.
-    EXTRINSIC_LIDAR_VEHICLE_CALIBRATION     ///< Extrinsic LiDAR-Vehicle calibration.
+    EXTRINSIC_LIDAR_VEHICLE_CALIBRATION,    ///< Extrinsic LiDAR-Vehicle calibration.
+    STEREO_CAMERA_CALIBRATION               ///< Intrinsic and Extrinsic Camera-Camera calibration.
 };
 
 /// Map convert a value inside the ECalibrationType enum to a node name of type string.
@@ -229,7 +230,8 @@ static const std::unordered_map<ECalibrationType, std::string> CALIB_TYPE_2_NODE
   {EXTRINSIC_LIDAR_LIDAR_CALIBRATION, "extrinsic_lidar_lidar_calibration"},
   {EXTRINSIC_CAMERA_REFERENCE_CALIBRATION, "extrinsic_camera_reference_calibration"},
   {EXTRINSIC_LIDAR_REFERENCE_CALIBRATION, "extrinsic_lidar_reference_calibration"},
-  {EXTRINSIC_LIDAR_VEHICLE_CALIBRATION, "extrinsic_lidar_vehicle_calibration"}};
+  {EXTRINSIC_LIDAR_VEHICLE_CALIBRATION, "extrinsic_lidar_vehicle_calibration"},
+  {STEREO_CAMERA_CALIBRATION, "stereo_camera_calibration"}};
 
 /// Map convert a value inside the ECalibrationType enum to a string.
 static const std::unordered_map<ECalibrationType, std::string> CALIB_TYPE_2_STR{
@@ -237,7 +239,8 @@ static const std::unordered_map<ECalibrationType, std::string> CALIB_TYPE_2_STR{
   {EXTRINSIC_LIDAR_LIDAR_CALIBRATION, "Extrinsic LiDAR-LiDAR"},
   {EXTRINSIC_CAMERA_REFERENCE_CALIBRATION, "Extrinsic Camera-Reference"},
   {EXTRINSIC_LIDAR_REFERENCE_CALIBRATION, "Extrinsic LiDAR-Reference"},
-  {EXTRINSIC_LIDAR_VEHICLE_CALIBRATION, "Extrinsic LiDAR-Vehicle"}};
+  {EXTRINSIC_LIDAR_VEHICLE_CALIBRATION, "Extrinsic LiDAR-Vehicle"},
+  {STEREO_CAMERA_CALIBRATION, "Intrinsic and Extrinsic Camera-Camera"}};
 
 /// Map to a string to value inside the ECalibrationType enum.
 static const std::unordered_map<std::string, ECalibrationType> STR_2_CALIB_TYPE{
@@ -245,7 +248,8 @@ static const std::unordered_map<std::string, ECalibrationType> STR_2_CALIB_TYPE{
   {"Extrinsic LiDAR-LiDAR", EXTRINSIC_LIDAR_LIDAR_CALIBRATION},
   {"Extrinsic Camera-Reference", EXTRINSIC_CAMERA_REFERENCE_CALIBRATION},
   {"Extrinsic LiDAR-Reference", EXTRINSIC_LIDAR_REFERENCE_CALIBRATION},
-  {"Extrinsic LiDAR-Vehicle", EXTRINSIC_LIDAR_VEHICLE_CALIBRATION}};
+  {"Extrinsic LiDAR-Vehicle", EXTRINSIC_LIDAR_VEHICLE_CALIBRATION},
+  {"Intrinsic and Extrinsic Camera-Camera", STEREO_CAMERA_CALIBRATION}};
 
 /// Enum indicating the state of the input image.
 enum EImageState
