@@ -120,16 +120,6 @@ class ExtrinsicLidarReferenceCalibration
     bool initializeWorkspaceObjects() override;
 
     /**
-     * @brief Handle service call to request removing of last observation.
-     *
-     * @param[in] ipReq Request, with flag to capture calibration target
-     * @param[out] opRes Response, empty.
-     */
-    bool onRequestRemoveObservation(
-      const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
-      std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes) override;
-
-    /**
      * @brief Method to sensor data, i.e. LiDAR point clouds from the source sensor.
      *
      * This calls the processing of the data data processors, i.e. detect the calibration target

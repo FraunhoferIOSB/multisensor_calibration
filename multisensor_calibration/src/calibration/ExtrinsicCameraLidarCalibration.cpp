@@ -470,43 +470,19 @@ bool ExtrinsicCameraLidarCalibration::onRequestRemoveObservation(
   const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
   std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes)
 {
-    UNUSED_VAR(ipReq);
 
-    //--- if there is a calibration to be removed, remove all observations from this iteration
-    if (calibrationItrCnt_ > 1)
+    if (ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::onRequestRemoveObservation(ipReq, opRes))
     {
-
-        //--- get ownership of mutex
-        std::lock_guard<std::mutex> guard(dataProcessingMutex_);
-
-        calibrationItrCnt_--;
-
-        pCamDataProcessor_->removeCalibIteration(calibrationItrCnt_);
-        pLidarDataProcessor_->removeCalibIteration(calibrationItrCnt_);
-
-        //--- pop last sensor extrinsic
         sensorExtrinsics_.pop_back();
-
         //--- pop last frustum culling filter from stack and set previous filter
         pFrustumCullingFilters_.pop_back();
         if (pFrustumCullingFilters_.size() > 0 && pLidarDataProcessor_)
             pLidarDataProcessor_->setPreprocFilter(pFrustumCullingFilters_.back());
         else if (pFrustumCullingFilters_.size() == 0 && pLidarDataProcessor_)
             pLidarDataProcessor_->setPreprocFilter(nullptr);
-
-        opRes->is_accepted = true;
-        opRes->msg         = "Last observation successfully removed! "
-                             "Remaining number of observations: " +
-                     std::to_string(pCamDataProcessor_->getNumCalibIterations()) + " (camera), " +
-                     std::to_string(pLidarDataProcessor_->getNumCalibIterations()) + " (lidar).";
     }
     else
-    {
-        opRes->is_accepted = false;
-        opRes->msg         = "No observation available to be removed!";
-    }
-
-    RCLCPP_INFO(logger_, "%s", opRes->msg.c_str());
+        return false;
 
     return true;
 }

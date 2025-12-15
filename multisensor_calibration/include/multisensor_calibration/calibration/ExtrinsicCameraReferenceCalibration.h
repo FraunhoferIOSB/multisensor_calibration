@@ -142,16 +142,6 @@ class ExtrinsicCameraReferenceCalibration
       std::shared_ptr<interf::srv::CameraIntrinsics::Response> opRes);
 
     /**
-     * @brief Handle service call to request removing of last observation.
-     *
-     * @param[in] ipReq Request, with flag to capture calibration target
-     * @param[out] opRes Response, empty.
-     */
-    bool onRequestRemoveObservation(
-      const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
-      std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes) override;
-
-    /**
      * @brief Method to receive sensor data, i.e. camera image from the source sensor.
      *
      * This calls the processing of the data data processors, i.e. detect the calibration target

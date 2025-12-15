@@ -67,6 +67,43 @@ bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::initializeP
 
 //==================================================================================================
 template <class SrcDataProcessorT, class RefDataProcessorT>
+bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::onRequestRemoveObservation(
+  const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
+  std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes)
+{
+    UNUSED_VAR(ipReq);
+
+    //--- if there is a calibration to be removed, remove all observations from this iteration
+    if (calibrationItrCnt_ > 1)
+    {
+
+        //--- get ownership of mutex
+        std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+
+        calibrationItrCnt_--;
+
+        pSrcDataProcessor_->removeCalibIteration(calibrationItrCnt_);
+        pRefDataProcessor_->removeCalibIteration(calibrationItrCnt_);
+
+        opRes->is_accepted = true;
+        opRes->msg         = "Last observation successfully removed! "
+                             "Remaining number of observations: " +
+                     std::to_string(pSrcDataProcessor_->getNumCalibIterations()) + " (src), " +
+                     std::to_string(pRefDataProcessor_->getNumCalibIterations()) + " (ref).";
+    }
+    else
+    {
+        opRes->is_accepted = false;
+        opRes->msg         = "No observation available to be removed!";
+    }
+
+    RCLCPP_INFO(logger_, "%s", opRes->msg.c_str());
+
+    return true;
+}
+
+//==================================================================================================
+template <class SrcDataProcessorT, class RefDataProcessorT>
 bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::initializeServices(
   rclcpp::Node* ipNode)
 {

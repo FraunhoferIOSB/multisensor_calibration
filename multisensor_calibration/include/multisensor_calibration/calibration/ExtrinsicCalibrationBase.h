@@ -182,7 +182,7 @@ class ExtrinsicCalibrationBase : public CalibrationBase
      */
     virtual bool onRequestRemoveObservation(
       const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
-      std::shared_ptr<interf::srv::RemoveLastObservation::Response> oRes) = 0;
+      std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes);
 
     /**
      * @brief Handling call requesting sensor extrinsics.
