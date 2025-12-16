@@ -37,13 +37,10 @@
 
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
-#include "multisensor_calibration/common/utils.hpp"
 #include "multisensor_calibration/sensor_data_processing/LocalPlaneSacModel.h"
 
 namespace multisensor_calibration
 {
-
-using namespace utils;
 
 //==================================================================================================
 ExtrinsicLidarVehicleCalibration::ExtrinsicLidarVehicleCalibration(
@@ -280,37 +277,8 @@ bool ExtrinsicLidarVehicleCalibration::finalizeCalibration()
       registrationParams_.registration_icp_max_correspondence_distance.value,
       registrationParams_.registration_icp_rotation_tolerance.value,
       registrationParams_.registration_icp_translation_tolerance.value);
-    calibResult_.error = std::make_pair("Root Mean Squared Error (in m)", icpRmse);
 
-    //--- set calibration meta data
-    calibResult_.calibrations[0].srcSensorName = srcSensorName_;
-    calibResult_.calibrations[0].srcFrameId    = srcFrameId_;
-    calibResult_.calibrations[0].refSensorName = refSensorName_;
-    calibResult_.calibrations[0].refFrameId    = refFrameId_;
-    calibResult_.calibrations[0].baseFrameId   = baseFrameId_;
-
-    //--- get extrinsics
-    const lib3d::Extrinsics& extrinsics = sensorExtrinsics_.back();
-
-    //--- get transformation from lib3d::Extrinsics.
-    // resulting transformation from ref to src sensor
-    tf2::Transform refToSrcTransform;
-    setTfTransformFromCameraExtrinsics(extrinsics,
-                                       refToSrcTransform);
-    calibResult_.calibrations[0].XYZ = refToSrcTransform.inverse().getOrigin(); // invert to get LOCAL_2_REF
-    double roll, pitch, yaw;
-    refToSrcTransform.inverse().getBasis().getRPY(roll, pitch, yaw); // invert to get LOCAL_2_REF
-    calibResult_.calibrations[0].RPY = tf2::Vector3(roll, pitch, yaw);
-
-    //--- store meta information into calibResult
-    calibResult_.numObservations = static_cast<int>(refRegionMarkers_.size());
-
-    //--- print out final transformation
-    RCLCPP_INFO(logger_,
-                "\n==================================================================================="
-                "\n%s"
-                "\n===================================================================================",
-                calibResult_.toString().c_str());
+    ExtrinsicCalibrationBase::updateCalibrationResult(std::make_pair("Root Mean Squared Error (in m)", icpRmse), static_cast<int>(refRegionMarkers_.size()));
 
     //--- publish last sensor extrinsics
     ExtrinsicCalibrationBase::publishLastCalibrationResult();

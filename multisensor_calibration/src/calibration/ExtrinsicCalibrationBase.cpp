@@ -909,4 +909,51 @@ template class ExtrinsicCalibrationBase<CameraDataProcessor, ReferenceDataProces
 template class ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>;
 template class ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>;
 
+//==================================================================================================
+template <class SrcDataProcessorT, class RefDataProcessorT>
+void ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::updateCalibrationResult(const std::pair<std::string, double> error,
+                                                                                             const int numberOfObservations)
+{
+    calibResult_.error = error;
+
+    //--- computer target pose deviation if more than 1 observation is available
+    if (pSrcDataProcessor_->getNumCalibIterations() > 1 &&
+        pRefDataProcessor_->getNumCalibIterations() > 1)
+    {
+        calibResult_.target_poses_stdDev =
+          computeTargetPoseStdDev(pSrcDataProcessor_->getCalibrationTargetPoses(),
+                                  pRefDataProcessor_->getCalibrationTargetPoses());
+    }
+
+    //--- set calibration meta data
+    calibResult_.calibrations[0].srcSensorName = srcSensorName_;
+    calibResult_.calibrations[0].srcFrameId    = srcFrameId_;
+    calibResult_.calibrations[0].refSensorName = refSensorName_;
+    calibResult_.calibrations[0].refFrameId    = refFrameId_;
+    calibResult_.calibrations[0].baseFrameId   = baseFrameId_;
+
+    //--- get extrinsics
+    const lib3d::Extrinsics& extrinsics = sensorExtrinsics_.back();
+
+    //--- get transformation from lib3d::Extrinsics.
+    // resulting transformation from ref to src sensor
+    tf2::Transform refToSrcTransform;
+    utils::setTfTransformFromCameraExtrinsics(extrinsics,
+                                              refToSrcTransform);
+    calibResult_.calibrations[0].XYZ = refToSrcTransform.inverse().getOrigin(); // invert to get LOCAL_2_REF
+    double roll, pitch, yaw;
+    refToSrcTransform.inverse().getBasis().getRPY(roll, pitch, yaw); // invert to get LOCAL_2_REF
+    calibResult_.calibrations[0].RPY = tf2::Vector3(roll, pitch, yaw);
+
+    //--- store meta information into calibResult
+    calibResult_.numObservations = numberOfObservations;
+
+    //--- print out final transformation
+    RCLCPP_INFO(logger_,
+                "\n==================================================================================="
+                "\n%s"
+                "\n===================================================================================",
+                calibResult_.toString().c_str());
+}
+
 } // namespace multisensor_calibration

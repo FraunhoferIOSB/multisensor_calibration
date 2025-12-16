@@ -37,12 +37,9 @@
 
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
-#include "multisensor_calibration/common/utils.hpp"
 
 namespace multisensor_calibration
 {
-
-using namespace utils;
 
 //==================================================================================================
 ExtrinsicCameraLidarCalibration::
@@ -246,52 +243,13 @@ bool ExtrinsicCameraLidarCalibration::finalizeCalibration()
       false,
       finalSensorExtrinsics);
 
-    //--- set calibration meta data
-    calibResult_.calibrations[0].srcSensorName = srcSensorName_;
-    calibResult_.calibrations[0].srcFrameId    = srcFrameId_;
-    calibResult_.calibrations[0].refSensorName = refSensorName_;
-    calibResult_.calibrations[0].refFrameId    = refFrameId_;
-    calibResult_.calibrations[0].baseFrameId   = baseFrameId_;
-
-    //--- get transformation from lib3d::Extrinsics.
-    // resulting transformation from ref to src sensor
-    tf2::Transform refToSrcTransform;
-    setTfTransformFromCameraExtrinsics(finalSensorExtrinsics,
-                                       refToSrcTransform);
-    calibResult_.calibrations[0].XYZ = refToSrcTransform.inverse().getOrigin(); // invert to get LOCAL_2_REF
-    double roll, pitch, yaw;
-    refToSrcTransform.inverse().getBasis().getRPY(roll, pitch, yaw); // invert to get LOCAL_2_REF
-    calibResult_.calibrations[0].RPY = tf2::Vector3(roll, pitch, yaw);
-
-    //--- store reprojection error
-    calibResult_.error = std::make_pair("Mean Reprojection Error (in pixel)", pnpRetVal.first);
-
-    //--- computer target pose deviation if more than 1 observation is available
-    if (pSrcDataProcessor_->getNumCalibIterations() > 1 &&
-        pRefDataProcessor_->getNumCalibIterations() > 1)
-    {
-        calibResult_.target_poses_stdDev =
-          computeTargetPoseStdDev(pSrcDataProcessor_->getCalibrationTargetPoses(),
-                                  pRefDataProcessor_->getCalibrationTargetPoses());
-    }
-
-    //--- store meta information into calibResult
-    calibResult_.numObservations = static_cast<int>(pLidarDataProcessor_->getNumCalibIterations());
-
+    ExtrinsicCalibrationBase::updateCalibrationResult(std::make_pair("Mean Reprojection Error (in pixel)", pnpRetVal.first), static_cast<int>(pLidarDataProcessor_->getNumCalibIterations()));
     //--- calculate additional sensor calibrations if camera is to be calibrated as stereo camera
     if (isStereoCamera_ && rightCameraInfo_.width != 0)
         calculateAdditionalStereoCalibrations();
     else if (isStereoCamera_ && rightCameraInfo_.width == 0)
         RCLCPP_ERROR(logger_, "Could not calculate additional sensor calibrations in stereo case "
                               "because 'camera info' data of right camera is not available.");
-
-    //--- print out final transformation
-    RCLCPP_INFO(
-      logger_,
-      "\n==================================================================================="
-      "\n%s"
-      "\n===================================================================================",
-      calibResult_.toString().c_str());
 
     //--- publish last sensor extrinsics
     ExtrinsicCalibrationBase::publishLastCalibrationResult();

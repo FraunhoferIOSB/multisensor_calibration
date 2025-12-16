@@ -42,6 +42,7 @@
 
 // multisensor_calibration
 #include "CalibrationBase.h"
+#include <multisensor_calibration/common/utils.hpp>
 #include <multisensor_calibration_interface/srv/calibration_meta_data.hpp>
 #include <multisensor_calibration_interface/srv/remove_last_observation.hpp>
 #include <multisensor_calibration_interface/srv/sensor_extrinsics.hpp>
@@ -346,6 +347,9 @@ class ExtrinsicCalibrationBase : public CalibrationBase
     std::pair<tf2::Vector3, tf2::Vector3> computeTargetPoseStdDev(
       const std::vector<lib3d::Extrinsics>& iSrcTargetPoses,
       const std::vector<lib3d::Extrinsics>& iRefTargetPoses) const;
+
+    void updateCalibrationResult(const std::pair<std::string, double> error,
+                                 const int numberOfObservations);
 
     //--- MEMBER DECLARATION ---/
 
