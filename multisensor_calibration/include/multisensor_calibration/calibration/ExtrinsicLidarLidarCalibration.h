@@ -85,7 +85,7 @@ class ExtrinsicLidarLidarCalibration
     /**
      * @brief Destructor
      */
-     ~ExtrinsicLidarLidarCalibration() override;
+    ~ExtrinsicLidarLidarCalibration() override;
 
   private:
     using CalibrationBase::handleDynamicParameterChange;

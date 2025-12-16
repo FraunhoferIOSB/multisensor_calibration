@@ -142,18 +142,25 @@ class ExtrinsicCalibrationBase : public CalibrationBase
     /**
      * @brief Destructor
      */
-     ~ExtrinsicCalibrationBase() override = default;
+    ~ExtrinsicCalibrationBase() override = default;
 
   protected:
-    using CalibrationBase::initializeAndStartSensorCalibration;
+    //--- Not implemented purely virtual from parent ---/
 
+    bool finalizeCalibration() override                              = 0;
+    bool initializeDataProcessors() override                         = 0;
+    bool initializeSubscribers(rclcpp::Node* ipNode) override        = 0;
+    void setupDynamicParameters(rclcpp::Node* ipNode) const override = 0;
+    bool shutdownSubscribers() override                              = 0;
+
+    //--- Overrides from parent ---/
     /**
      * @brief Initialize publishers. Purely virtual.
      *
      * @param[in, out] ipNode Pointer to node.
      * @return True, if successful. False otherwise.
      */
-     bool initializePublishers(rclcpp::Node* ipNode) override;
+    bool initializePublishers(rclcpp::Node* ipNode) override;
 
     /**
      * @brief Method to initialize services. This overrides the CalibrationBase::initializeServices.
@@ -162,7 +169,7 @@ class ExtrinsicCalibrationBase : public CalibrationBase
      * @param[in, out] ipNode Pointer to node.
      * @return True, if successful. False otherwise.
      */
-     bool initializeServices(rclcpp::Node* ipNode) override;
+    bool initializeServices(rclcpp::Node* ipNode) override;
 
     /**
      * @brief Handle call requesting calibration meta data.

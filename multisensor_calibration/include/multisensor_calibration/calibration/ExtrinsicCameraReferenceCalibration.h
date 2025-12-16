@@ -79,7 +79,7 @@ class ExtrinsicCameraReferenceCalibration
     /**
      * @brief Destructor
      */
-     ~ExtrinsicCameraReferenceCalibration() override;
+    ~ExtrinsicCameraReferenceCalibration() override;
 
   private:
     using CalibrationBase::handleDynamicParameterChange;

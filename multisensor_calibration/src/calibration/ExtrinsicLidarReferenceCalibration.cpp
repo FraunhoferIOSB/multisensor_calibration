@@ -20,7 +20,6 @@
 
 // small_gicp
 #include <memory>
-#include <memory>
 #include <small_gicp/registration/registration_helper.hpp>
 
 // multisensor_calibration
@@ -77,7 +76,7 @@ bool ExtrinsicLidarReferenceCalibration::finalizeCalibration()
         std::set<uint> srcObservationIds;
         std::vector<cv::Point3f> srcCornerObservations;
         pSrcDataProcessor_->getOrderedObservations(srcObservationIds, srcCornerObservations,
-                                                        i, 1);
+                                                   i, 1);
 
         //--- get observations from reference LiDAR
         std::set<uint> refObservationIds;

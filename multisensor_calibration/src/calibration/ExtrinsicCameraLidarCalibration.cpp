@@ -17,7 +17,6 @@
 
 // ROS
 #include <memory>
-#include <memory>
 #include <sensor_msgs/msg/camera_info.hpp>
 
 // PCL
@@ -103,7 +102,7 @@ void ExtrinsicCameraLidarCalibration::calibrateLastObservation()
     std::set<uint> lidarObservationIds;
     std::vector<cv::Point3f> lidarCornerObservations;
     pRefDataProcessor_->getOrderedObservations(lidarObservationIds, lidarCornerObservations,
-                                                 calibrationItrCnt_, 1);
+                                               calibrationItrCnt_, 1);
 
     //--- remove observations that do not have a correspondence in the other list
     removeCornerObservationsWithoutCorrespondence(cameraObservationIds,
@@ -475,7 +474,7 @@ void ExtrinsicCameraLidarCalibration::onSensorDataReceived(
         refFrameId_ != ipCloudMsg->header.frame_id)
     {
         imageFrameId_ = ipImgMsg->header.frame_id;
-        refFrameId_ = ipCloudMsg->header.frame_id;
+        refFrameId_   = ipCloudMsg->header.frame_id;
 
         //--- if base frame id is not empty and unequal to refCloudFrameId use baseFrameID as
         //--- reference frame id.
@@ -562,9 +561,9 @@ void ExtrinsicCameraLidarCalibration::onSensorDataReceived(
             pSrcDataProcessor_->publishPreview(ipImgMsg->header);
         if (lidarProcResult == LidarDataProcessor::SUCCESS)
             pRefDataProcessor_->publishPreview(ipCloudMsg->header.stamp,
-                                                 (baseFrameId_.empty())
-                                                   ? refFrameId_
-                                                   : baseFrameId_);
+                                               (baseFrameId_.empty())
+                                                 ? refFrameId_
+                                                 : baseFrameId_);
     }
     //--- else if, processing level is target_detection,
     //--- calibrate only if processing for both sensors is successful
@@ -576,9 +575,9 @@ void ExtrinsicCameraLidarCalibration::onSensorDataReceived(
             //--- publish detections
             pSrcDataProcessor_->publishLastTargetDetection(ipImgMsg->header);
             pRefDataProcessor_->publishLastTargetDetection(ipCloudMsg->header.stamp,
-                                                             (baseFrameId_.empty())
-                                                               ? refFrameId_
-                                                               : baseFrameId_);
+                                                           (baseFrameId_.empty())
+                                                             ? refFrameId_
+                                                             : baseFrameId_);
 
             //--- do calibration
             calibrateLastObservation();

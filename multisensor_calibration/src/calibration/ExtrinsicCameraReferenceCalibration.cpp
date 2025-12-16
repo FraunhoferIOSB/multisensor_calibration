@@ -17,7 +17,6 @@
 
 // ROS
 #include <memory>
-#include <memory>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <tf2/LinearMath/Transform.hpp>
 

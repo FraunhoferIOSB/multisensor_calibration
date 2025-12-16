@@ -18,8 +18,6 @@
 
 // ROS
 #include <memory>
-#include <memory>
-#include <memory>
 #include <tf2/LinearMath/Transform.hpp>
 
 // Qt
@@ -92,13 +90,13 @@ void ExtrinsicLidarLidarCalibration::calibrateLastObservation()
         std::set<uint> srcObservationIds;
         std::vector<cv::Point3f> srcCornerObservations;
         pSrcDataProcessor_->getOrderedObservations(srcObservationIds, srcCornerObservations,
-                                                        i, 1);
+                                                   i, 1);
 
         //--- get observations from reference LiDAR
         std::set<uint> refObservationIds;
         std::vector<cv::Point3f> refCornerObservations;
         pRefDataProcessor_->getOrderedObservations(refObservationIds, refCornerObservations,
-                                                        i, 1);
+                                                   i, 1);
 
         //--- remove observations that do not have a correspondence in the other list
         removeCornerObservationsWithoutCorrespondence(srcObservationIds,
@@ -557,9 +555,9 @@ void ExtrinsicLidarLidarCalibration::onSensorDataReceived(
             pSrcDataProcessor_->publishPreview(ipSrcCloudMsg->header);
         if (refLidarProcResult == LidarDataProcessor::SUCCESS)
             pRefDataProcessor_->publishPreview(ipRefCloudMsg->header.stamp,
-                                                    (baseFrameId_.empty())
-                                                      ? refFrameId_
-                                                      : baseFrameId_);
+                                               (baseFrameId_.empty())
+                                                 ? refFrameId_
+                                                 : baseFrameId_);
     }
     //--- else if, processing level is target_detection,
     //--- calibrate only if processing for both sensors is successful
@@ -571,9 +569,9 @@ void ExtrinsicLidarLidarCalibration::onSensorDataReceived(
             //--- publish detections
             pSrcDataProcessor_->publishLastTargetDetection(ipSrcCloudMsg->header);
             pRefDataProcessor_->publishLastTargetDetection(ipRefCloudMsg->header.stamp,
-                                                                (baseFrameId_.empty())
-                                                                  ? refFrameId_
-                                                                  : baseFrameId_);
+                                                           (baseFrameId_.empty())
+                                                             ? refFrameId_
+                                                             : baseFrameId_);
 
             //--- perform single calibration iteration
             //--- To this end, this only removes observations without correspondence.
