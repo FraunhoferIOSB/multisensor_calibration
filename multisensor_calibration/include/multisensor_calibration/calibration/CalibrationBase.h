@@ -100,6 +100,8 @@ class CalibrationBase
     virtual ~CalibrationBase();
 
   protected:
+    bool init(rclcpp::Node* ipNode);
+
     /**
      * @brief Initialize and start calibration.
 

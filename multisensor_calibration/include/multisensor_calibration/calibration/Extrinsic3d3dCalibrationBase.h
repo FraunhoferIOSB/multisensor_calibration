@@ -60,16 +60,6 @@ class Extrinsic3d3dCalibrationBase
   : public ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>
 {
 
-    //--- TYPEDEFS ---//
-  protected:
-    typedef message_filters::sync_policies::ApproximateTime<
-      InputCloud_Message_T, InputCloud_Message_T>
-      CloudCloudApproxSync;
-
-    typedef message_filters::sync_policies::ExactTime<
-      InputCloud_Message_T, InputCloud_Message_T>
-      CloudCloudExactSync;
-
     //--- METHOD DECLARATION ---/
 
   public:

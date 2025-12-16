@@ -62,8 +62,13 @@ class ExtrinsicLidarLidarCalibration
 
     //--- TYPEDEFS ---//
   protected:
-    using Extrinsic3d3dCalibrationBase<LidarDataProcessor, LidarDataProcessor>::CloudCloudApproxSync;
-    using Extrinsic3d3dCalibrationBase<LidarDataProcessor, LidarDataProcessor>::CloudCloudExactSync;
+    typedef message_filters::sync_policies::ApproximateTime<
+      InputCloud_Message_T, InputCloud_Message_T>
+      CloudCloudApproxSync;
+
+    typedef message_filters::sync_policies::ExactTime<
+      InputCloud_Message_T, InputCloud_Message_T>
+      CloudCloudExactSync;
 
     //--- METHOD DECLARATION ---/
   public:

@@ -53,34 +53,7 @@ ExtrinsicCameraReferenceCalibration::
     EXTRINSIC_CAMERA_REFERENCE_CALIBRATION),
   rclcpp::Node(nodeName, options)
 {
-    //--- do base class initialization
-    CalibrationBase::logger_ = this->get_logger();
-    CalibrationBase::initializeTfListener(this);
-
-    //--- setup launch and dynamic parameters
-    setupLaunchParameters(this);
-    setupDynamicParameters(this);
-
-    //--- register parameter change callback
-    pParameterCallbackHandle_ = add_on_set_parameters_callback(
-      std::bind(&ExtrinsicCameraReferenceCalibration::handleDynamicParameterChange, this,
-                std::placeholders::_1));
-
-    //--- read launch parameters
-    isInitialized_ = readLaunchParameters(this);
-
-    //--- if reading of launch parameters has returned with false, i.e. if error occurred, return.
-    if (isInitialized_ == false)
-        return;
-
-    //--- initialize services
-    isInitialized_ &= initializeServices(this);
-
-    //--- initialize workspace objects
-    isInitialized_ &= initializeWorkspaceObjects();
-
-    //--- create and start calibration workflow;
-    isInitialized_ &= initializeAndStartSensorCalibration(this);
+    CalibrationBase::init(this);
 }
 
 //==================================================================================================
