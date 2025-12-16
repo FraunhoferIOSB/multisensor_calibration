@@ -200,40 +200,6 @@ class ExtrinsicLidarReferenceCalibration
 
     /// Subscriber to point cloud from source sensor
     rclcpp::Subscription<InputCloud_Message_T>::SharedPtr pSrcCloudSubsc_;
-
-    /// Name of the source LiDAR sensor as given in the URDF model.
-    /// This is a reference to ExtrinsicCalibrationBase::srcSensorName_
-    std::string& srcLidarSensorName_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>::srcSensorName_;
-
-    /// Topic name of the source lidar cloud which are to be used for extrinsic calibration.
-    /// This is a reference to ExtrinsicCalibrationBase::srcTopicName_
-    std::string& srcLidarCloudTopic_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>::srcTopicName_;
-
-    /// Frame id of source cloud received by #srcCloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::srcFrameId_
-    std::string& srcCloudFrameId_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>::srcFrameId_;
-
-    /// Name of the reference data.
-    /// This is a reference to ExtrinsicCalibrationBase::refSensorName_
-    std::string& referenceName_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>::refSensorName_;
-
-    /// Frame id of reference cloud received by #refCloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::refFrameId_
-    using ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>::refFrameId_;
-
-    /// Pointer to object of lidar data processor, responsible to detect calibration target
-    /// in the source lidar cloud data.
-    std::shared_ptr<LidarDataProcessor>& pSrcLidarDataProcessor_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>::pSrcDataProcessor_;
-
-    /// Pointer to object of reference data processor, responsible to provide calibration target
-    /// in the reference data.
-    using ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>::
-      pRefDataProcessor_;
 };
 
 } // namespace multisensor_calibration

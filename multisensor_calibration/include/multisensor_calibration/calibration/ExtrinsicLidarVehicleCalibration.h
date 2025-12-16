@@ -304,36 +304,6 @@ class ExtrinsicLidarVehicleCalibration
     /// Publisher for regions in ref cloud selected by marker and used for calibration
     rclcpp::Publisher<RoisCloud_Message_T>::SharedPtr pRefRegionPub_;
 
-    /// Name of the source LiDAR sensor as given in the URDF model.
-    /// This is a reference to ExtrinsicCalibrationBase::srcSensorName_
-    std::string& srcLidarSensorName_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::srcSensorName_;
-
-    /// Topic name of the source lidar cloud which are to be used for extrinsic calibration.
-    /// This is a reference to ExtrinsicCalibrationBase::srcTopicName_
-    std::string& srcLidarCloudTopic_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::srcTopicName_;
-
-    /// Frame id of source cloud received by #srcCloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::srcFrameId_
-    std::string& srcCloudFrameId_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::srcFrameId_;
-
-    /// Name of the reference
-    /// This is a reference to ExtrinsicCalibrationBase::refSensorName_
-    std::string& referenceName_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::refSensorName_;
-
-    /// Topic name of the reference lidar cloud which are to be used for extrinsic calibration.
-    /// This is a reference to ExtrinsicCalibrationBase::refTopicName_
-    std::string& refLidarCloudTopic_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::refTopicName_;
-
-    /// Frame id of reference cloud received by #refCloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::refFrameId_
-    std::string& refCloudFrameId_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::refFrameId_;
-
     /// List of 3D points marking region correspondences in the cloud of the source lidar.
     std::vector<InputPointType> srcRegionMarkers_;
 

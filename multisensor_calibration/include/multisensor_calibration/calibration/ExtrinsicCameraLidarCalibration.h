@@ -274,36 +274,11 @@ class ExtrinsicCameraLidarCalibration
     /// Subscriber to point cloud
     message_filters::Subscriber<InputCloud_Message_T> cloudSubsc_;
 
-    /// Name of the LiDAR sensor as given in the URDF model.
-    /// This is a reference to ExtrinsicCalibrationBase::refSensorName_
-    std::string& lidarSensorName_ =
-      ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::refSensorName_;
-
-    /// Topic name of the lidar cloud which are to be used for extrinsic calibration.
-    /// This is a reference to ExtrinsicCalibrationBase::refTopicName_
-    std::string& lidarCloudTopic_ =
-      ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::refTopicName_;
-
-    /// Frame id of cloud received by #cloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::refFrameId_
-    std::string& cloudFrameId_ =
-      ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::refFrameId_;
-
     /// Queue size for synchronization of image messages and point cloud
     int syncQueueSize_;
 
     /// Flag to activate exact time synchronization
     bool useExactSync_;
-
-    /// Pointer to camera data processor, responsible to detect calibration target
-    /// in camera image data. This is a reference of ExtrinsicCalibrationBase::pSrcDataProcessor_.
-    std::shared_ptr<CameraDataProcessor>& pCamDataProcessor_ =
-      ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::pSrcDataProcessor_;
-
-    /// Pointer to lidar data processor, responsible to detect calibration target
-    /// in lidar cloud data. This is a reference of ExtrinsicCalibrationBase::pSrcDataProcessor_.
-    std::shared_ptr<LidarDataProcessor>& pLidarDataProcessor_ =
-      ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::pRefDataProcessor_;
 
     /// Vector of Pointers to FrustumCulling filter used for pre-processing of the lidar data.
     std::vector<pcl::FrustumCulling<InputPointType>::Ptr> pFrustumCullingFilters_;

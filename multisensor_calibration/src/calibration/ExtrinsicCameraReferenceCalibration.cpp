@@ -66,14 +66,14 @@ ExtrinsicCameraReferenceCalibration::~ExtrinsicCameraReferenceCalibration()
 {
     //--- reset pointers message filters before sensor processors in order to avoid seg fault during
     //--- disconnection of callbacks.
-    pCamDataProcessor_.reset();
+    pSrcDataProcessor_.reset();
     pRefDataProcessor_.reset();
 }
 
 //==================================================================================================
 bool ExtrinsicCameraReferenceCalibration::finalizeCalibration()
 {
-    if (!pCamDataProcessor_->isCameraIntrinsicsSet())
+    if (!pSrcDataProcessor_->isCameraIntrinsicsSet())
     {
         RCLCPP_ERROR(logger_, "Could not finalize calibration. "
                               "Camera intrinsics are not set");
@@ -83,7 +83,7 @@ bool ExtrinsicCameraReferenceCalibration::finalizeCalibration()
     //--- get all observations from data processors
     std::set<uint> cameraObservationIds;
     std::vector<cv::Point2f> cameraCornerObservations;
-    pCamDataProcessor_->getOrderedObservations(cameraObservationIds, cameraCornerObservations);
+    pSrcDataProcessor_->getOrderedObservations(cameraObservationIds, cameraCornerObservations);
 
     std::set<uint> refObservationIds;
     std::vector<cv::Point3f> refCornerObservations;
@@ -111,7 +111,7 @@ bool ExtrinsicCameraReferenceCalibration::finalizeCalibration()
       cameraCornerObservations.cend(),
       refCornerObservations.cbegin(),
       refCornerObservations.cend(),
-      pCamDataProcessor_->cameraIntrinsics(),
+      pSrcDataProcessor_->cameraIntrinsics(),
       static_cast<float>(registrationParams_.pnp_inlier_rpj_error_limit.value),
       false,
       finalSensorExtrinsics);
@@ -135,21 +135,21 @@ bool ExtrinsicCameraReferenceCalibration::finalizeCalibration()
 bool ExtrinsicCameraReferenceCalibration::initializeDataProcessors()
 {
     //--- initialize camera data processor
-    pCamDataProcessor_.reset(
+    pSrcDataProcessor_.reset(
       new CameraDataProcessor(logger_.get_name(), cameraSensorName_, calibTargetFilePath_));
 
     //--- initialize reference data processor
     pRefDataProcessor_.reset(
-      new ReferenceDataProcessor3d(logger_.get_name(), referenceName_, calibTargetFilePath_));
+      new ReferenceDataProcessor3d(logger_.get_name(), refSensorName_, calibTargetFilePath_));
 
     //--- if either of the two data processors are not initialized, return false.
-    if (!pCamDataProcessor_ || !pRefDataProcessor_)
+    if (!pSrcDataProcessor_ || !pRefDataProcessor_)
         return false;
 
     //--- set data to camera data processor
-    pCamDataProcessor_->setImageState(imageState_);
-    pCamDataProcessor_->initializeServices(this);
-    pCamDataProcessor_->initializePublishers(this);
+    pSrcDataProcessor_->setImageState(imageState_);
+    pSrcDataProcessor_->initializeServices(this);
+    pSrcDataProcessor_->initializePublishers(this);
 
     //--- set data to reference data processor
     pRefDataProcessor_->initializeServices(this);
@@ -220,10 +220,10 @@ bool ExtrinsicCameraReferenceCalibration::onRequestCameraIntrinsics(
     UNUSED_VAR(ipReq);
 
     lib3d::Intrinsics cameraIntr;
-    if (!isInitialized_ || pCamDataProcessor_ == nullptr)
+    if (!isInitialized_ || pSrcDataProcessor_ == nullptr)
         cameraIntr = lib3d::Intrinsics();
     else
-        cameraIntr = pCamDataProcessor_->getCameraIntrinsics();
+        cameraIntr = pSrcDataProcessor_->getCameraIntrinsics();
 
     //--- image size
     opRes->intrinsics.width  = cameraIntr.getWidth();
@@ -260,7 +260,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
         RCLCPP_ERROR(logger_, "Node is not initialized.");
         return;
     }
-    if (pCamDataProcessor_ == nullptr)
+    if (pSrcDataProcessor_ == nullptr)
     {
         RCLCPP_ERROR(logger_, "Camera data processor is not initialized.");
         return;
@@ -279,7 +279,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
 
     // camera image
     cv::Mat cameraImage;
-    isConversionSuccessful &= pCamDataProcessor_->getSensorDataFromMsg(ipImgMsg, cameraImage);
+    isConversionSuccessful &= pSrcDataProcessor_->getSensorDataFromMsg(ipImgMsg, cameraImage);
 
     if (!isConversionSuccessful)
     {
@@ -290,9 +290,9 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
 
     //--- camera intrinsics is not set to camera data processor,
     //--- wait for camera_info message and set intrinsics
-    if (!pCamDataProcessor_->isCameraIntrinsicsSet())
+    if (!pSrcDataProcessor_->isCameraIntrinsicsSet())
     {
-        if (!initializeCameraIntrinsics(pCamDataProcessor_.get()))
+        if (!initializeCameraIntrinsics(pSrcDataProcessor_.get()))
             return;
     }
 
@@ -357,7 +357,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
     //--- process camera data asynchronously
     std::future<CameraDataProcessor::EProcessingResult> camProcFuture =
       std::async(&CameraDataProcessor::processData,
-                 pCamDataProcessor_,
+                 pSrcDataProcessor_,
                  cameraImage,
                  procLevel);
 
@@ -368,7 +368,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
     if (procLevel == CameraDataProcessor::PREVIEW)
     {
         if (camProcResult == CameraDataProcessor::SUCCESS)
-            pCamDataProcessor_->publishPreview(ipImgMsg->header);
+            pSrcDataProcessor_->publishPreview(ipImgMsg->header);
     }
     //--- else if, processing level is target_detection,
     //--- calibrate only if processing for both sensors is successful
@@ -379,7 +379,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
         if (camProcResult == CameraDataProcessor::SUCCESS)
         {
             //--- publish detections
-            pCamDataProcessor_->publishLastTargetDetection(ipImgMsg->header);
+            pSrcDataProcessor_->publishLastTargetDetection(ipImgMsg->header);
 
             //--- Other extrinsic calibration routines, i.e. camera-lidar or lidar-lidar, run
             //--- an intermediate calibration at this point. This will increase the calibration
@@ -420,7 +420,7 @@ bool ExtrinsicCameraReferenceCalibration::saveCalibrationSettingsToWorkspace()
 
     //--- reference name
     pCalibSettings->setValue("reference/name",
-                             QString::fromStdString(referenceName_));
+                             QString::fromStdString(refSensorName_));
 
     //--- reference frame id
     pCalibSettings->setValue("reference/frame_id",
@@ -470,7 +470,7 @@ bool ExtrinsicCameraReferenceCalibration::readLaunchParameters(const rclcpp::Nod
         return false;
 
     //--- reference_name
-    referenceName_ =
+    refSensorName_ =
       readStringLaunchParameter(ipNode, "reference_name", "reference");
 
     //--- ref_lidar_sensor_name
@@ -509,7 +509,7 @@ void ExtrinsicCameraReferenceCalibration::reset()
 {
     ExtrinsicCalibrationBase::reset();
 
-    pCamDataProcessor_->reset();
+    pSrcDataProcessor_->reset();
     pRefDataProcessor_->reset();
 }
 

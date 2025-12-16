@@ -296,7 +296,7 @@ bool ExtrinsicLidarVehicleCalibration::initializePublishers(rclcpp::Node* ipNode
       "~/" + srcSensorName_ + "/" + ROIS_CLOUD_TOPIC_NAME, 10);
 
     pRefRegionPub_ = ipNode->create_publisher<RoisCloud_Message_T>(
-      "~/" + referenceName_ + "/" + ROIS_CLOUD_TOPIC_NAME, 10);
+      "~/" + refSensorName_ + "/" + ROIS_CLOUD_TOPIC_NAME, 10);
 
     return true;
 }
@@ -331,11 +331,11 @@ bool ExtrinsicLidarVehicleCalibration::initializeSubscribers(rclcpp::Node* ipNod
 
     //--- subscribe to topics with name cloudTopic
     pSrcCloudSubsc_ = ipNode->create_subscription<InputCloud_Message_T>(
-      srcLidarCloudTopic_, 1,
+      srcTopicName_, 1,
       std::bind(&ExtrinsicLidarVehicleCalibration::onSensorDataReceived, this,
                 std::placeholders::_1));
     pRefCloudSubsc_ = ipNode->create_subscription<InputCloud_Message_T>(
-      refLidarCloudTopic_, 1,
+      refTopicName_, 1,
       std::bind(&ExtrinsicLidarVehicleCalibration::onReferenceDataReceived, this,
                 std::placeholders::_1));
 
@@ -352,7 +352,7 @@ bool ExtrinsicLidarVehicleCalibration::initializeWorkspaceObjects()
     //--- initialize calibration workspace
     fs::path calibWsPath = robotWsPath_;
     calibWsPath /=
-      std::string(srcLidarSensorName_ + "_" + refSensorName_ + "_extrinsic_calibration");
+      std::string(srcSensorName_ + "_" + refSensorName_ + "_extrinsic_calibration");
     pCalibrationWs_ =
       std::make_shared<ExtrinsicLidarVehicleCalibWorkspace>(calibWsPath, logger_);
     retVal &= (pCalibrationWs_ != nullptr);
@@ -449,7 +449,7 @@ bool ExtrinsicLidarVehicleCalibration::onRequestRemoveObservation(
         }
         else if (regionMarkerHistory_.back() == srcFrameId_)
         {
-            srcCloudFrameId_.pop_back();
+            srcFrameId_.pop_back();
             opRes->msg = "Removed last marker from source.";
         }
         else
@@ -491,19 +491,19 @@ void ExtrinsicLidarVehicleCalibration::onReferenceDataReceived(
     std::lock_guard<std::mutex> guard(refDataProcessingMutex_);
 
     //--- set frame ids and initialize sensor extrinsics if applicable
-    if (refCloudFrameId_ != ipRefCloudMsg->header.frame_id)
+    if (refFrameId_ != ipRefCloudMsg->header.frame_id)
     {
-        refCloudFrameId_ = ipRefCloudMsg->header.frame_id;
+        refFrameId_ = ipRefCloudMsg->header.frame_id;
 
         //--- if base frame id is not empty and unequal to refCloudFrameId also get transform
         //--- between refFrameID and baseFrameID and pass to refLidarProcessor.
-        if (!baseFrameId_.empty() && baseFrameId_ != refCloudFrameId_)
+        if (!baseFrameId_.empty() && baseFrameId_ != refFrameId_)
         {
             if (tfBuffer_->_frameExists(baseFrameId_))
             {
                 try
                 {
-                    auto t = tfBuffer_->lookupTransform(baseFrameId_, refCloudFrameId_,
+                    auto t = tfBuffer_->lookupTransform(baseFrameId_, refFrameId_,
                                                         tf2::TimePointZero);
                     pRefDataTransform_ =
                       std::make_shared<tf2::Transform>(tf2::Quaternion(t.transform.rotation.x,
@@ -582,9 +582,9 @@ void ExtrinsicLidarVehicleCalibration::onSensorDataReceived(
     std::lock_guard<std::mutex> guard(sensorDataProcessingMutex_);
 
     //--- set frame ids and initialize sensor extrinsics if applicable
-    if (srcCloudFrameId_ != ipSrcCloudMsg->header.frame_id)
+    if (srcFrameId_ != ipSrcCloudMsg->header.frame_id)
     {
-        srcCloudFrameId_ = ipSrcCloudMsg->header.frame_id;
+        srcFrameId_ = ipSrcCloudMsg->header.frame_id;
     }
 
     //--- return immediately if no markers are set
@@ -616,19 +616,19 @@ bool ExtrinsicLidarVehicleCalibration::saveCalibrationSettingsToWorkspace()
 
     //--- source lidar sensor name
     pCalibSettings->setValue("source_lidar/sensor_name",
-                             QString::fromStdString(srcLidarSensorName_));
+                             QString::fromStdString(srcSensorName_));
 
     //--- source lidar cloud topic
     pCalibSettings->setValue("source_lidar/cloud_topic",
-                             QString::fromStdString(srcLidarCloudTopic_));
+                             QString::fromStdString(srcTopicName_));
 
     //--- reference name
     pCalibSettings->setValue("reference/name",
-                             QString::fromStdString(referenceName_));
+                             QString::fromStdString(refSensorName_));
 
     //--- reference cloud topic
     pCalibSettings->setValue("reference/cloud_topic",
-                             QString::fromStdString(refLidarCloudTopic_));
+                             QString::fromStdString(refTopicName_));
 
     //--- sync settings file
     pCalibSettings->sync();
@@ -682,19 +682,19 @@ bool ExtrinsicLidarVehicleCalibration::readLaunchParameters(const rclcpp::Node* 
         return false;
 
     //--- source_lidar_sensor_name
-    srcLidarSensorName_ = CalibrationBase::readStringLaunchParameter(
+    srcSensorName_ = CalibrationBase::readStringLaunchParameter(
       ipNode, "src_lidar_sensor_name", DEFAULT_LIDAR_SENSOR_NAME);
 
     //--- source_lidar_cloud_topic
-    srcLidarCloudTopic_ = CalibrationBase::readStringLaunchParameter(
+    srcTopicName_ = CalibrationBase::readStringLaunchParameter(
       ipNode, "src_lidar_cloud_topic", DEFAULT_LIDAR_CLOUD_TOPIC);
 
     //--- reference_lidar_cloud_topic
-    refLidarCloudTopic_ = CalibrationBase::readStringLaunchParameter(
+    refTopicName_ = CalibrationBase::readStringLaunchParameter(
       ipNode, "ref_lidar_cloud_topic", DEFAULT_LIDAR_CLOUD_TOPIC);
 
     //--- set reference name to 'vehicle'
-    referenceName_ = "vehicle";
+    refSensorName_ = "vehicle";
 
     return true;
 }

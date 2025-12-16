@@ -245,36 +245,6 @@ class ExtrinsicLidarLidarCalibration
     /// Subscriber to point cloud from reference sensor
     message_filters::Subscriber<InputCloud_Message_T> refCloudSubsc_;
 
-    /// Name of the source LiDAR sensor as given in the URDF model.
-    /// This is a reference to ExtrinsicCalibrationBase::srcSensorName_
-    std::string& srcLidarSensorName_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::srcSensorName_;
-
-    /// Topic name of the source lidar cloud which are to be used for extrinsic calibration.
-    /// This is a reference to ExtrinsicCalibrationBase::srcTopicName_
-    std::string& srcLidarCloudTopic_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::srcTopicName_;
-
-    /// Frame id of source cloud received by #srcCloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::srcFrameId_
-    std::string& srcCloudFrameId_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::srcFrameId_;
-
-    /// Name of the reference LiDAR sensor as given in the URDF model.
-    /// This is a reference to ExtrinsicCalibrationBase::refSensorName_
-    std::string& refLidarSensorName_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::refSensorName_;
-
-    /// Topic name of the reference lidar cloud which are to be used for extrinsic calibration.
-    /// This is a reference to ExtrinsicCalibrationBase::refTopicName_
-    std::string& refLidarCloudTopic_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::refTopicName_;
-
-    /// Frame id of reference cloud received by #refCloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::refFrameId_
-    std::string& refCloudFrameId_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::refFrameId_;
-
     /// Flag to activate the additional alignment of the ground planes.
     bool alignGroundPlanes_;
 
@@ -286,16 +256,6 @@ class ExtrinsicLidarLidarCalibration
 
     /// Flag to activate exact time synchronization
     bool useExactSync_;
-
-    /// Pointer to object of lidar data processor, responsible to detect calibration target
-    /// in the source lidar cloud data.
-    std::shared_ptr<LidarDataProcessor>& pSrcLidarDataProcessor_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::pSrcDataProcessor_;
-
-    /// Pointer to object of lidar data processor, responsible to detect calibration target
-    /// in the reference lidar cloud data.
-    std::shared_ptr<LidarDataProcessor>& pRefLidarDataProcessor_ =
-      ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::pRefDataProcessor_;
 };
 
 } // namespace multisensor_calibration

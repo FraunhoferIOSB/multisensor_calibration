@@ -221,25 +221,6 @@ class ExtrinsicCameraReferenceCalibration
 
     /// Subscriber to image topic
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr pImageSubsc_;
-
-    /// Name of the reference data.
-    /// This is a reference to ExtrinsicCalibrationBase::refSensorName_
-    std::string& referenceName_ =
-      ExtrinsicCalibrationBase<CameraDataProcessor, ReferenceDataProcessor3d>::refSensorName_;
-
-    /// Frame id of reference cloud received by #refCloudSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::refFrameId_
-    using ExtrinsicCalibrationBase<CameraDataProcessor, ReferenceDataProcessor3d>::refFrameId_;
-
-    /// Pointer to camera data processor, responsible to detect calibration target
-    /// in camera image data. This is a reference of ExtrinsicCalibrationBase::pSrcDataProcessor_.
-    std::shared_ptr<CameraDataProcessor>& pCamDataProcessor_ =
-      ExtrinsicCalibrationBase<CameraDataProcessor, ReferenceDataProcessor3d>::pSrcDataProcessor_;
-
-    /// Pointer to object of reference data processor, responsible to provide calibration target
-    /// in the reference data.
-    using ExtrinsicCalibrationBase<CameraDataProcessor, ReferenceDataProcessor3d>::
-      pRefDataProcessor_;
 };
 
 } // namespace multisensor_calibration
