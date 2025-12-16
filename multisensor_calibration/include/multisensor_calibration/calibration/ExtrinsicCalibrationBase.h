@@ -26,8 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MULTISENSORCALIBRATION_EXTRINSICCALIBRATIONBASE_H
-#define MULTISENSORCALIBRATION_EXTRINSICCALIBRATIONBASE_H
+#pragma once
 
 // Std
 #include <memory>
@@ -60,7 +59,9 @@ namespace multisensor_calibration
 template <class SrcDataProcessorT, class RefDataProcessorT>
 class ExtrinsicCalibrationBase : public CalibrationBase
 {
-    //--- STRUCTS ---//
+    //==============================================================================
+    // STRUCTS
+    //==============================================================================
 
     /**
      * @ingroup calibration
@@ -125,27 +126,20 @@ class ExtrinsicCalibrationBase : public CalibrationBase
         }
     };
 
-    //--- METHOD DECLARATION ---/
+    //==============================================================================
+    // CONSTRUCTION / DESTRUCTION
+    //==============================================================================
   public:
-    /**
-     * @brief Default constructor is deleted.
-     */
     ExtrinsicCalibrationBase() = delete;
 
-    /**
-     * @brief Initialization constructor.
-     *
-     * @brief[in] type type of calibration.
-     */
     ExtrinsicCalibrationBase(ECalibrationType type);
 
-    /**
-     * @brief Destructor
-     */
     ~ExtrinsicCalibrationBase() override = default;
 
   protected:
-    //--- Not implemented purely virtual from parent ---/
+    //==============================================================================
+    // METHODS: Not implemented purely virtual from parent
+    //==============================================================================
 
     bool finalizeCalibration() override                              = 0;
     bool initializeDataProcessors() override                         = 0;
@@ -153,24 +147,26 @@ class ExtrinsicCalibrationBase : public CalibrationBase
     void setupDynamicParameters(rclcpp::Node* ipNode) const override = 0;
     bool shutdownSubscribers() override                              = 0;
 
-    //--- Overrides from parent ---/
-    /**
-     * @brief Initialize publishers. Purely virtual.
-     *
-     * @param[in, out] ipNode Pointer to node.
-     * @return True, if successful. False otherwise.
-     */
+    //==============================================================================
+    // METHODS: Overrides from parent
+    //==============================================================================
     bool initializePublishers(rclcpp::Node* ipNode) override;
 
-    /**
-     * @brief Method to initialize services. This overrides the CalibrationBase::initializeServices.
-     * In this, the method from the base class is also called.
-     *
-     * @param[in, out] ipNode Pointer to node.
-     * @return True, if successful. False otherwise.
-     */
     bool initializeServices(rclcpp::Node* ipNode) override;
 
+    bool saveCalibrationSettingsToWorkspace() override;
+
+    void setupLaunchParameters(rclcpp::Node* ipNode) const override;
+
+    bool readLaunchParameters(const rclcpp::Node* ipNode) override;
+
+    void reset() override;
+
+    bool saveCalibration() override;
+
+    //==============================================================================
+    // METHODS
+    //==============================================================================
     /**
      * @brief Handle call requesting calibration meta data.
      *
@@ -215,40 +211,6 @@ class ExtrinsicCalibrationBase : public CalibrationBase
     void publishLastCalibrationResult() const;
 
     /**
-     * @brief Save calibration settings to setting.ini inside calibration workspace.
-     *
-     * This overrides CalibrationBase::saveCalibrationSettingsToWorkspace. In this, the method of
-     * the parent class is also called.
-     *
-     * @return True, if all settings are valid. False, otherwise.
-     */
-    bool saveCalibrationSettingsToWorkspace() override;
-
-    /**
-     * @brief Setup launch parameters.
-     *
-     * The implementation within this class hold launch parameters that are common to all
-     * calibration nodes.
-     *
-     * @param[in] ipNode Pointer to node.
-     */
-    void setupLaunchParameters(rclcpp::Node* ipNode) const override;
-
-    /**
-     * @brief Read launch parameters.
-     *
-     * This overrides CalibrationBase::readLaunchParameters. In this, the method of
-     * the parent class is also called.
-     *
-     * The implementation within this class hold launch parameters that are common to all
-     * calibration nodes, e.g. robot_ws_path, target_config_file.
-     *
-     * @param[in] ipNode Pointer to node.
-     * @return True if successful. False, otherwise (e.g. if sanity check fails)
-     */
-    bool readLaunchParameters(const rclcpp::Node* ipNode) override;
-
-    /**
      * @brief Method to remove all observations that were captured during the given calibration
      * iteration.
      *
@@ -283,22 +245,6 @@ class ExtrinsicCalibrationBase : public CalibrationBase
     void removeCornerObservationsWithoutCorrespondence(const std::set<Id_T>& iReferenceIds,
                                                        std::set<Id_T>& ioSrcIds,
                                                        std::vector<Obs_T>& ioSrcObs) const;
-
-    /**
-     * @brief Reset calibration.
-     *
-     * This overrides CalibrationBase::reset. In this, the method of
-     * the parent class is also called.
-     */
-    void reset() override;
-
-    /**
-     * @brief Save calibration.
-     *
-     * This overrides CalibrationBase::saveCalibration. In this, the method of
-     * the parent class is also called.
-     */
-    bool saveCalibration() override;
 
     /**
      * @brief Method to save the calibration into the URDF model.
@@ -358,8 +304,9 @@ class ExtrinsicCalibrationBase : public CalibrationBase
     void updateCalibrationResult(const std::pair<std::string, double> error,
                                  const int numberOfObservations);
 
-    //--- MEMBER DECLARATION ---/
-
+    //==============================================================================
+    // MEMBERS
+    //==============================================================================
   protected:
     /// Pointert to publish calibration result.
     rclcpp::Publisher<CalibrationResult_Message_T>::SharedPtr pCalibResultPub_;
@@ -412,5 +359,3 @@ class ExtrinsicCalibrationBase : public CalibrationBase
 };
 
 } // namespace multisensor_calibration
-
-#endif // MULTISENSORCALIBRATION_EXTRINSICCALIBRATIONBASE_H

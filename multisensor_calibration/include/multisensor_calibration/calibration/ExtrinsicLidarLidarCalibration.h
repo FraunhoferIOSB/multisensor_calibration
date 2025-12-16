@@ -26,8 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MULTISENSORCALIBRATION_EXTRINSICLIDARLIDARCALIBRATION_H
-#define MULTISENSORCALIBRATION_EXTRINSICLIDARLIDARCALIBRATION_H
+#pragma once
 
 // Std
 #include <memory>
@@ -60,7 +59,9 @@ class ExtrinsicLidarLidarCalibration
     public rclcpp::Node
 {
 
-    //--- TYPEDEFS ---//
+    //==============================================================================
+    // TYPEDEFS
+    //==============================================================================
   protected:
     typedef message_filters::sync_policies::ApproximateTime<
       InputCloud_Message_T, InputCloud_Message_T>
@@ -70,26 +71,20 @@ class ExtrinsicLidarLidarCalibration
       InputCloud_Message_T, InputCloud_Message_T>
       CloudCloudExactSync;
 
-    //--- METHOD DECLARATION ---/
+    //==============================================================================
+    // CONSTRUCTION / DESTRUCTION
+    //==============================================================================
   public:
-    /**
-     * @brief Initialization constructor
-     */
     ExtrinsicLidarLidarCalibration(const std::string& nodeName,
                                    const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
-    /**
-     * @brief Initialization constructor
-     */
+
     ExtrinsicLidarLidarCalibration(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
 
-    /**
-     * @brief Destructor
-     */
     ~ExtrinsicLidarLidarCalibration() override;
 
-  private:
-    using CalibrationBase::handleDynamicParameterChange;
-
+    //==============================================================================
+    // METHODS
+    //==============================================================================
     /**
      * @brief Run the extrinsic calibration based on the last observation of the calibration target.
      *
@@ -97,57 +92,6 @@ class ExtrinsicLidarLidarCalibration
      * based on the detected marker corners.
      */
     void calibrateLastObservation();
-
-    /**
-     * @brief Method to finalize calibration. This overrides the method of the parent class.
-     *
-     * This will calibrate the extrinsic pose based on all observations in the list and print the
-     * final error and print out the result of the calibration. In this, the isolated clouds of the
-     * detected calibration target are aligned using GICP and, in turn, the extrinsic 6DOF pose
-     * between the sensors is calculated.
-     */
-    bool finalizeCalibration() override;
-
-    /**
-     * @brief Method to initialize data processing. This overrides the method of the parent class.
-     * In this, the parent method is also called.
-     *
-     * This will initialize the data processors, call the initialization of the publishers within
-     * the data processors and subscribe to the corresponding data topics.
-     *
-     * @return True, if all settings are valid. False, otherwise.
-     */
-    bool initializeDataProcessors() override;
-
-    /**
-     * @brief Method to initialize subscribers. This overrides the method of the parent class.
-     * In this, the parent method is also called.
-     *
-     * @return True, if all settings are valid. False, otherwise.
-     */
-    bool initializeSubscribers(rclcpp::Node* ipNode) override;
-
-    /**
-     * @brief Method to initialize workspace objects. This overrides the method of the parent class.
-     * In this, the parent method is also called.
-     *
-     * In this class, the object of the calibration
-     * workspace is initialized. The initialization requires the launch parameters, thus it is to
-     * be executed after the launch parameters are read.
-     *
-     * @return True if successful. False, otherwise (e.g. if instantiation has failed)
-     */
-    bool initializeWorkspaceObjects() override;
-
-    /**
-     * @brief Handle service call to request removing of last observation.
-     *
-     * @param[in] ipReq Request, with flag to capture calibration target
-     * @param[out] opRes Response, empty.
-     */
-    bool onRequestRemoveObservation(
-      const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
-      std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes) override;
 
     /**
      * @brief Method to receive synchronized sensor data, i.e. LiDAR point clouds from the source
@@ -166,66 +110,39 @@ class ExtrinsicLidarLidarCalibration
     void onSensorDataReceived(
       const InputCloud_Message_T::ConstSharedPtr& ipSrcCloudMsg,
       const InputCloud_Message_T::ConstSharedPtr& ipRefCloudMsg);
+    //==============================================================================
+    // METHODS: Overrides from parent
+    //==============================================================================
+  private:
+    bool finalizeCalibration() override;
 
-    /**
-     * @brief Method to save calibration specific settings to the workspace. This overrides the
-     * method of the parent class.
-     *
-     * @return True, if all settings are valid. False, otherwise.
-     */
+    bool initializeDataProcessors() override;
+
+    bool initializeSubscribers(rclcpp::Node* ipNode) override;
+
+    bool initializeWorkspaceObjects() override;
+
+    bool onRequestRemoveObservation(
+      const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
+      std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes) override;
+
     bool saveCalibrationSettingsToWorkspace() override;
 
-    /**
-     * @brief Setup launch parameters.
-     *
-     * The implementation within this class hold launch parameters that are common to all
-     * calibration nodes.
-     *
-     * @param[in] ipNode Pointer to node.
-     */
     void setupLaunchParameters(rclcpp::Node* ipNode) const override;
 
-    /**
-     * @brief Setup dynamic parameters.
-     *
-     * @param[in] ipNode Pointer to node.
-     */
     void setupDynamicParameters(rclcpp::Node* ipNode) const override;
 
-    /**
-     * @brief Method to read launch parameters. This overrides the method of the parent class.
-     * In this, the parent method is also called.
-     *
-     * @param[in] ipNode Pointer to node.
-     * @return True if successful. False, otherwise (e.g. if sanity check fails)
-     */
     bool readLaunchParameters(const rclcpp::Node* ipNode) override;
 
-    /**
-     * @brief Virtual function to set dynamic parameter. This is called from
-     * handleDynamicParameterChange for each parameter in the list that is to be changed.
-     *
-     * @param[in] iParameter Parameter that is to be changed.
-     * @return True, if successful, i.e. if it has been changed. False, otherwise.
-     */
     bool setDynamicParameter(const rclcpp::Parameter& iParameter) override;
 
-    /**
-     * @brief Method to reset calibration. This overrides the method of the parent class.
-     * In this, the parent method is also called.
-     */
     void reset() override;
 
-    /**
-     * @brief Method to shutdown subscribers and disconnect callbacks. This overrides the method of
-     * the parent class. In this, the parent method is also called.
-     *
-     * @return True, if successful. False, otherwise.
-     */
     bool shutdownSubscribers() override;
 
-    //--- MEMBER DECLARATION ---/
-
+    //==============================================================================
+    // MEMBERS
+    //==============================================================================
   private:
     /// Object holding parameters for the lidar lidar registration
     LidarLidarRegistrationParameters registrationParams_;
@@ -259,5 +176,3 @@ class ExtrinsicLidarLidarCalibration
 };
 
 } // namespace multisensor_calibration
-
-#endif // MULTISENSORCALIBRATION_EXTRINSICLIDARLIDARCALIBRATION_H

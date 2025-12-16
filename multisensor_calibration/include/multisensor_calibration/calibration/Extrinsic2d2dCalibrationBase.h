@@ -57,11 +57,13 @@ class Extrinsic2d2dCalibrationBase
     //==============================================================================
   public:
     Extrinsic2d2dCalibrationBase() = delete;
+
     explicit Extrinsic2d2dCalibrationBase(ECalibrationType type);
+
     virtual ~Extrinsic2d2dCalibrationBase();
 
     //==============================================================================
-    // CALIBRATION LOGIC
+    // METHODS
     //==============================================================================
   protected:
     std::pair<double, int> runStereoMatching(

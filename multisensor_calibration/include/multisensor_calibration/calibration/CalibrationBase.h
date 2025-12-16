@@ -26,8 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MULTISENSORCALIBRATION_CALIBRATIONBASE_H
-#define MULTISENSORCALIBRATION_CALIBRATIONBASE_H
+#pragma once
 
 // Std
 #include <filesystem>
@@ -80,7 +79,9 @@ namespace multisensor_calibration
  */
 class CalibrationBase
 {
-    //--- METHOD DECLARATION ---//
+    //==============================================================================
+    // CONSTRUCTION / DESTRUCTION
+    //==============================================================================
   public:
     /**
      * @brief Default constructor is deleted
@@ -99,6 +100,9 @@ class CalibrationBase
      */
     virtual ~CalibrationBase() = default;
 
+    //==============================================================================
+    // METHODS
+    //==============================================================================
   protected:
     bool init(rclcpp::Node* ipNode);
 
@@ -331,8 +335,9 @@ class CalibrationBase
      */
     bool readRobotSettings();
 
-    //--- MEMBER DECLARATION ---//
-
+    //==============================================================================
+    // MEMBERS
+    //==============================================================================
   protected:
     /// Type of calibration.
     ECalibrationType type_;
@@ -404,5 +409,3 @@ class CalibrationBase
 };
 
 } // namespace multisensor_calibration
-
-#endif // MULTISENSORCALIBRATION_CALIBRATIONBASE_H

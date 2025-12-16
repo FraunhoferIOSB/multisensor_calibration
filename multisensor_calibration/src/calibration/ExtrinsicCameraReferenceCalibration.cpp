@@ -137,7 +137,7 @@ bool ExtrinsicCameraReferenceCalibration::initializeDataProcessors()
 {
     //--- initialize camera data processor
     pSrcDataProcessor_ = std::make_shared<CameraDataProcessor>(
-      logger_.get_name(), cameraSensorName_, calibTargetFilePath_);
+      logger_.get_name(), srcSensorName_, calibTargetFilePath_);
 
     //--- initialize reference data processor
     pRefDataProcessor_ = std::make_shared<ReferenceDataProcessor3d>(
@@ -182,7 +182,7 @@ bool ExtrinsicCameraReferenceCalibration::initializeSubscribers(rclcpp::Node* ip
 
     //--- subscribe to image topics
     pImageSubsc_ = ipNode->create_subscription<sensor_msgs::msg::Image>(
-      cameraImageTopic_,
+      srcTopicName_,
       1,
       std::bind(&ExtrinsicCameraReferenceCalibration::onSensorDataReceived, this, std::placeholders::_1));
 
@@ -199,7 +199,7 @@ bool ExtrinsicCameraReferenceCalibration::initializeWorkspaceObjects()
     //--- initialize calibration workspace
     fs::path calibWsPath = robotWsPath_;
     calibWsPath /=
-      std::string(cameraSensorName_ + "_" + refSensorName_ + "_extrinsic_calibration");
+      std::string(srcSensorName_ + "_" + refSensorName_ + "_extrinsic_calibration");
     pCalibrationWs_ =
       std::make_shared<ExtrinsicCameraReferenceCalibWorkspace>(calibWsPath, logger_);
     retVal &= (pCalibrationWs_ != nullptr);
@@ -298,9 +298,9 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
     }
 
     //--- set frame ids and initialize sensor extrinsics if applicable
-    if (imageFrameId_ != ipImgMsg->header.frame_id)
+    if (srcFrameId_ != ipImgMsg->header.frame_id)
     {
-        imageFrameId_ = ipImgMsg->header.frame_id;
+        srcFrameId_ = ipImgMsg->header.frame_id;
 
         //--- compute sensor extrinsics between source frame id and ref or base frame id
         //--- if base frame id is not empty and unequal to refCloudFrameId also get transform
@@ -308,7 +308,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
         if (!baseFrameId_.empty() && baseFrameId_ != refFrameId_)
         {
             if (useTfTreeAsInitialGuess_)
-                setSensorExtrinsicsFromFrameIds(imageFrameId_, baseFrameId_);
+                setSensorExtrinsicsFromFrameIds(srcFrameId_, baseFrameId_);
 
             if (tfBuffer_->_frameExists(baseFrameId_))
             {
@@ -346,7 +346,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
         else
         {
             if (useTfTreeAsInitialGuess_)
-                setSensorExtrinsicsFromFrameIds(imageFrameId_, refFrameId_);
+                setSensorExtrinsicsFromFrameIds(srcFrameId_, refFrameId_);
         }
     }
 

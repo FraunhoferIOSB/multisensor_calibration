@@ -306,11 +306,11 @@ bool Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
 
     //--- camera sensor name
     pCalibSettings->setValue("camera/sensor_name",
-                             QString::fromStdString(cameraSensorName_));
+                             QString::fromStdString(srcSensorName_));
 
     //--- camera image topic
     pCalibSettings->setValue("camera/image_topic",
-                             QString::fromStdString(cameraImageTopic_));
+                             QString::fromStdString(srcTopicName_));
 
     //--- camera info topic
     pCalibSettings->setValue("camera/info_topic",
@@ -434,12 +434,12 @@ bool Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
         return false;
 
     //--- camera_sensor_name
-    cameraSensorName_ =
+    srcSensorName_ =
       CalibrationBase::readStringLaunchParameter(ipNode, "camera_sensor_name",
                                                  DEFAULT_CAMERA_SENSOR_NAME);
 
     //--- camera_image_topic
-    cameraImageTopic_ =
+    srcTopicName_ =
       CalibrationBase::readStringLaunchParameter(ipNode, "camera_image_topic",
                                                  DEFAULT_CAMERA_IMAGE_TOPIC);
 
@@ -448,7 +448,7 @@ bool Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
     if (cameraInfoTopic_.empty())
     {
         cameraInfoTopic_ =
-          cameraImageTopic_.substr(0, cameraImageTopic_.find_last_of('/')) + "/camera_info";
+          srcTopicName_.substr(0, srcTopicName_.find_last_of('/')) + "/camera_info";
     }
 
     //--- image state

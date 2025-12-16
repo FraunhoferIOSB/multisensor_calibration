@@ -26,8 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MULTISENSORCALIBRATION_EXTRINSIC2D3DCALIBRATIONBASE_H
-#define MULTISENSORCALIBRATION_EXTRINSIC2D3DCALIBRATIONBASE_H
+#pragma once
 
 // ROS
 #include <message_filters/sync_policies/approximate_time.hpp>
@@ -68,26 +67,19 @@ class Extrinsic2d3dCalibrationBase
       InputImage_Message_T, InputCloud_Message_T>
       ImgCloudExactSync;
 
-    //--- METHOD DECLARATION ---/
-
+    //==============================================================================
+    // CONSTRUCTION / DESTRUCTION
+    //==============================================================================
   public:
-    /**
-     * @brief Default constructor is deleted
-     */
     Extrinsic2d3dCalibrationBase() = delete;
 
-    /**
-     * @brief Initialization constructor
-     *
-     * @param[in] type Type of calibration
-     */
     Extrinsic2d3dCalibrationBase(ECalibrationType type);
 
-    /**
-     * @brief Destructor
-     */
     virtual ~Extrinsic2d3dCalibrationBase() = default;
 
+    //==============================================================================
+    // METHODS
+    //==============================================================================
   protected:
     void calculateAdditionalStereoCalibrations();
 
@@ -128,14 +120,6 @@ class Extrinsic2d3dCalibrationBase
     bool initializeCameraIntrinsics(CameraDataProcessor* iopCamProcessor);
 
     /**
-     * @brief Method to initialize subscribers. This overrides the method of the parent class.
-     * In this, the parent method is also called.
-     *
-     * @return True, if all settings are valid. False, otherwise.
-     */
-    bool initializeSubscribers(rclcpp::Node* ipNode) override;
-
-    /**
      * @brief Handle reception of camera info message of left camera.
      */
     void onLeftCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo);
@@ -146,56 +130,25 @@ class Extrinsic2d3dCalibrationBase
      */
     void onRightCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo);
 
-    /**
-     * @brief Method to save calibration specific settings to the workspace. This overrides the
-     * method of the parent class.
-     *
-     * @return True, if all settings are valid. False, otherwise.
-     */
+    //==============================================================================
+    // METHODS: Overrides from parent
+    //==============================================================================
+
+    bool initializeSubscribers(rclcpp::Node* ipNode) override;
+
     bool saveCalibrationSettingsToWorkspace() override;
 
-    /**
-     * @brief Setup launch parameters.
-     *
-     * The implementation within this class hold launch parameters that are common to all
-     * calibration nodes.
-     *
-     * @param[in] ipNode Pointer to node.
-     */
     void setupLaunchParameters(rclcpp::Node* ipNode) const override;
 
-    /**
-     * @brief Method to read launch parameters. This overrides the method of the parent class.
-     * In this, the parent method is also called.
-     *
-     * @param[in] iNh Object of node handle
-     * @return True if successful. False, otherwise (e.g. if sanity check fails)
-     */
     bool readLaunchParameters(const rclcpp::Node* ipNode) override;
 
-    //--- MEMBER DECLARATION ---//
-
+    //==============================================================================
+    // MEMBERS
+    //==============================================================================
   protected:
-    using ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::calibResult_;
-
-    /// Name of the camera sensor as given in the URDF model.
-    /// This is a reference to ExtrinsicCalibrationBase::srcSensorName_
-    std::string& cameraSensorName_ =
-      ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::srcSensorName_;
-
-    /// Topic name of the camera images which are to be used for extrinsic calibration.
-    /// This is a reference to ExtrinsicCalibrationBase::srcTopicName_
-    std::string& cameraImageTopic_ =
-      ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::srcTopicName_;
-
     /// Topic name of the camera info messages.
     /// If not explicitly set, this is constructed from #cameraImageTopic_.
     std::string cameraInfoTopic_;
-
-    /// Frame id of image received by #imageSubsc_
-    /// This is a reference to ExtrinsicCalibrationBase::srcFrameId_
-    std::string& imageFrameId_ =
-      ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::srcFrameId_;
 
     /// State of image received on the subscribed topic
     EImageState imageState_;
@@ -232,5 +185,3 @@ class Extrinsic2d3dCalibrationBase
 };
 
 } // namespace multisensor_calibration
-
-#endif // MULTISENSORCALIBRATION_EXTRINSIC2D3DCALIBRATIONBASE_H

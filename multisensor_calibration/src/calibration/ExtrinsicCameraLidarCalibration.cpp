@@ -262,7 +262,7 @@ bool ExtrinsicCameraLidarCalibration::initializeDataProcessors()
 {
     //--- initialize camera data processor
     pSrcDataProcessor_ = std::make_shared<CameraDataProcessor>(
-      logger_.get_name(), cameraSensorName_, calibTargetFilePath_);
+      logger_.get_name(), srcSensorName_, calibTargetFilePath_);
 
     //--- initialize lidar data processor
     pRefDataProcessor_ = std::make_shared<LidarDataProcessor>(
@@ -308,7 +308,7 @@ bool ExtrinsicCameraLidarCalibration::initializeSubscribers(rclcpp::Node* ipNode
         return false;
 
     //--- subscribe to topics
-    imageSubsc_.subscribe(ipNode, cameraImageTopic_, "raw");
+    imageSubsc_.subscribe(ipNode, srcTopicName_, "raw");
     cloudSubsc_.subscribe(ipNode, refTopicName_);
 
     //--- initialize synchronizers
@@ -344,7 +344,7 @@ bool ExtrinsicCameraLidarCalibration::initializeWorkspaceObjects()
     //--- initialize calibration workspace
     fs::path calibWsPath = robotWsPath_;
     calibWsPath /=
-      std::string(cameraSensorName_ + "_" + refSensorName_ + "_extrinsic_calibration");
+      std::string(srcSensorName_ + "_" + refSensorName_ + "_extrinsic_calibration");
     pCalibrationWs_ =
       std::make_shared<ExtrinsicCameraLidarCalibWorkspace>(calibWsPath, logger_);
     retVal &= (pCalibrationWs_ != nullptr);
@@ -470,11 +470,11 @@ void ExtrinsicCameraLidarCalibration::onSensorDataReceived(
     }
 
     //--- set frame ids and initialize sensor extrinsics if applicable
-    if (imageFrameId_ != ipImgMsg->header.frame_id ||
+    if (srcFrameId_ != ipImgMsg->header.frame_id ||
         refFrameId_ != ipCloudMsg->header.frame_id)
     {
-        imageFrameId_ = ipImgMsg->header.frame_id;
-        refFrameId_   = ipCloudMsg->header.frame_id;
+        srcFrameId_ = ipImgMsg->header.frame_id;
+        refFrameId_ = ipCloudMsg->header.frame_id;
 
         //--- if base frame id is not empty and unequal to refCloudFrameId use baseFrameID as
         //--- reference frame id.
@@ -519,7 +519,7 @@ void ExtrinsicCameraLidarCalibration::onSensorDataReceived(
 
         //--- set sensor extrinsics from either cloud or base frame id and apply frustum culling
         if (useTfTreeAsInitialGuess_ &&
-            setSensorExtrinsicsFromFrameIds(imageFrameId_, tmpRefFrameId))
+            setSensorExtrinsicsFromFrameIds(srcFrameId_, tmpRefFrameId))
         {
             //--- update preprocessing filter with current sensorExtrinsics_
             configureAndApplyFrustumCulling();
