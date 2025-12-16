@@ -146,6 +146,11 @@ class Extrinsic2d3dCalibrationBase
     // MEMBERS
     //==============================================================================
   protected:
+    // This is needed because it is a templated class and name look-up does not directly work
+    using ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::calibResult_;
+    using ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::srcSensorName_;
+    using ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::srcTopicName_;
+
     /// Topic name of the camera info messages.
     /// If not explicitly set, this is constructed from #cameraImageTopic_.
     std::string cameraInfoTopic_;
