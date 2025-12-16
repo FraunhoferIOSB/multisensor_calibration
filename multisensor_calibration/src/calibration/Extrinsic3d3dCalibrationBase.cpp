@@ -38,12 +38,6 @@ Extrinsic3d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
 
 //==================================================================================================
 template <class SrcDataProcessorT, class RefDataProcessorT>
-Extrinsic3d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::~Extrinsic3d3dCalibrationBase()
-{
-}
-
-//==================================================================================================
-template <class SrcDataProcessorT, class RefDataProcessorT>
 template <typename PointT>
 lib3d::Extrinsics Extrinsic3d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
   computeExtrinsicsFromPointCorrespondences(

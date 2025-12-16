@@ -45,9 +45,6 @@ CalibrationBase::CalibrationBase(ECalibrationType type) :
 }
 
 //==================================================================================================
-CalibrationBase::~CalibrationBase()
-{
-}
 
 bool CalibrationBase::init(rclcpp::Node* ipNode)
 {

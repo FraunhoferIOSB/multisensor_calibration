@@ -19,6 +19,8 @@
 #include <QFile>
 
 // small_gicp
+#include <memory>
+#include <memory>
 #include <small_gicp/registration/registration_helper.hpp>
 
 // multisensor_calibration
@@ -120,9 +122,9 @@ bool ExtrinsicLidarReferenceCalibration::finalizeCalibration()
         auto pushToCloud = [&](const std::vector<cv::Point3f>& cornerVec,
                                pcl::PointCloud<pcl::PointXYZ>& cornerCloud)
         {
-            for (auto itr = cornerVec.cbegin(); itr != cornerVec.cend(); ++itr)
+            for (auto itr : cornerVec)
             {
-                cornerCloud.push_back(pcl::PointXYZ(itr->x, itr->y, itr->z));
+                cornerCloud.push_back(pcl::PointXYZ(itr.x, itr.y, itr.z));
             }
         };
         pushToCloud(srcCornerObservations, *pSrcMarkerCornerCloud);
@@ -140,7 +142,7 @@ bool ExtrinsicLidarReferenceCalibration::finalizeCalibration()
     pcl::Correspondences correspondences;
     for (uint i = 0; i < pSrcMarkerCornerCloud->size(); ++i)
     {
-        correspondences.push_back(pcl::Correspondence(i, i, 1.f));
+        correspondences.emplace_back(i, i, 1.f);
     }
 
     //--- estimate sensor extrinsics from marker corners
@@ -193,8 +195,8 @@ bool ExtrinsicLidarReferenceCalibration::initializeDataProcessors()
     bool isSuccessful = true;
 
     //--- initialize source lidar data processor
-    pSrcDataProcessor_.reset(
-      new LidarDataProcessor(logger_.get_name(), srcSensorName_, calibTargetFilePath_));
+    pSrcDataProcessor_ = std::make_shared<LidarDataProcessor>(
+      logger_.get_name(), srcSensorName_, calibTargetFilePath_);
     if (pSrcDataProcessor_)
     {
         pSrcDataProcessor_->initializeServices(this);
@@ -207,8 +209,8 @@ bool ExtrinsicLidarReferenceCalibration::initializeDataProcessors()
     }
 
     //--- initialize reference data processor
-    pRefDataProcessor_.reset(
-      new ReferenceDataProcessor3d(logger_.get_name(), refSensorName_, calibTargetFilePath_));
+    pRefDataProcessor_ = std::make_shared<ReferenceDataProcessor3d>(
+      logger_.get_name(), refSensorName_, calibTargetFilePath_);
     if (pRefDataProcessor_)
     {
         pRefDataProcessor_->initializeServices(this);

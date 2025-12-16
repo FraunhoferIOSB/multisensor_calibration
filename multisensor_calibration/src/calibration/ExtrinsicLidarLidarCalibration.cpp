@@ -17,6 +17,9 @@
 #include <pcl/visualization/pcl_visualizer.h>
 
 // ROS
+#include <memory>
+#include <memory>
+#include <memory>
 #include <tf2/LinearMath/Transform.hpp>
 
 // Qt
@@ -133,9 +136,9 @@ void ExtrinsicLidarLidarCalibration::calibrateLastObservation()
         auto pushToCloud = [&](const std::vector<cv::Point3f>& cornerVec,
                                pcl::PointCloud<pcl::PointXYZ>& cornerCloud)
         {
-            for (auto itr = cornerVec.cbegin(); itr != cornerVec.cend(); ++itr)
+            for (auto itr : cornerVec)
             {
-                cornerCloud.push_back(pcl::PointXYZ(itr->x, itr->y, itr->z));
+                cornerCloud.push_back(pcl::PointXYZ(itr.x, itr.y, itr.z));
             }
         };
         pushToCloud(srcCornerObservations, *pSrcMarkerCornerCloud);
@@ -147,7 +150,7 @@ void ExtrinsicLidarLidarCalibration::calibrateLastObservation()
     pcl::Correspondences correspondences;
     for (uint i = 0; i < pSrcMarkerCornerCloud->size(); ++i)
     {
-        correspondences.push_back(pcl::Correspondence(i, i, 1.f));
+        correspondences.emplace_back(i, i, 1.f);
     }
 
     //--- estimate sensor extrinsics from marker corners
@@ -210,9 +213,9 @@ bool ExtrinsicLidarLidarCalibration::finalizeCalibration()
         //--- ground plane
         //--- to this end, only the points on the targets are in the corresponding point clouds, thus,
         //--- the size of the point clouds can be used as upper bound of the indices.
-        pSrcTargetIndices.reset(new pcl::Indices(pSrcLidarTargetClouds->size()));
+        pSrcTargetIndices = std::make_shared<pcl::Indices>(pSrcLidarTargetClouds->size());
         std::iota(std::begin(*pSrcTargetIndices), std::end(*pSrcTargetIndices), 0);
-        pRefTargetIndices.reset(new pcl::Indices(pRefLidarTargetClouds->size()));
+        pRefTargetIndices = std::make_shared<pcl::Indices>(pRefLidarTargetClouds->size());
         std::iota(std::begin(*pRefTargetIndices), std::end(*pRefTargetIndices), 0);
 
         //--- check if specified upright frame exists
@@ -335,8 +338,8 @@ bool ExtrinsicLidarLidarCalibration::initializeDataProcessors()
     auto initializeLidarDataProcessor = [&](std::shared_ptr<LidarDataProcessor>& iopProcessor,
                                             const std::string& iSensorName)
     {
-        iopProcessor.reset(
-          new LidarDataProcessor(logger_.get_name(), iSensorName, calibTargetFilePath_));
+        iopProcessor = std::make_shared<LidarDataProcessor>(
+          logger_.get_name(), iSensorName, calibTargetFilePath_);
         if (iopProcessor)
         {
             iopProcessor->initializeServices(this);

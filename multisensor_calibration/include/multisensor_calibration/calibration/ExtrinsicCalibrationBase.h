@@ -110,10 +110,10 @@ class ExtrinsicCalibrationBase : public CalibrationBase
         std::pair<tf2::Vector3, tf2::Vector3> target_poses_stdDev;
 
         /// Print out calibration results to string.
-        std::string toString() const;
+        [[nodiscard]] std::string toString() const;
 
         /// Print URDF snippet of the calibration to string.
-        std::string urdfSnippet() const;
+        [[nodiscard]] std::string urdfSnippet() const;
 
         CalibrationResult()
         {
@@ -142,7 +142,7 @@ class ExtrinsicCalibrationBase : public CalibrationBase
     /**
      * @brief Destructor
      */
-    virtual ~ExtrinsicCalibrationBase();
+     ~ExtrinsicCalibrationBase() override = default;
 
   protected:
     using CalibrationBase::initializeAndStartSensorCalibration;
@@ -153,7 +153,7 @@ class ExtrinsicCalibrationBase : public CalibrationBase
      * @param[in, out] ipNode Pointer to node.
      * @return True, if successful. False otherwise.
      */
-    virtual bool initializePublishers(rclcpp::Node* ipNode) override;
+     bool initializePublishers(rclcpp::Node* ipNode) override;
 
     /**
      * @brief Method to initialize services. This overrides the CalibrationBase::initializeServices.
@@ -162,7 +162,7 @@ class ExtrinsicCalibrationBase : public CalibrationBase
      * @param[in, out] ipNode Pointer to node.
      * @return True, if successful. False otherwise.
      */
-    virtual bool initializeServices(rclcpp::Node* ipNode) override;
+     bool initializeServices(rclcpp::Node* ipNode) override;
 
     /**
      * @brief Handle call requesting calibration meta data.

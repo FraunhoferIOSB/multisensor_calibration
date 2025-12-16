@@ -78,7 +78,7 @@ class Extrinsic3d3dCalibrationBase
     /**
      * @brief Destructor
      */
-    virtual ~Extrinsic3d3dCalibrationBase();
+    virtual ~Extrinsic3d3dCalibrationBase() = default;
 
   protected:
     /**

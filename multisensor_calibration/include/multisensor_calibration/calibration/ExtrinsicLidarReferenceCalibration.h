@@ -30,7 +30,6 @@
 #define MULTISENSORCALIBRATION_EXTRINSICLIDARREFERENCECALIBRATION_H
 
 // Std
-#include <memory>
 #include <string>
 
 // ROS
@@ -73,7 +72,7 @@ class ExtrinsicLidarReferenceCalibration
     /**
      * @brief Destructor
      */
-    virtual ~ExtrinsicLidarReferenceCalibration();
+     ~ExtrinsicLidarReferenceCalibration() override;
 
   private:
     using CalibrationBase::handleDynamicParameterChange;

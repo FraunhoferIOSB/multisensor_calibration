@@ -42,12 +42,6 @@ Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
 
 //==================================================================================================
 template <class SrcDataProcessorT, class RefDataProcessorT>
-Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::~Extrinsic2d3dCalibrationBase()
-{
-}
-
-//==================================================================================================
-template <class SrcDataProcessorT, class RefDataProcessorT>
 void Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
   calculateAdditionalStereoCalibrations()
 {

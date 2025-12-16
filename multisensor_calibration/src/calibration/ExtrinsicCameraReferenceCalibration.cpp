@@ -16,6 +16,8 @@
 #include <QFile>
 
 // ROS
+#include <memory>
+#include <memory>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <tf2/LinearMath/Transform.hpp>
 
@@ -135,12 +137,12 @@ bool ExtrinsicCameraReferenceCalibration::finalizeCalibration()
 bool ExtrinsicCameraReferenceCalibration::initializeDataProcessors()
 {
     //--- initialize camera data processor
-    pSrcDataProcessor_.reset(
-      new CameraDataProcessor(logger_.get_name(), cameraSensorName_, calibTargetFilePath_));
+    pSrcDataProcessor_ = std::make_shared<CameraDataProcessor>(
+      logger_.get_name(), cameraSensorName_, calibTargetFilePath_);
 
     //--- initialize reference data processor
-    pRefDataProcessor_.reset(
-      new ReferenceDataProcessor3d(logger_.get_name(), refSensorName_, calibTargetFilePath_));
+    pRefDataProcessor_ = std::make_shared<ReferenceDataProcessor3d>(
+      logger_.get_name(), refSensorName_, calibTargetFilePath_);
 
     //--- if either of the two data processors are not initialized, return false.
     if (!pSrcDataProcessor_ || !pRefDataProcessor_)

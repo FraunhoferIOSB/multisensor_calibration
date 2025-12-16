@@ -50,12 +50,6 @@ ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
 
 //==================================================================================================
 template <class SrcDataProcessorT, class RefDataProcessorT>
-ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::~ExtrinsicCalibrationBase()
-{
-}
-
-//==================================================================================================
-template <class SrcDataProcessorT, class RefDataProcessorT>
 bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::initializePublishers(
   rclcpp::Node* ipNode)
 {
@@ -781,7 +775,7 @@ std::pair<tf2::Vector3, tf2::Vector3> ExtrinsicCalibrationBase<SrcDataProcessorT
         double sRoll, sPitch, sYaw, rRoll, rPitch, rYaw;
         transSrcPoseTransform.getBasis().getRPY(sRoll, sPitch, sYaw);
         refPoseTransform.getBasis().getRPY(rRoll, rPitch, rYaw);
-        rpy_differences.push_back(tf2::Vector3(sRoll - rRoll, sPitch - rPitch, sYaw - rYaw));
+        rpy_differences.emplace_back(sRoll - rRoll, sPitch - rPitch, sYaw - rYaw);
 
         //--- add previously computed difference to running mean of XYZ and RPY
         xyz_difference_mean += xyz_differences.back();
@@ -885,7 +879,7 @@ std::string ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::Cali
     std::stringstream strStream;
     for (auto calib : calibrations)
     {
-        strStream << "<joint name=\"" << calib.srcSensorName << "_joint\" type=\"fixed\">";
+        strStream << "<joint name=\"" << calib.srcSensorName << R"(_joint" type="fixed">)";
         strStream << "\n\t<parent link=\""
                   << ((!calib.baseFrameId.empty()) ? calib.baseFrameId : calib.refFrameId)
                   << "\"/>";

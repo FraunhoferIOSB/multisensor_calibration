@@ -81,11 +81,6 @@ ExtrinsicLidarVehicleCalibration::ExtrinsicLidarVehicleCalibration(
 }
 
 //==================================================================================================
-ExtrinsicLidarVehicleCalibration::~ExtrinsicLidarVehicleCalibration()
-{
-}
-
-//==================================================================================================
 void ExtrinsicLidarVehicleCalibration::computeRegionsCloud(
   const InputCloud_Message_T::ConstSharedPtr& ipCloudMsg,
   const std::vector<InputPointType>& iRegionMarkers,

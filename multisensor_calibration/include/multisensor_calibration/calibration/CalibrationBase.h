@@ -97,7 +97,7 @@ class CalibrationBase
     /**
      * @brief Destructor
      */
-    virtual ~CalibrationBase();
+    virtual ~CalibrationBase() = default;
 
   protected:
     bool init(rclcpp::Node* ipNode);

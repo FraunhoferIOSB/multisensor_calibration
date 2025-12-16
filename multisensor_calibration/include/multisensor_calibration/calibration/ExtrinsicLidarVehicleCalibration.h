@@ -87,7 +87,7 @@ class ExtrinsicLidarVehicleCalibration
     /**
      * @brief Destructor
      */
-    virtual ~ExtrinsicLidarVehicleCalibration();
+     ~ExtrinsicLidarVehicleCalibration() override = default;
 
   private:
     using CalibrationBase::handleDynamicParameterChange;

@@ -86,7 +86,7 @@ class Extrinsic2d3dCalibrationBase
     /**
      * @brief Destructor
      */
-    virtual ~Extrinsic2d3dCalibrationBase();
+    virtual ~Extrinsic2d3dCalibrationBase() = default;
 
   protected:
     void calculateAdditionalStereoCalibrations();

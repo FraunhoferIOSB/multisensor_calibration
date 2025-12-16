@@ -16,6 +16,8 @@
 #include <QFile>
 
 // ROS
+#include <memory>
+#include <memory>
 #include <sensor_msgs/msg/camera_info.hpp>
 
 // PCL
@@ -177,8 +179,7 @@ void ExtrinsicCameraLidarCalibration::configureAndApplyFrustumCulling()
     Eigen::Matrix4f frustumCullingCamPose = RTmatrix * cam2robot;
 
     //--- configure filter
-    pcl::FrustumCulling<InputPointType>::Ptr pFilter =
-      pcl::FrustumCulling<InputPointType>::Ptr(new pcl::FrustumCulling<InputPointType>());
+    pcl::FrustumCulling<InputPointType>::Ptr pFilter = std::make_shared<pcl::FrustumCulling<InputPointType>>();
     pFilter->setHorizontalFOV(
       static_cast<float>(pSrcDataProcessor_->getCameraIntrinsics().getHFov()) + 10.f);
     pFilter->setVerticalFOV(
@@ -261,12 +262,12 @@ bool ExtrinsicCameraLidarCalibration::finalizeCalibration()
 bool ExtrinsicCameraLidarCalibration::initializeDataProcessors()
 {
     //--- initialize camera data processor
-    pSrcDataProcessor_.reset(
-      new CameraDataProcessor(logger_.get_name(), cameraSensorName_, calibTargetFilePath_));
+    pSrcDataProcessor_ = std::make_shared<CameraDataProcessor>(
+      logger_.get_name(), cameraSensorName_, calibTargetFilePath_);
 
     //--- initialize lidar data processor
-    pRefDataProcessor_.reset(
-      new LidarDataProcessor(logger_.get_name(), refSensorName_, calibTargetFilePath_));
+    pRefDataProcessor_ = std::make_shared<LidarDataProcessor>(
+      logger_.get_name(), refSensorName_, calibTargetFilePath_);
 
     //--- if either of the two data processors are not initialized, return false.
     if (!pSrcDataProcessor_ || !pRefDataProcessor_)
