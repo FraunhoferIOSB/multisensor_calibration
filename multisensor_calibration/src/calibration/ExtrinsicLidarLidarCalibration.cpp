@@ -302,21 +302,13 @@ bool ExtrinsicLidarLidarCalibration::finalizeCalibration()
     }
 
     //--- run ICP
-    runIcp<InputPointType>(
+    const double rmse = runIcp<InputPointType>(
       pSrcLidarTargetClouds, pRefLidarTargetClouds,
       static_cast<small_gicp::RegistrationSetting::RegistrationType>(
         registrationParams_.registration_icp_variant.value),
       registrationParams_.registration_icp_max_correspondence_distance.value,
       registrationParams_.registration_icp_rotation_tolerance.value,
       registrationParams_.registration_icp_translation_tolerance.value);
-
-    //--- calculate RMSE
-    //--- if no ground plane is used, the pointer to the indices will be nullptr, thus, the full
-    //--- cloud will be used
-    double rmse = utils::calculateRootMeanSquaredError<InputPointType, InputPointType>(
-      pSrcLidarTargetClouds, pRefLidarTargetClouds,
-      ExtrinsicCalibrationBase::sensorExtrinsics_.back(),
-      pSrcTargetIndices, pRefTargetIndices);
 
     ExtrinsicCalibrationBase::updateCalibrationResult(std::make_pair("Root Mean Squared Error (in m)", rmse), static_cast<int>(pRefDataProcessor_->getNumCalibIterations()));
 
