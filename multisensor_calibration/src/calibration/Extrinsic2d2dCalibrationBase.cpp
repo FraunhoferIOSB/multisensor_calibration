@@ -60,6 +60,9 @@ std::pair<double, int> Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataPr
 {
     double meanError = 0.0;
     int inlierCount  = 0;
+
+    /* @TODO update sensorExtrinsics_ */
+
     return {meanError, inlierCount};
 }
 

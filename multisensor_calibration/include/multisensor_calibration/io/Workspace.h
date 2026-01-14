@@ -63,7 +63,8 @@ enum EWorkspaceType
     EXTRINSIC_CAMERA_REFERENCE_WS, ///< EXtrinsic camera-reference calibration workspace type.
     EXTRINSIC_LIDAR_LIDAR_WS,      ///< EXtrinsic LiDAR-LiDAR calibration workspace type.
     EXTRINSIC_LIDAR_REFERENCE_WS,  ///< EXtrinsic LiDAR-reference calibration workspace type.
-    EXTRINSIC_LIDAR_VEHICLE_WS     ///< EXtrinsic LiDAR-Vehicle calibration workspace type.
+    EXTRINSIC_LIDAR_VEHICLE_WS,     ///< EXtrinsic LiDAR-Vehicle calibration workspace type.
+    EXTRINSIC_CAMERA_CAMERA_WS     ///< EXtrinsic Camera-Camera calibration workspace type.
 };
 
 /**
@@ -401,6 +402,34 @@ class ExtrinsicLidarReferenceCalibWorkspace : public Workspace<EXTRINSIC_LIDAR_R
      * @brief Destructor
      */
     virtual ~ExtrinsicLidarReferenceCalibWorkspace()
+    {
+    }
+};
+
+
+/**
+ * @ingroup workspace_handling
+ * @brief Class of an extrinsic camera-lidar calibration workspace
+ *
+ */
+class ExtrinsicCameraCameraCalibWorkspace : public Workspace<EXTRINSIC_CAMERA_CAMERA_WS>
+{
+    //--- METHOD DECLARATION ---//
+  public:
+    ExtrinsicCameraCameraCalibWorkspace() = delete;
+
+    ExtrinsicCameraCameraCalibWorkspace(const std::string& iWsPath,
+                                       const rclcpp::Logger& iLogger) :
+      Workspace<EXTRINSIC_CAMERA_CAMERA_WS>(iWsPath, iLogger)
+    {
+        requiredFilesForBackup_ = {CALIB_RESULTS_FILE_NAME};
+        settingsTplFileName_    = "extrinsic_camera_camera_calib_ws_settings_template.ini";
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~ExtrinsicCameraCameraCalibWorkspace()
     {
     }
 };

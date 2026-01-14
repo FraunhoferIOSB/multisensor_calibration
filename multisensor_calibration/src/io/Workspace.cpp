@@ -17,25 +17,29 @@
 namespace multisensor_calibration
 {
 
-// Map to convert workspace type to string.
-static std::map<EWorkspaceType, std::string> WORKSPACE_TYPE_2_STR =
-  {{ROBOT_WS, "robot"},
-   {INTRINSIC_CAMERA_WS, "intrinsic-camera-calibration"},
-   {EXTRINSIC_CAMERA_LIDAR_WS, "extrinsic-camera-lidar-calibration"},
-   {EXTRINSIC_CAMERA_REFERENCE_WS, "extrinsic-camera-reference-calibration"},
-   {EXTRINSIC_LIDAR_LIDAR_WS, "extrinsic-lidar-lidar-calibration"},
-   {EXTRINSIC_LIDAR_REFERENCE_WS, "extrinsic-lidar-reference-calibration"},
-   {EXTRINSIC_LIDAR_VEHICLE_WS, "extrinsic-lidar-vehicle-calibration"}};
+#define WORKSPACE_TYPE_TABLE(X)                                                                                          \
+    X(ROBOT_WS, "robot", "Robot")                                                                                        \
+    X(INTRINSIC_CAMERA_WS, "intrinsic-camera-calibration", "Intrinsic-Camera-Calibration")                               \
+    X(EXTRINSIC_CAMERA_LIDAR_WS, "extrinsic-camera-lidar-calibration", "Extrinsic-Camera-LiDAR-Calibration")             \
+    X(EXTRINSIC_CAMERA_REFERENCE_WS, "extrinsic-camera-reference-calibration", "Extrinsic-Camera-Reference-Calibration") \
+    X(EXTRINSIC_LIDAR_LIDAR_WS, "extrinsic-lidar-lidar-calibration", "Extrinsic-LiDAR-LiDAR-Calibration")                \
+    X(EXTRINSIC_LIDAR_REFERENCE_WS, "extrinsic-lidar-reference-calibration", "Extrinsic-LiDAR-Reference-Calibration")    \
+    X(EXTRINSIC_LIDAR_VEHICLE_WS, "extrinsic-lidar-vehicle-calibration", "Extrinsic-LiDAR-Vehicle-Calibration") \
+    X(EXTRINSIC_CAMERA_CAMERA_WS, "extrinsic-camera-camera-calibration", "Extrinsic-Camera-Camera-Calibration")
 
 // Map to get workspace type from string.
+static std::map<EWorkspaceType, std::string> WORKSPACE_TYPE_2_STR =
+  {
+#define X(A, B, C) {A, B},
+    WORKSPACE_TYPE_TABLE(X)
+#undef X
+};
 static std::map<EWorkspaceType, std::string> WORKSPACE_TYPE_2_STR_TITLE =
-  {{ROBOT_WS, "Robot"},
-   {INTRINSIC_CAMERA_WS, "Intrinsic-Camera-Calibration"},
-   {EXTRINSIC_CAMERA_LIDAR_WS, "Extrinsic-Camera-LiDAR-Calibration"},
-   {EXTRINSIC_CAMERA_REFERENCE_WS, "Extrinsic-Camera-Reference-Calibration"},
-   {EXTRINSIC_LIDAR_LIDAR_WS, "Extrinsic-LiDAR-LiDAR-Calibration"},
-   {EXTRINSIC_LIDAR_REFERENCE_WS, "Extrinsic-LiDAR-Reference-Calibration"},
-   {EXTRINSIC_LIDAR_VEHICLE_WS, "Extrinsic-LiDAR-Vehicle-Calibration"}};
+  {
+#define X(A, B, C) {A, C},
+    WORKSPACE_TYPE_TABLE(X)
+#undef X
+};
 
 //==================================================================================================
 template <EWorkspaceType TypeT>
@@ -353,3 +357,4 @@ template class multisensor_calibration::Workspace<multisensor_calibration::EXTRI
 template class multisensor_calibration::Workspace<multisensor_calibration::EXTRINSIC_LIDAR_LIDAR_WS>;
 template class multisensor_calibration::Workspace<multisensor_calibration::EXTRINSIC_LIDAR_REFERENCE_WS>;
 template class multisensor_calibration::Workspace<multisensor_calibration::EXTRINSIC_LIDAR_VEHICLE_WS>;
+template class multisensor_calibration::Workspace<multisensor_calibration::EXTRINSIC_CAMERA_CAMERA_WS>;
