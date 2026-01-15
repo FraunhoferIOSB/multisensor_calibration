@@ -53,7 +53,7 @@ class ExtrinsicCameraCameraConfigWidget;
 
 /**
  * @ingroup ui
- * @brief Widget holding the configuration options for the extrinsic camera lidar calibration.
+ * @brief Widget holding the configuration options for the extrinsic camera calibration.
  * This is part of the calibration configurator of the multi_sensor_calibration node.
  */
 class ExtrinsicCameraCameraConfigWidget : public QWidget
@@ -64,14 +64,14 @@ class ExtrinsicCameraCameraConfigWidget : public QWidget
 
   public:
     /**
-     * @brief Construct a new Extrinsic Camera Lidar Config Widget.
+     * @brief Construct a new Extrinsic Camera Config Widget.
      *
      * @param[in] parent Parent Widget
      */
     ExtrinsicCameraCameraConfigWidget(QWidget* parent = nullptr);
 
     /**
-     * @brief Destroy the Extrinsic Camera Lidar Config Widget.
+     * @brief Destroy the Extrinsic Camera Config Widget.
      */
     ~ExtrinsicCameraCameraConfigWidget();
 

@@ -1,15 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>multisensor_calibration::ExtrinsicCameraCameraConfigWidget</class>
- <widget
-        class="QWidget"
-        name="multisensor_calibration::ExtrinsicCameraCameraConfigWidget"
-    >
+ <widget class="QWidget" name="multisensor_calibration::ExtrinsicCameraCameraConfigWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>405</width>
+    <width>455</width>
     <height>715</height>
    </rect>
   </property>
@@ -48,28 +45,33 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="cameraGroupBox">
+    <widget class="QGroupBox" name="srcCamGroupBox">
      <property name="title">
       <string>Camera (Source)</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <layout class="QFormLayout" name="formLayout_6">
+       <layout class="QFormLayout" name="formLayout_8">
         <property name="horizontalSpacing">
          <number>32</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="cameraNameLabel">
+         <widget class="QLabel" name="srcCamNameLabel">
           <property name="text">
            <string>Sensor Name:</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QComboBox" name="cameraNameComboBox">
+         <widget class="QComboBox" name="srcCamNameComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
-           <string
-                                            >Select or enter the name of the source camera sensor.</string>
+           <string>Select or enter the name of the source camera sensor.</string>
           </property>
           <property name="editable">
            <bool>true</bool>
@@ -77,17 +79,22 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="imageTopicLabel">
+         <widget class="QLabel" name="srcImageTopicLabel">
           <property name="text">
            <string>Image Topic:</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QComboBox" name="imageTopicComboBox">
+         <widget class="QComboBox" name="srcImageTopicComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
-           <string
-                                            >Select or enter the topic name on which the camera images are published.</string>
+           <string>Select or enter the topic name on which the camera images are published.</string>
           </property>
           <property name="editable">
            <bool>true</bool>
@@ -95,17 +102,22 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="infoTopicLabel">
+         <widget class="QLabel" name="srcInfoTopicLabel">
           <property name="text">
            <string>Camera Info Topic:</string>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QComboBox" name="infoTopicComboBox">
+         <widget class="QComboBox" name="srcInfoTopicComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
-           <string
-                                            >Select or enter the topic name on which the camera info messages are published. If left empty, this will be constructed from the image topic.</string>
+           <string>Select or enter the topic name on which the camera info messages are published. If left empty, this will be constructed from the image topic.</string>
           </property>
           <property name="editable">
            <bool>true</bool>
@@ -113,129 +125,131 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="imageStateLabel">
+         <widget class="QLabel" name="srcImageStateLabel">
           <property name="text">
            <string>Image State:</string>
           </property>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QComboBox" name="imageStateComboBox">
+         <widget class="QComboBox" name="srcImageStateComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="toolTip">
-           <string
-                                            >&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the state of the image data:&lt;/p&gt;&lt;p&gt;  - DISTORTED: The image directly coming from the sensor, i.e. containing lense distortion.&lt;/p&gt;&lt;p&gt;  - UNDISTORTED: The image has been made free of lense distortion.&lt;/p&gt;&lt;p&gt;  - STEREO_RECTIFIED: The image comes from a stereo camera has been rectified so that the images of both cameras align horizontally.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the state of the image data:&lt;/p&gt;&lt;p&gt;  - DISTORTED: The image directly coming from the sensor, i.e. containing lense distortion.&lt;/p&gt;&lt;p&gt;  - UNDISTORTED: The image has been made free of lense distortion.&lt;/p&gt;&lt;p&gt;  - STEREO_RECTIFIED: The image comes from a stereo camera has been rectified so that the images of both cameras align horizontally.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="QGroupBox" name="isStereoGroupBox">
-        <property name="title">
-         <string>Is Stereo Camera?</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <layout class="QFormLayout" name="formLayout">
-         <property name="horizontalSpacing">
-          <number>12</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="rightCameraNameLabel">
-           <property name="text">
-            <string>Right Sensor Name:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="rightCameraNameComboBox">
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="rightCameraInfoLabel">
-           <property name="text">
-            <string>Right Info Topic:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="rightInfoComboBox">
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="rectSuffixlabel">
-           <property name="text">
-            <string>Rect Suffix:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="rectSuffixLineEdit">
-           <property name="text">
-            <string>_rect</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="lidarGroupBox">
+    <widget class="QGroupBox" name="refCamGroupBox">
      <property name="title">
-      <string>LiDAR (Reference)</string>
+      <string>Camera (Reference)</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <property name="horizontalSpacing">
-       <number>32</number>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="lidarNameLabel">
-        <property name="text">
-         <string>Sensor Name:</string>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QFormLayout" name="formLayout_7">
+        <property name="horizontalSpacing">
+         <number>32</number>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="cloudTopicLabel">
-        <property name="text">
-         <string>Point Cloud Topic:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="cloudTopicComboBox">
-        <property name="toolTip">
-         <string
-                                    >Select or enter the topic name on which the point clouds are published.</string>
-        </property>
-        <property name="editable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="lidarNameComboBox">
-        <property name="toolTip">
-         <string
-                                    >Select or enter the name of the reference LiDAR sensor.</string>
-        </property>
-        <property name="editable">
-         <bool>true</bool>
-        </property>
-       </widget>
+        <item row="0" column="0">
+         <widget class="QLabel" name="refCamNameLabel">
+          <property name="text">
+           <string>Sensor Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="refCamNameComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Select or enter the name of the source camera sensor.</string>
+          </property>
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="refImageTopicLabel">
+          <property name="text">
+           <string>Image Topic:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="refImageTopicComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Select or enter the topic name on which the camera images are published.</string>
+          </property>
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="refInfoTopicLabel">
+          <property name="text">
+           <string>Camera Info Topic:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="refInfoTopicComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Select or enter the topic name on which the camera info messages are published. If left empty, this will be constructed from the image topic.</string>
+          </property>
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="refImageStateLabel">
+          <property name="text">
+           <string>Image State:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="refImageStateComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the state of the image data:&lt;/p&gt;&lt;p&gt;  - DISTORTED: The image directly coming from the sensor, i.e. containing lense distortion.&lt;/p&gt;&lt;p&gt;  - UNDISTORTED: The image has been made free of lense distortion.&lt;/p&gt;&lt;p&gt;  - STEREO_RECTIFIED: The image comes from a stereo camera has been rectified so that the images of both cameras align horizontally.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -306,8 +320,7 @@
    <item>
     <widget class="QGroupBox" name="baseFrameGroupBox">
      <property name="toolTip">
-      <string
-                        >Calibrate the pose of the source sensor with respect to a base frame.</string>
+      <string>Calibrate the pose of the source sensor with respect to a base frame.</string>
      </property>
      <property name="title">
       <string>Calibrate with respect to base frame?</string>
@@ -328,9 +341,14 @@
       </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="baseFrameComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
-         <string
-                                    >Select the frame ID of the base frame with respect to which the pose is to be calibrated.</string>
+         <string>Select the frame ID of the base frame with respect to which the pose is to be calibrated.</string>
         </property>
         <property name="editable">
          <bool>true</bool>
@@ -344,10 +362,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="calibrateIntrinsics">
+     <property name="text">
+      <string>Calibrate Intrinsics?</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QCheckBox" name="initialGuessCheckBox">
      <property name="toolTip">
-      <string
-                        >Use the data provided by the TF-Tree to extract an initial guess for the calibration.</string>
+      <string>Use the data provided by the TF-Tree to extract an initial guess for the calibration.</string>
      </property>
      <property name="text">
       <string>Use initial guess from TF-Tree?</string>
@@ -360,8 +384,7 @@
    <item>
     <widget class="QCheckBox" name="observationsCheckBox">
      <property name="toolTip">
-      <string
-                        >Save the observations which have been used for the calibration into the calibration workspace.</string>
+      <string>Save the observations which have been used for the calibration into the calibration workspace.</string>
      </property>
      <property name="text">
       <string>Save observations?</string>
@@ -394,8 +417,7 @@
       <item row="0" column="1">
        <widget class="QComboBox" name="syncPolicyComboBox">
         <property name="toolTip">
-         <string
-                                    >Select which type of time synchronization is to be used to synchronize the sensor messages.</string>
+         <string>Select which type of time synchronization is to be used to synchronize the sensor messages.</string>
         </property>
         <property name="currentIndex">
          <number>1</number>
@@ -468,6 +490,6 @@
    </item>
   </layout>
  </widget>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>

@@ -30,6 +30,7 @@
 #define MULTISENSORCALIBRATION_UTILS_H
 
 // STD
+#include <cstdint>
 #define USE_MATH_DEFINES
 #include <cmath>
 #include <filesystem>
@@ -1177,6 +1178,22 @@ inline void setTfTransformFromCameraExtrinsics(const lib3d::Extrinsics& iCameraE
     //--- store in tf
     oTfTransform.setOrigin(tf2::Vector3(eigenT.x(), eigenT.y(), eigenT.z()));
     oTfTransform.setRotation(tf2::Quaternion(eigenQ.x(), eigenQ.y(), eigenQ.z(), eigenQ.w()));
+}
+
+inline auto getTopicList(uint32_t nanoSecondsToAccum = 5e8)
+{
+    auto node        = rclcpp::Node::make_shared("topic_info_node");
+    auto topics_info = node->get_topic_names_and_types();
+
+    auto last = node->now().nanoseconds();
+
+    while (node->now().nanoseconds() - last < nanoSecondsToAccum)
+    {
+        rclcpp::spin_some(node);
+        topics_info = node->get_topic_names_and_types();
+    }
+
+    return topics_info;
 }
 
 } // namespace utils

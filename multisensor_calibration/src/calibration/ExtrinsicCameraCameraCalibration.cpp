@@ -207,16 +207,25 @@ bool ExtrinsicCameraCameraCalibration::saveCalibrationSettingsToWorkspace()
     pCalibSettings->setValue("source_camera/image_topic",
                              QString::fromStdString(srcTopicName_));
 
+    pCalibSettings->setValue("source_camera/info_topic",
+                             QString::fromStdString(srcTopicName_));
+
     pCalibSettings->setValue("reference_camera/sensor_name",
                              QString::fromStdString(refSensorName_));
 
     pCalibSettings->setValue("reference_camera/image_topic",
                              QString::fromStdString(refTopicName_));
 
+    pCalibSettings->setValue("reference_camera/info_topic",
+                             QString::fromStdString(srcTopicName_));
+
     pCalibSettings->setValue("misc/sync_queue_size",
                              QVariant::fromValue(syncQueueSize_));
 
     pCalibSettings->setValue("misc/use_exact_sync",
+                             QVariant::fromValue(useExactSync_));
+
+    pCalibSettings->setValue("misc/intrinsic_calibration",
                              QVariant::fromValue(useExactSync_));
 
     pCalibSettings->sync();
@@ -301,8 +310,7 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
     //--- sync queue
     auto syncQueueDesc = rcl_interfaces::msg::ParameterDescriptor{};
     syncQueueDesc.description =
-      "Queue size used for the synchronization between the messages of the camera images and "
-      "the LiDAR clouds.\n "
+      "Queue size used for the synchronization between the messages of the camera images\n "
       "Default: 100";
     syncQueueDesc.read_only = true;
     ipNode->declare_parameter<int>("sync_queue_size", DEFAULT_SYNC_QUEUE_SIZE,
@@ -311,8 +319,7 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
     //--- exact sync
     auto exactSyncDesc = rcl_interfaces::msg::ParameterDescriptor{};
     exactSyncDesc.description =
-      "Set to true if an exact time synchronization between the camera image messages and the "
-      "LiDAR cloud messages.\n"
+      "Set to true if an exact time synchronization between the camera image messages\n"
       "Default: false";
     syncQueueDesc.read_only = true;
     ipNode->declare_parameter<bool>("use_exact_sync", false, exactSyncDesc);

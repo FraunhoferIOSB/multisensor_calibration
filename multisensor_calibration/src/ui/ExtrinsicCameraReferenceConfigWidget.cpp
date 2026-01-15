@@ -16,6 +16,7 @@
 
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/utils.hpp"
 #include "multisensor_calibration/io/Workspace.h"
 #include "ui_ExtrinsicCameraReferenceConfigWidget.h"
 
@@ -262,19 +263,10 @@ void ExtrinsicCameraReferenceConfigWidget::populateComboBoxesFromAvailableTfs()
 }
 
 //==================================================================================================
-inline auto getTopicList()
-{
-    auto node        = rclcpp::Node::make_shared("topic_info_node");
-    auto topics_info = node->get_topic_names_and_types();
-
-    return topics_info;
-}
-
-//==================================================================================================
 void ExtrinsicCameraReferenceConfigWidget::populateComboBoxesFromAvailableTopics()
 {
     //--- populate combo boxes from available ros topics
-    auto topicInfos = getTopicList();
+    auto topicInfos = utils::getTopicList();
     for (auto topicInfo : topicInfos)
     {
         if (std::find(topicInfo.second.begin(), topicInfo.second.end(), "sensor_msgs/msg/Image") !=
