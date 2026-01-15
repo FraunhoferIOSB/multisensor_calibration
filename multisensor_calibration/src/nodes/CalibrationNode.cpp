@@ -231,7 +231,7 @@ int main(int argc, char** argv)
     pExec->add_node(calibrationNode);
 #endif
 
-    /* @TODO: Camera Camera GUI */
+    /* @TODO: Camera-Camera GUI */
     pGui.reset(new multisensor_calibration::CameraLidarCalibrationGui(TARGET_NAME,
                                                                       multisensor_calibration::GUI_SUB_NAMESPACE));
 

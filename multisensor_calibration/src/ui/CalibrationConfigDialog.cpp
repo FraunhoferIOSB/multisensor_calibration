@@ -14,6 +14,7 @@
 #include <QMessageBox>
 
 // multisensor_calibration
+#include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/io/Workspace.h"
 #include "ui_CalibrationConfigDialog.h"
 
@@ -32,6 +33,7 @@ CalibrationConfigDialog::CalibrationConfigDialog(QWidget* parent) :
   ui(new Ui::CalibrationConfigDialog),
   pInstallWsTemplateDialog(new InstallWorkspaceDialog(this)),
   pCameraLidarConfigWidget(new ExtrinsicCameraLidarConfigWidget(this)),
+  pCameraCameraConfigWidget(new ExtrinsicCameraCameraConfigWidget(this)),
   pCameraReferenceConfigWidget(new ExtrinsicCameraReferenceConfigWidget(this)),
   pLidarLidarConfigWidget(new ExtrinsicLidarLidarConfigWidget(this)),
   pLidarReferenceConfigWidget(new ExtrinsicLidarReferenceConfigWidget(this)),
@@ -42,6 +44,8 @@ CalibrationConfigDialog::CalibrationConfigDialog(QWidget* parent) :
     ui->setupUi(this);
     ui->calibrationGroupBox->layout()->addWidget(pCameraLidarConfigWidget);
     pCameraLidarConfigWidget->setParent(ui->calibrationGroupBox);
+    ui->calibrationGroupBox->layout()->addWidget(pCameraCameraConfigWidget);
+    pCameraCameraConfigWidget->setParent(ui->calibrationGroupBox);
     ui->calibrationGroupBox->layout()->addWidget(pCameraReferenceConfigWidget);
     pCameraReferenceConfigWidget->setParent(ui->calibrationGroupBox);
     ui->calibrationGroupBox->layout()->addWidget(pLidarLidarConfigWidget);
@@ -117,6 +121,10 @@ std::unordered_map<std::string, bool> CalibrationConfigDialog::getBoolTypedCalib
     {
         calibOptions = pLidarReferenceConfigWidget->getBoolTypedCalibrationOptions();
     }
+    else if (currentCalibType == STEREO_CAMERA_CALIBRATION)
+    {
+        calibOptions = pCameraCameraConfigWidget->getBoolTypedCalibrationOptions();
+    }
 
     return calibOptions;
 }
@@ -145,6 +153,10 @@ std::unordered_map<std::string, double> CalibrationConfigDialog::getDoubleTypedC
     else if (currentCalibType == EXTRINSIC_LIDAR_REFERENCE_CALIBRATION)
     {
         calibOptions = pLidarReferenceConfigWidget->getDoubleTypedCalibrationOptions();
+    }
+    else if (currentCalibType == STEREO_CAMERA_CALIBRATION)
+    {
+        calibOptions = pCameraCameraConfigWidget->getDoubleTypedCalibrationOptions();
     }
 
     return calibOptions;
@@ -175,6 +187,10 @@ std::unordered_map<std::string, int> CalibrationConfigDialog::getIntTypedCalibra
     {
         calibOptions = pLidarReferenceConfigWidget->getIntTypedCalibrationOptions();
     }
+    else if (currentCalibType == STEREO_CAMERA_CALIBRATION)
+    {
+        calibOptions = pCameraCameraConfigWidget->getIntTypedCalibrationOptions();
+    }
 
     return calibOptions;
 }
@@ -204,6 +220,10 @@ CalibrationConfigDialog::getStringTypedCalibrationOptions()
     else if (currentCalibType == EXTRINSIC_LIDAR_REFERENCE_CALIBRATION)
     {
         calibOptions = pLidarReferenceConfigWidget->getStringTypedCalibrationOptions();
+    }
+    else if (currentCalibType == STEREO_CAMERA_CALIBRATION)
+    {
+        calibOptions = pCameraCameraConfigWidget->getStringTypedCalibrationOptions();
     }
 
     //--- add robot ws path
@@ -396,6 +416,13 @@ void CalibrationConfigDialog::resetCalibrationOptions()
         if (!lastRefSensorSelected.isEmpty())
             pLidarReferenceConfigWidget->setReferenceName(lastRefSensorSelected);
     }
+    else if (lastCalibTypeSelected == STEREO_CAMERA_CALIBRATION)
+    {
+        if (!lastSrcSensorSelected.isEmpty())
+            pCameraCameraConfigWidget->setSourceSensorName(lastSrcSensorSelected);
+        if (!lastRefSensorSelected.isEmpty())
+            pCameraCameraConfigWidget->setReferenceSensorName(lastRefSensorSelected);
+    }
 }
 
 //==================================================================================================
@@ -443,6 +470,13 @@ void CalibrationConfigDialog::saveSettings()
                                          pLidarReferenceConfigWidget->getSourceSensorName());
         pConfiguratorSettings_->setValue("last_ref_sensor_name",
                                          pLidarReferenceConfigWidget->getReferenceName());
+    }
+    else if (currentCalibType == STEREO_CAMERA_CALIBRATION)
+    {
+        pConfiguratorSettings_->setValue("last_src_sensor_name",
+                                         pCameraCameraConfigWidget->getSourceSensorName());
+        pConfiguratorSettings_->setValue("last_ref_sensor_name",
+                                         pCameraCameraConfigWidget->getReferenceSensorName());
     }
 }
 
@@ -536,6 +570,7 @@ void CalibrationConfigDialog::handleCalibrationTypeChanged()
         pLidarLidarConfigWidget->setVisible(false);
         pLidarReferenceConfigWidget->setVisible(false);
         pCameraLidarConfigWidget->setVisible(true);
+        pCameraCameraConfigWidget->setVisible(false);
     }
     break;
 
@@ -545,6 +580,7 @@ void CalibrationConfigDialog::handleCalibrationTypeChanged()
         pLidarLidarConfigWidget->setVisible(false);
         pLidarReferenceConfigWidget->setVisible(false);
         pCameraReferenceConfigWidget->setVisible(true);
+        pCameraCameraConfigWidget->setVisible(false);
     }
     break;
 
@@ -554,6 +590,7 @@ void CalibrationConfigDialog::handleCalibrationTypeChanged()
         pCameraReferenceConfigWidget->setVisible(false);
         pLidarReferenceConfigWidget->setVisible(false);
         pLidarLidarConfigWidget->setVisible(true);
+        pCameraCameraConfigWidget->setVisible(false);
     }
     break;
 
@@ -563,6 +600,17 @@ void CalibrationConfigDialog::handleCalibrationTypeChanged()
         pCameraReferenceConfigWidget->setVisible(false);
         pLidarLidarConfigWidget->setVisible(false);
         pLidarReferenceConfigWidget->setVisible(true);
+        pCameraCameraConfigWidget->setVisible(false);
+    }
+    break;
+
+    case STEREO_CAMERA_CALIBRATION:
+    {
+        pCameraLidarConfigWidget->setVisible(false);
+        pCameraReferenceConfigWidget->setVisible(false);
+        pLidarLidarConfigWidget->setVisible(false);
+        pLidarReferenceConfigWidget->setVisible(false);
+        pCameraCameraConfigWidget->setVisible(true);
     }
     break;
     }
@@ -632,6 +680,7 @@ void CalibrationConfigDialog::handleWsFolderChanged()
     pCameraReferenceConfigWidget->setRobotWorkspaceFolderPath(robotWsFolderPath);
     pLidarLidarConfigWidget->setRobotWorkspaceFolderPath(robotWsFolderPath);
     pLidarReferenceConfigWidget->setRobotWorkspaceFolderPath(robotWsFolderPath);
+    pCameraCameraConfigWidget->setRobotWorkspaceFolderPath(robotWsFolderPath);
 }
 
 } // namespace multisensor_calibration

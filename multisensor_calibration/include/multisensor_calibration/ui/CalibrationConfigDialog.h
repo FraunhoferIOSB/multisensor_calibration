@@ -43,6 +43,7 @@
 // multisensor_calibration
 #include "../common/common.h"
 #include "ExtrinsicCameraLidarConfigWidget.h"
+#include "ExtrinsicCameraCameraConfigWidget.h"
 #include "ExtrinsicCameraReferenceConfigWidget.h"
 #include "ExtrinsicLidarLidarConfigWidget.h"
 #include "ExtrinsicLidarReferenceConfigWidget.h"
@@ -197,6 +198,9 @@ class CalibrationConfigDialog : public QDialog
 
     /// Pointer to configuration widget for extrinsic camera-LiDAR calibration.
     ExtrinsicCameraLidarConfigWidget* pCameraLidarConfigWidget;
+
+    /// Pointer to configuration widget for extrinsic camera-camera calibration.
+    ExtrinsicCameraCameraConfigWidget* pCameraCameraConfigWidget;
 
     /// Pointer to configuration widget for extrinsic camera-Reference calibration.
     ExtrinsicCameraReferenceConfigWidget* pCameraReferenceConfigWidget;

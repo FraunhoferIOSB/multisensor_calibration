@@ -230,13 +230,13 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
 {
     ExtrinsicCalibrationBase::setupLaunchParameters(ipNode);
 
-    /* SRC Camera */
+    /* ---- SRC Camera ---- */
     auto srcSensorNameDesc = rcl_interfaces::msg::ParameterDescriptor{};
     srcSensorNameDesc.description =
       "Name of the camera sensor that is to be calibrated.\n"
       "Default: \"camera\"";
     srcSensorNameDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("camera_sensor_name", DEFAULT_CAMERA_SENSOR_NAME,
+    ipNode->declare_parameter<std::string>("src_camera_sensor_name", DEFAULT_CAMERA_SENSOR_NAME,
                                            srcSensorNameDesc);
 
     auto srcSensorTopicDesc = rcl_interfaces::msg::ParameterDescriptor{};
@@ -244,7 +244,7 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
       "Topic name of the corresponding camera images.\n"
       "Default: \"/camera/image_color\"";
     srcSensorTopicDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("camera_image_topic", DEFAULT_CAMERA_IMAGE_TOPIC,
+    ipNode->declare_parameter<std::string>("src_camera_image_topic", DEFAULT_CAMERA_IMAGE_TOPIC,
                                            srcSensorTopicDesc);
 
     auto srcCameraInfoTopicDesc = rcl_interfaces::msg::ParameterDescriptor{};
@@ -253,7 +253,7 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
       "constructed from the specified ```camera_image_topic```.\n "
       "Default: \"\"";
     srcCameraInfoTopicDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("camera_info_topic", "",
+    ipNode->declare_parameter<std::string>("src_camera_info_topic", "",
                                            srcCameraInfoTopicDesc);
 
     auto srcImageStateDesc = rcl_interfaces::msg::ParameterDescriptor{};
@@ -261,16 +261,16 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
       "State of the camera images used.\n"
       "Default: \"DISTORTED\"";
     srcImageStateDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("image_state", DEFAULT_IMG_STATE_STR,
+    ipNode->declare_parameter<std::string>("src_image_state", DEFAULT_IMG_STATE_STR,
                                            srcImageStateDesc);
 
-    /* REF Camera */
+    /* ---- REF Camera ---- */
     auto refSensorNameDesc = rcl_interfaces::msg::ParameterDescriptor{};
     refSensorNameDesc.description =
       "Name of the camera sensor that is to be calibrated.\n"
       "Default: \"camera\"";
     refSensorNameDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("camera_sensor_name", DEFAULT_CAMERA_SENSOR_NAME,
+    ipNode->declare_parameter<std::string>("ref_camera_sensor_name", DEFAULT_CAMERA_SENSOR_NAME,
                                            refSensorNameDesc);
 
     auto refSensorTopicDesc = rcl_interfaces::msg::ParameterDescriptor{};
@@ -278,7 +278,7 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
       "Topic name of the corresponding camera images.\n"
       "Default: \"/camera/image_color\"";
     refSensorTopicDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("camera_image_topic", DEFAULT_CAMERA_IMAGE_TOPIC,
+    ipNode->declare_parameter<std::string>("ref_camera_image_topic", DEFAULT_CAMERA_IMAGE_TOPIC,
                                            refSensorTopicDesc);
 
     auto refCameraInfoTopicDesc = rcl_interfaces::msg::ParameterDescriptor{};
@@ -287,7 +287,7 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
       "constructed from the specified ```camera_image_topic```.\n "
       "Default: \"\"";
     refCameraInfoTopicDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("camera_info_topic", "",
+    ipNode->declare_parameter<std::string>("ref_camera_info_topic", "",
                                            refCameraInfoTopicDesc);
 
     auto refImageStateDesc = rcl_interfaces::msg::ParameterDescriptor{};
@@ -295,7 +295,7 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
       "State of the camera images used.\n"
       "Default: \"DISTORTED\"";
     refImageStateDesc.read_only = true;
-    ipNode->declare_parameter<std::string>("image_state", DEFAULT_IMG_STATE_STR,
+    ipNode->declare_parameter<std::string>("ref_image_state", DEFAULT_IMG_STATE_STR,
                                            refImageStateDesc);
 
     //--- sync queue
@@ -335,13 +335,52 @@ bool ExtrinsicCameraCameraCalibration::readLaunchParameters(const rclcpp::Node* 
       ipNode, "src_camera_sensor_name", DEFAULT_CAMERA_SENSOR_NAME);
 
     srcTopicName_ = CalibrationBase::readStringLaunchParameter(
-      ipNode, "src_camera_cloud_topic", DEFAULT_CAMERA_IMAGE_TOPIC);
+      ipNode, "src_camera_image_topic", DEFAULT_CAMERA_IMAGE_TOPIC);
 
     refSensorName_ = CalibrationBase::readStringLaunchParameter(
       ipNode, "ref_camera_sensor_name", DEFAULT_CAMERA_SENSOR_NAME);
 
     refTopicName_ = CalibrationBase::readStringLaunchParameter(
-      ipNode, "ref_camera_cloud_topic", DEFAULT_CAMERA_IMAGE_TOPIC);
+      ipNode, "ref_camera_image_topic", DEFAULT_CAMERA_IMAGE_TOPIC);
+
+
+    //--- camera_info_topic
+    srcCameraInfoTopic_ = ipNode->get_parameter("src_camera_info_topic").as_string();
+    if (srcCameraInfoTopic_.empty())
+    {
+        srcCameraInfoTopic_ =
+          srcTopicName_.substr(0, srcTopicName_.find_last_of('/')) + "/camera_info";
+    }
+
+    refCameraInfoTopic_ = ipNode->get_parameter("ref_camera_info_topic").as_string();
+    if (refCameraInfoTopic_.empty())
+    {
+        refCameraInfoTopic_ =
+          srcTopicName_.substr(0, srcTopicName_.find_last_of('/')) + "/camera_info";
+    }
+
+    //--- image state
+    std::string srcImageState_ =
+      CalibrationBase::readStringLaunchParameter(ipNode, "src_image_state",
+                                                 DEFAULT_IMG_STATE_STR);
+    auto findItr = STR_2_IMG_STATE.find(srcImageState_);
+    if (findItr != STR_2_IMG_STATE.end())
+        srcImageState_ = std::to_string(findItr->second);
+    else
+        RCLCPP_WARN(CalibrationBase::logger_, "String passed to 'src_image_state' is not valid. "
+                                              "\nSetting 'src_image_state' to default: %s",
+                    DEFAULT_IMG_STATE_STR.c_str());
+
+    std::string refImageState_ =
+      CalibrationBase::readStringLaunchParameter(ipNode, "ref_image_state",
+                                                 DEFAULT_IMG_STATE_STR);
+    findItr = STR_2_IMG_STATE.find(refImageState_);
+    if (findItr != STR_2_IMG_STATE.end())
+        refImageState_ = std::to_string(findItr->second);
+    else
+        RCLCPP_WARN(CalibrationBase::logger_, "String passed to 'ref_image_state' is not valid. "
+                                              "\nSetting 'ref_image_state' to default: %s",
+                    DEFAULT_IMG_STATE_STR.c_str());
 
     //--- sync queue
     syncQueueSize_ = CalibrationBase::readNumericLaunchParameter<int>(

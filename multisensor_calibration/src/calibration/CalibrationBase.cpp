@@ -267,7 +267,7 @@ bool CalibrationBase::readLaunchParameters(const rclcpp::Node* ipNode)
     std::string targetFileStr = ipNode->get_parameter("target_config_file").as_string();
     if (targetFileStr.empty() || !fs::exists(targetFileStr))
     {
-        RCLCPP_ERROR(logger_, "Target configuration file path is empty or does not consist: %s",
+        RCLCPP_ERROR(logger_, "Target configuration file path is empty or does not consist: [ %s ]",
                      targetFileStr.c_str());
         return false;
     }

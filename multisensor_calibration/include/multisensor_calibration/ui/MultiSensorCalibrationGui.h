@@ -100,17 +100,26 @@ class MultiSensorCalibrationGui : public GuiBase
      */
     void runExtrinsicLidarReferenceCalibration();
 
-
     /**
      * @brief Run camera-camera calibration
      */
     void runExtrinsicCameraCameraCalibration();
 
+    /**
+     * @brief Run Extrinsic calibration base on modules types
+     */
+    typedef struct
+    {
+    } NULLTYPE;
+
+#define TYPE_INHERITS(BASE, T) (std::is_base_of<BASE, T>::value)
+#define TYPE_INHERTIS_FROM_OR_NULLTYPE(BASE, T) ((TYPE_INHERITS(BASE, T) || std::is_same<T, MultiSensorCalibrationGui::NULLTYPE>::value))
+
     template <typename CalibrationType, typename GuidanceType, typename GuiType>
     typename std::enable_if<
-      std::is_base_of<CalibrationGuiBase, GuiType>::value &&
-        std::is_base_of<CalibrationBase, CalibrationType>::value &&
-        std::is_base_of<GuidanceBase, GuidanceBase>::value,
+      TYPE_INHERTIS_FROM_OR_NULLTYPE(CalibrationGuiBase, GuiType) &&
+        TYPE_INHERITS(CalibrationBase, CalibrationType) &&
+        TYPE_INHERTIS_FROM_OR_NULLTYPE(GuidanceBase, GuidanceBase),
       void>::type
     runExtrinsicCalibration();
 

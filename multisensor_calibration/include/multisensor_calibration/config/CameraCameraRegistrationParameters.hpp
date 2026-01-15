@@ -32,66 +32,16 @@
 #include <rclcpp/rclcpp.hpp>
 
 // multisensor_calibration
-#include "DynamicParameter.hpp"
+#include "multisensor_calibration/common/common.h"
 
 namespace multisensor_calibration
 {
 
 struct CameraCameraRegistrationParameters
 {
-    //--- ENUM DECLARATION ---//
-
-    enum EIcpMethod
-    {
-        ICP = 0,
-        PlaneICP,
-        GICP
-    };
-
-    // target ICP variant
-    DynamicParameter<int>
-      registration_icp_variant = DynamicParameter<int>(
-        2,
-        "Select ICP variant to use for registration."
-        "\n\t0 = ICP,"
-        "\n\t1 = PlaneICP,"
-        "\n\t2 = GICP",
-        0, 2, 1);
-
-    // target ICP maximum correspondence distance
-    DynamicParameter<double>
-      registration_icp_max_correspondence_distance = DynamicParameter<double>(
-        0.1,
-        "Maximum distance for ICP to search for point correspondences. "
-        "Given as ratio with respect to shorter side of calibration target.",
-        0.001, 10.0);
-
-    // target ICP rotation tolerance
-    DynamicParameter<double>
-      registration_icp_rotation_tolerance = DynamicParameter<double>(
-        0.5,
-        "Rotation tolerance for convergence check. Given in degrees.",
-        0.001, 10.0);
-
-    // target ICP translation tolerance
-    DynamicParameter<double>
-      registration_icp_translation_tolerance = DynamicParameter<double>(
-        0.001,
-        "Translation tolerance for convergence check. Given in unit of the"
-        "LiDAR point cloud, typically meters.",
-        0.00001, 0.1);
-
-    /**
-     * @brief Declare parameters as dynamic to be adjusted during runtime.
-     *
-     * @param[in] ipNode Pointer to node for which the parameters are to be declared.
-     */
     void declareDynamic(rclcpp::Node* ipNode) const
     {
-        DECLARE_PARAMETER(registration_icp_variant, ipNode)
-        DECLARE_PARAMETER(registration_icp_max_correspondence_distance, ipNode)
-        DECLARE_PARAMETER(registration_icp_rotation_tolerance, ipNode)
-        DECLARE_PARAMETER(registration_icp_translation_tolerance, ipNode)
+        UNUSED_VAR(ipNode);
     }
 
     /**
@@ -104,13 +54,10 @@ struct CameraCameraRegistrationParameters
      */
     bool tryToSetParameter(const rclcpp::Parameter& iParameter)
     {
-        SET_PARAMETER_FROM_RCLCPP_PARAM(registration_icp_variant, iParameter)
-        SET_PARAMETER_FROM_RCLCPP_PARAM(registration_icp_max_correspondence_distance, iParameter)
-        SET_PARAMETER_FROM_RCLCPP_PARAM(registration_icp_rotation_tolerance, iParameter)
-        SET_PARAMETER_FROM_RCLCPP_PARAM(registration_icp_translation_tolerance, iParameter)
-
+        UNUSED_VAR(iParameter);
         return false;
     }
+
 };
 
 } // namespace multisensor_calibration
