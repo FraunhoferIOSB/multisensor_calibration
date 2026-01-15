@@ -902,6 +902,7 @@ template class ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>
 template class ExtrinsicCalibrationBase<CameraDataProcessor, ReferenceDataProcessor3d>;
 template class ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>;
 template class ExtrinsicCalibrationBase<LidarDataProcessor, ReferenceDataProcessor3d>;
+template class ExtrinsicCalibrationBase<CameraDataProcessor, CameraDataProcessor>;
 
 //==================================================================================================
 template <class SrcDataProcessorT, class RefDataProcessorT>

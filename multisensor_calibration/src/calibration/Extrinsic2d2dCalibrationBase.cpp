@@ -26,6 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
 #include <multisensor_calibration/calibration/Extrinsic2d2dCalibrationBase.h>
 
 namespace multisensor_calibration
@@ -65,5 +66,7 @@ std::pair<double, int> Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataPr
 
     return {meanError, inlierCount};
 }
+
+template class Extrinsic2d2dCalibrationBase<CameraDataProcessor, CameraDataProcessor>;
 
 } // namespace multisensor_calibration

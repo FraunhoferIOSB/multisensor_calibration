@@ -211,6 +211,30 @@ int main(int argc, char** argv)
     pGui.reset(new multisensor_calibration::LidarReferenceCalibrationGui(TARGET_NAME,
                                                                          multisensor_calibration::GUI_SUB_NAMESPACE));
 
+#elif TARGET == STEREO_CAMERA_CALIBRATION
+
+    /*
+     * For 'extrinsic_camera_camera_calibration',
+     *   - the ExtrinsicCameraCameraCalibration,
+     * is loaded.
+     */
+#ifdef MULTI_THREADED
+    auto calibrationThread = std::thread(
+      [](rclcpp::NodeOptions options)
+      {
+          auto calibrationNode = std::make_shared<multisensor_calibration::ExtrinsicCameraCameraCalibration>(TARGET_NAME, options);
+          rclcpp::spin(calibrationNode);
+      },
+      options);
+#else
+    auto calibrationNode = std::make_shared<multisensor_calibration::ExtrinsicCameraCameraCalibration>(TARGET_NAME, options);
+    pExec->add_node(calibrationNode);
+#endif
+
+    /* @TODO: Camera Camera GUI */
+    pGui.reset(new multisensor_calibration::CameraLidarCalibrationGui(TARGET_NAME,
+                                                                      multisensor_calibration::GUI_SUB_NAMESPACE));
+
 #else
     std::cerr << "No valid TARGET passed as compiler define!" << std::endl;
     return 1;

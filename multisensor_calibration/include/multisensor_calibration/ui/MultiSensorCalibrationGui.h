@@ -100,6 +100,12 @@ class MultiSensorCalibrationGui : public GuiBase
      */
     void runExtrinsicLidarReferenceCalibration();
 
+
+    /**
+     * @brief Run camera-camera calibration
+     */
+    void runExtrinsicCameraCameraCalibration();
+
     template <typename CalibrationType, typename GuidanceType, typename GuiType>
     typename std::enable_if<
       std::is_base_of<CalibrationGuiBase, GuiType>::value &&

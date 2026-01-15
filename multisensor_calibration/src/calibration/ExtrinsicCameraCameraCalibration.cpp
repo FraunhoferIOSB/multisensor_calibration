@@ -35,9 +35,9 @@ namespace multisensor_calibration
 {
 
 //==================================================================================================
-ExtrinsicCameraCameraCalibration::
-  ExtrinsicCameraCameraCalibration(const std::string& nodeName,
-                                   const rclcpp::NodeOptions& options) :
+ExtrinsicCameraCameraCalibration::ExtrinsicCameraCameraCalibration(
+  const std::string& nodeName,
+  const rclcpp::NodeOptions& options) :
   Extrinsic2d2dCalibrationBase<CameraDataProcessor, CameraDataProcessor>(
     STEREO_CAMERA_CALIBRATION),
   rclcpp::Node(nodeName, options),
@@ -188,7 +188,7 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
   const InputImage_Message_T::ConstSharedPtr& ipSrcImgMsg,
   const InputImage_Message_T::ConstSharedPtr& ipRefImgMsg)
 {
-     /* @TODO */
+    /* @TODO */
 }
 
 //==================================================================================================
@@ -230,7 +230,6 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
 {
     ExtrinsicCalibrationBase::setupLaunchParameters(ipNode);
 
-
     /* SRC Camera */
     auto srcSensorNameDesc = rcl_interfaces::msg::ParameterDescriptor{};
     srcSensorNameDesc.description =
@@ -265,7 +264,6 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
     ipNode->declare_parameter<std::string>("image_state", DEFAULT_IMG_STATE_STR,
                                            srcImageStateDesc);
 
-
     /* REF Camera */
     auto refSensorNameDesc = rcl_interfaces::msg::ParameterDescriptor{};
     refSensorNameDesc.description =
@@ -299,7 +297,6 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
     refImageStateDesc.read_only = true;
     ipNode->declare_parameter<std::string>("image_state", DEFAULT_IMG_STATE_STR,
                                            refImageStateDesc);
-
 
     //--- sync queue
     auto syncQueueDesc = rcl_interfaces::msg::ParameterDescriptor{};
@@ -402,8 +399,6 @@ bool ExtrinsicCameraCameraCalibration::shutdownSubscribers()
 
 //==================================================================================================
 /* @TODO:
-bool ExtrinsicCameraCameraCalibration::finalizeCalibration() override;
-
 CameraCameraRegistrationParameters
 
 Extrinsic2d2dCalibration

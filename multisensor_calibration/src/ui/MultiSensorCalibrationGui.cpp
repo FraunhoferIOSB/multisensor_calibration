@@ -19,6 +19,7 @@
 #include "multisensor_calibration/ui/LidarLidarCalibrationGui.h"
 #include "multisensor_calibration/ui/LidarReferenceCalibrationGui.h"
 
+#include "multisensor_calibration/calibration/ExtrinsicCameraCameraCalibration.h"
 #include "multisensor_calibration/calibration/ExtrinsicCameraLidarCalibration.h"
 #include "multisensor_calibration/calibration/ExtrinsicCameraReferenceCalibration.h"
 #include "multisensor_calibration/calibration/ExtrinsicLidarLidarCalibration.h"
@@ -113,6 +114,16 @@ void MultiSensorCalibrationGui::runExtrinsicLidarReferenceCalibration()
 }
 
 //==================================================================================================
+
+void MultiSensorCalibrationGui::runExtrinsicCameraCameraCalibration()
+{
+    runExtrinsicCalibration<
+      multisensor_calibration::ExtrinsicCameraCameraCalibration,
+      multisensor_calibration::GuidedLidarLidarTargetPlacementNode,
+      LidarReferenceCalibrationGui>();
+}
+
+//==================================================================================================
 template <typename CalibrationType, typename GuidanceType, typename GuiType>
 typename std::enable_if<
   std::is_base_of<CalibrationGuiBase, GuiType>::value &&
@@ -197,6 +208,12 @@ void MultiSensorCalibrationGui::handleConfigDialogAccepted()
     case EXTRINSIC_LIDAR_REFERENCE_CALIBRATION:
     {
         runExtrinsicLidarReferenceCalibration();
+    }
+    break;
+
+    case STEREO_CAMERA_CALIBRATION:
+    {
+        runExtrinsicCameraCameraCalibration();
     }
     break;
     }
