@@ -211,8 +211,8 @@ void multisensor_calibration::visualizers::PointCloud2PointCloudDistanceNode::cl
   const PointCloud::ConstSharedPtr ipCloudMsg, int idx)
 {
 #ifdef DEBUG_BUILD
-    RCLCPP_INFO(this->get_logger() "%s | idx: %i | %i-%i", __PRETTY_FUNCTION__, idx,
-                ipCloudMsg->header.stamp.sec, ipCloudMsg->header.stamp.nsec);
+    RCLCPP_INFO(this->get_logger(), "%s | idx: %i | %i-%i", __PRETTY_FUNCTION__, idx,
+                ipCloudMsg->header.stamp.sec, ipCloudMsg->header.stamp.nanosec);
 #endif
 
     //--- lock mutex
@@ -303,7 +303,7 @@ void multisensor_calibration::visualizers::PointCloud2PointCloudDistanceNode::pr
 {
 
 #ifdef DEBUG_BUILD
-    RCLCPP_INFO(this->get_logger() "%s", __PRETTY_FUNCTION__);
+    RCLCPP_INFO(this->get_logger(), "%s", __PRETTY_FUNCTION__);
 #endif
 
     //--- lock mutex

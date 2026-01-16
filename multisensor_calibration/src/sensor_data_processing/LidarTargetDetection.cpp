@@ -109,8 +109,8 @@ void LidarTargetDetection::onCloudReceived(
 {
 
 #ifdef DEBUG_BUILD
-    RCLCPP_INFO(this->get_logger(), "Message timestamp: %i-%i", __PRETTY_FUNCTION__,
-                ipCloudMsg->header.stamp.sec, ipCloudMsg->header.stamp.nsec);
+    RCLCPP_INFO(this->get_logger(), "[%s] Message timestamp: %i.%i", __PRETTY_FUNCTION__,
+                ipCloudMsg->header.stamp.sec, ipCloudMsg->header.stamp.nanosec);
 #endif
 
     //--- check if node is initialized
