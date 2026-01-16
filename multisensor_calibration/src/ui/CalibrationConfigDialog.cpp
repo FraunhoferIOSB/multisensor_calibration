@@ -15,6 +15,7 @@
 
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/utils.hpp"
 #include "multisensor_calibration/io/Workspace.h"
 #include "ui_CalibrationConfigDialog.h"
 
@@ -673,9 +674,18 @@ void CalibrationConfigDialog::handleWsFolderChanged()
 {
     loadRobotSettings();
 
+    auto topicList = utils::getTopicList();
+
     QString robotWsFolderPath = calibrationRootDir_.absolutePath() +
                                 QDir::separator() +
                                 ui->wsFolderComboBox->currentText();
+
+    pCameraLidarConfigWidget->setTopicList(topicList);
+    pCameraReferenceConfigWidget->setTopicList(topicList);
+    pLidarLidarConfigWidget->setTopicList(topicList);
+    pLidarReferenceConfigWidget->setTopicList(topicList);
+    pCameraCameraConfigWidget->setTopicList(topicList);
+
     pCameraLidarConfigWidget->setRobotWorkspaceFolderPath(robotWsFolderPath);
     pCameraReferenceConfigWidget->setRobotWorkspaceFolderPath(robotWsFolderPath);
     pLidarLidarConfigWidget->setRobotWorkspaceFolderPath(robotWsFolderPath);

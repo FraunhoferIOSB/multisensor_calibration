@@ -1180,7 +1180,7 @@ inline void setTfTransformFromCameraExtrinsics(const lib3d::Extrinsics& iCameraE
     oTfTransform.setRotation(tf2::Quaternion(eigenQ.x(), eigenQ.y(), eigenQ.z(), eigenQ.w()));
 }
 
-inline auto getTopicList(uint32_t nanoSecondsToAccum = 5e8)
+inline std::map<std::string, std::vector<std::string>> getTopicList(const uint32_t nanoSecondsToAccum = 5e8)
 {
     auto node        = rclcpp::Node::make_shared("topic_info_node");
     auto topics_info = node->get_topic_names_and_types();
@@ -1190,8 +1190,9 @@ inline auto getTopicList(uint32_t nanoSecondsToAccum = 5e8)
     while (node->now().nanoseconds() - last < nanoSecondsToAccum)
     {
         rclcpp::spin_some(node);
-        topics_info = node->get_topic_names_and_types();
     }
+
+    topics_info = node->get_topic_names_and_types();
 
     return topics_info;
 }

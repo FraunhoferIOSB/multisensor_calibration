@@ -125,6 +125,8 @@ class ExtrinsicLidarReferenceConfigWidget : public QWidget
      */
     std::unordered_map<std::string, std::string> getStringTypedCalibrationOptions();
 
+    void setTopicList(std::map<std::string, std::vector<std::string>> topicList);
+
   private:
     /**
      * @brief Utility function to add string value uniquely to ComboBox.
@@ -176,6 +178,8 @@ class ExtrinsicLidarReferenceConfigWidget : public QWidget
     /// Transform buffer and listener to get transform between the two sensor frames
     std::unique_ptr<tf2_ros::Buffer> tfBuffer_;
     std::shared_ptr<tf2_ros::TransformListener> tfListener_{nullptr};
+
+    std::map<std::string, std::vector<std::string>> topicList;
 };
 
 } // namespace multisensor_calibration

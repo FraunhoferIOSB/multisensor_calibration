@@ -244,8 +244,8 @@ void ExtrinsicLidarLidarConfigWidget::populateComboBoxesFromAvailableTopics()
 {
 
     //--- populate combo boxes from available ros topics
-    auto topicInfos = utils::getTopicList();
-    for (auto topicInfo : topicInfos)
+
+    for (auto topicInfo : topicList)
     {
         if (std::find(topicInfo.second.begin(), topicInfo.second.end(), "sensor_msgs/msg/PointCloud2") !=
             topicInfo.second.end())
@@ -317,6 +317,13 @@ void ExtrinsicLidarLidarConfigWidget::setCalibrationOptionsFromSettings()
 void ExtrinsicLidarLidarConfigWidget::handleSelectedSensorsChanged()
 {
     setCalibrationOptionsFromSettings();
+}
+
+//==================================================================================================
+
+void ExtrinsicLidarLidarConfigWidget::setTopicList(std::map<std::string, std::vector<std::string>> topicList)
+{
+    this->topicList = topicList;
 }
 
 } // namespace multisensor_calibration

@@ -266,8 +266,8 @@ void ExtrinsicCameraReferenceConfigWidget::populateComboBoxesFromAvailableTfs()
 void ExtrinsicCameraReferenceConfigWidget::populateComboBoxesFromAvailableTopics()
 {
     //--- populate combo boxes from available ros topics
-    auto topicInfos = utils::getTopicList();
-    for (auto topicInfo : topicInfos)
+
+    for (auto topicInfo : topicList)
     {
         if (std::find(topicInfo.second.begin(), topicInfo.second.end(), "sensor_msgs/msg/Image") !=
             topicInfo.second.end())
@@ -338,6 +338,13 @@ void ExtrinsicCameraReferenceConfigWidget::setCalibrationOptionsFromSettings()
 void ExtrinsicCameraReferenceConfigWidget::handleSelectedSensorsChanged()
 {
     setCalibrationOptionsFromSettings();
+}
+
+//==================================================================================================
+
+void ExtrinsicCameraReferenceConfigWidget::setTopicList(std::map<std::string, std::vector<std::string>> topicList)
+{
+    this->topicList = topicList;
 }
 
 } // namespace multisensor_calibration

@@ -33,8 +33,8 @@ CameraCameraCalibrationGui::CameraCameraCalibrationGui(const std::string& iAppTi
                                                      const std::string& iGuiSubNamespace) :
   CalibrationGuiBase(iAppTitle, iGuiSubNamespace),
   pPlacementGuidanceDialog_(nullptr),
-  pCameraTargetDialog_(nullptr),
-  pLidarTargetDialog_(nullptr),
+  psrcCameraTargetDialog_(nullptr),
+  prefCameraTargetDialog_(nullptr),
   pFusionDialog_(nullptr)
 {
 }
@@ -57,41 +57,28 @@ void CameraCameraCalibrationGui::initializeGuiContents()
                                                            "/" + PLACEMENT_GUIDANCE_TOPIC_NAME);
     }
 
-    //--- initialize content of camera target dialog
-    if (pCameraTargetDialog_)
+    //--- initialize content of src camera target dialog
+    if (psrcCameraTargetDialog_)
     {
-        pCameraTargetDialog_->setWindowTitle(
+        psrcCameraTargetDialog_->setWindowTitle(
           QString::fromStdString(pCalibrationMetaData_->src_sensor_name));
 
-        pCameraTargetDialog_->subscribeToImageTopic(pNode_.get(),
+        psrcCameraTargetDialog_->subscribeToImageTopic(pNode_.get(),
                                                     calibratorNodeName_ +
                                                       "/" + pCalibrationMetaData_->src_sensor_name +
                                                       "/" + ANNOTATED_CAMERA_IMAGE_TOPIC_NAME);
     }
 
-    //--- initialize content of lidar target visualization
-    if (pLidarTargetDialog_)
+    //--- initialize content of ref camera target visualization
+    if (prefCameraTargetDialog_)
     {
-        pLidarTargetDialog_->setWindowTitle(
+        prefCameraTargetDialog_->setWindowTitle(
           QString::fromStdString(pCalibrationMetaData_->ref_sensor_name));
 
-        pLidarTargetDialog_->setFixedReferenceFrame((pCalibrationMetaData_->base_frame_id.empty())
-                                                      ? pCalibrationMetaData_->ref_frame_id
-                                                      : pCalibrationMetaData_->base_frame_id);
-        pLidarTargetDialog_->addAxes();
-        pLidarTargetDialog_->addRawSensorCloud(pCalibrationMetaData_->ref_topic_name);
-        pLidarTargetDialog_
-          ->addRegionsOfInterestCloud(calibratorNodeName_ +
-                                      "/" + pCalibrationMetaData_->ref_sensor_name +
-                                      "/" + ROIS_CLOUD_TOPIC_NAME);
-        pLidarTargetDialog_
-          ->addCalibTargetCloud(calibratorNodeName_ +
-                                "/" + pCalibrationMetaData_->ref_sensor_name +
-                                "/" + TARGET_PATTERN_CLOUD_TOPIC_NAME);
-        pLidarTargetDialog_
-          ->addMarkerCornersCloud(calibratorNodeName_ +
-                                  "/" + pCalibrationMetaData_->ref_sensor_name +
-                                  "/" + MARKER_CORNERS_TOPIC_NAME);
+        prefCameraTargetDialog_->subscribeToImageTopic(pNode_.get(),
+                                                    calibratorNodeName_ +
+                                                      "/" + pCalibrationMetaData_->ref_sensor_name +
+                                                      "/" + ANNOTATED_CAMERA_IMAGE_TOPIC_NAME);
     }
 
     //--- hide progress dialog
@@ -225,12 +212,7 @@ void CameraCameraCalibrationGui::loadVisualizer()
 
         QMessageBox::information(pFusionDialog_.get(), pFusionDialog_->windowTitle(),
                                  QObject::tr(
-                                   "In order to visualize the calibration, the 3D points of the "
-                                   "LiDAR sensor are projected into the camera image and colorized "
-                                   "according to their distance from the camera. Thus, if the "
-                                   "calibration is good, then the structure in the LiDAR scan "
-                                   "(which can be derived from the depth coloring) should align "
-                                   "with the object in the image."));
+                                   "@TODO"));
     }
     else
     {
@@ -249,7 +231,7 @@ bool CameraCameraCalibrationGui::setupGuiElements()
         return false;
 
     pCalibControlWindow_->setWindowTitle(
-      QString::fromStdString(CALIB_TYPE_2_STR.at(EXTRINSIC_CAMERA_LIDAR_CALIBRATION)) + " Calibration");
+      QString::fromStdString(CALIB_TYPE_2_STR.at(STEREO_CAMERA_CALIBRATION)) + " Calibration");
 
     //--- setup placement guidance dialog at the top-right corner of the display
     pPlacementGuidanceDialog_ = std::make_shared<ImageViewDialog>(pCalibControlWindow_.get());
@@ -262,29 +244,29 @@ bool CameraCameraCalibrationGui::setupGuiElements()
     pCalibControlWindow_->attachPlacementGuidanceDialog(pPlacementGuidanceDialog_.get());
     pPlacementGuidanceDialog_->show();
 
-    //--- setup camera target dialog at the bottom-left corner of the display
-    pCameraTargetDialog_ = std::make_shared<ImageViewDialog>(pCalibControlWindow_.get());
-    if (!pCameraTargetDialog_)
+    //--- setup src camera target dialog at the bottom-left corner of the display
+    psrcCameraTargetDialog_ = std::make_shared<ImageViewDialog>(pCalibControlWindow_.get());
+    if (!psrcCameraTargetDialog_)
         return false;
-    pCameraTargetDialog_->setWindowTitle("Camera Target Detections");
-    pCameraTargetDialog_->move(screenGeometry_.topLeft() + QPoint(0, (screenGeometry_.height() / 2) + (2 * titleBarHeight_)));
-    pCameraTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
+    psrcCameraTargetDialog_->setWindowTitle("Src Camera Target Detections");
+    psrcCameraTargetDialog_->move(screenGeometry_.topLeft() + QPoint(0, (screenGeometry_.height() / 2) + (2 * titleBarHeight_)));
+    psrcCameraTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
                                        (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
 
-    pCalibControlWindow_->attachSourceDialog(pCameraTargetDialog_.get());
-    pCameraTargetDialog_->show();
+    pCalibControlWindow_->attachSourceDialog(psrcCameraTargetDialog_.get());
+    psrcCameraTargetDialog_->show();
 
-    //--- setup lidar target dialog at the bottom-right corner of the display
-    pLidarTargetDialog_ = std::make_shared<Rviz3dViewDialog>(pCalibControlWindow_.get());
-    if (!pLidarTargetDialog_)
+    //--- setup ref camera target dialog at the bottom-right corner of the display
+    prefCameraTargetDialog_ = std::make_shared<ImageViewDialog>(pCalibControlWindow_.get());
+    if (!prefCameraTargetDialog_)
         return false;
-    pLidarTargetDialog_->setWindowTitle("LiDAR Target Detections");
-    pLidarTargetDialog_->move(screenGeometry_.topLeft() + QPoint(screenGeometry_.width() / 2,
+    prefCameraTargetDialog_->setWindowTitle("Ref Camera Target Detections");
+    prefCameraTargetDialog_->move(screenGeometry_.topLeft() + QPoint(screenGeometry_.width() / 2,
                                                                  (screenGeometry_.height() / 2) + (2 * titleBarHeight_)));
-    pLidarTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
+    prefCameraTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
                                       (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
-    pCalibControlWindow_->attachReferenceDialog(pLidarTargetDialog_.get());
-    pLidarTargetDialog_->show();
+    pCalibControlWindow_->attachReferenceDialog(prefCameraTargetDialog_.get());
+    prefCameraTargetDialog_->show();
 
     //--- show infinite progress dialog at screen center
     showProgressDialog("Initializing user interface ...");

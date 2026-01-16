@@ -103,10 +103,10 @@ class CameraCameraCalibrationGui : public CalibrationGuiBase
     std::shared_ptr<ImageViewDialog> pPlacementGuidanceDialog_;
 
     /// Member pointer to dialog object used to visualize the target detection in the camera image.
-    std::shared_ptr<ImageViewDialog> pCameraTargetDialog_;
+    std::shared_ptr<ImageViewDialog> psrcCameraTargetDialog_;
 
     /// Member pointer to dialog object used to visualize the reference cloud from the LiDAR.
-    std::shared_ptr<Rviz3dViewDialog> pLidarTargetDialog_;
+    std::shared_ptr<ImageViewDialog> prefCameraTargetDialog_;
 
     /// Member pointer to dialog object used to visualize the calibration by means of sensor fusion.
     std::shared_ptr<ImageViewDialog> pFusionDialog_;
