@@ -111,6 +111,25 @@ class ExtrinsicCameraCameraCalibration
       const InputImage_Message_T::ConstSharedPtr& ipSrcImgMsg,
       const InputImage_Message_T::ConstSharedPtr& ipRefImgMsg);
 
+    /**
+     * @brief Initialize camera intrinsics from camera info topics.
+     *
+     * @param[in, out] iopCamProcessor Pointer to camera data processor to which the intrinsics are
+     * to be set.
+     * @return True, if successful. False otherwise.
+     */
+    bool initializeCameraIntrinsics(
+      CameraDataProcessor* iopCamProcessor,
+      sensor_msgs::msg::CameraInfo& cameraInfo,
+      EImageState imageState,
+      std::string cameraInfoTopic);
+
+    /**
+     * @brief Handle reception of camera info message.
+     */
+    void onSrcCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo);
+    void onRefCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo);
+
     //==============================================================================
     // METHODS: Overrides from parent
     //==============================================================================
@@ -118,6 +137,8 @@ class ExtrinsicCameraCameraCalibration
     bool finalizeCalibration() override;
 
     bool initializeDataProcessors() override;
+
+    bool initializeServices(rclcpp::Node* ipNode) override;
 
     bool initializeSubscribers(rclcpp::Node* ipNode) override;
 
@@ -165,7 +186,12 @@ class ExtrinsicCameraCameraCalibration
     EImageState srcImageState_, refImageState_;
 
     /// Camera info
+    rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr pSrcCamInfoSubsc_, pRefCamInfoSubsc_;
     std::string srcCameraInfoTopic_, refCameraInfoTopic_;
+    sensor_msgs::msg::CameraInfo srcCameraInfo_, refCameraInfo_;
+
+    /// Service to get camera intrinsics
+    rclcpp::Service<interf::srv::CameraIntrinsics>::SharedPtr pCameraIntrSrv_;
 };
 
 } // namespace multisensor_calibration

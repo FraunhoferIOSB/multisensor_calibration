@@ -91,89 +91,92 @@ void CameraCameraCalibrationGui::loadVisualizer()
     // Function to initialize visualizer node and dialog
     auto initializeAndRunSensorFusion = [&]() -> bool
     {
-        if (!pVisualizerNode_)
-        {
-            //--- get camera intrinsics to extract image state
-            auto intrinsicsClient  = pNode_->create_client<CameraIntrinsics>(calibratorNodeName_ +
-                                                                             "/" + REQUEST_CAM_INTRINSICS_SRV_NAME);
-            auto intrinsicRequest  = std::make_shared<CameraIntrinsics::Request>();
-            auto intrinsicResponse = intrinsicsClient->async_send_request(intrinsicRequest);
-            auto retCode           = utils::doWhileWaiting(pExecutor_, intrinsicResponse, [&]()
-                                                           { QCoreApplication::processEvents(); }, 100);
-            if (retCode != rclcpp::FutureReturnCode::SUCCESS)
-            {
-                RCLCPP_ERROR(pNode_->get_logger(),
-                             "[%s] Failed to get camera intrinsics. "
-                             "Check if calibration node is initialized!",
-                             guiNodeName_.c_str());
-                return false;
-            }
+        /* @TODO */
+        // if (!pVisualizerNode_)
+        // {
+        //     //--- get camera intrinsics to extract image state
+        //     auto intrinsicsClient  = pNode_->create_client<CameraIntrinsics>(calibratorNodeName_ +
+        //                                                                      "/" + REQUEST_CAM_INTRINSICS_SRV_NAME);
+        //     auto intrinsicRequest  = std::make_shared<CameraIntrinsics::Request>();
+        //     auto intrinsicResponse = intrinsicsClient->async_send_request(intrinsicRequest);
+        //     auto retCode           = utils::doWhileWaiting(pExecutor_, intrinsicResponse, [&]()
+        //                                                    { QCoreApplication::processEvents(); }, 100);
+        //     if (retCode != rclcpp::FutureReturnCode::SUCCESS)
+        //     {
+        //         RCLCPP_ERROR(pNode_->get_logger(),
+        //                      "[%s] Failed to get camera intrinsics. "
+        //                      "Check if calibration node is initialized!",
+        //                      guiNodeName_.c_str());
+        //         return false;
+        //     }
 
-            //--- get sensor extrinsics
-            auto extrinsicsClient            = pNode_->create_client<SensorExtrinsics>(calibratorNodeName_ +
-                                                                                       "/" + REQUEST_SENSOR_EXTRINSICS_SRV_NAME);
-            auto extrinsicRequest            = std::make_shared<SensorExtrinsics::Request>();
-            extrinsicRequest->extrinsic_type = SensorExtrinsics::Request::SENSOR_2_SENSOR;
+        //     //--- get sensor extrinsics
+        //     auto extrinsicsClient            = pNode_->create_client<SensorExtrinsics>(calibratorNodeName_ +
+        //                                                                                "/" + REQUEST_SENSOR_EXTRINSICS_SRV_NAME);
+        //     auto extrinsicRequest            = std::make_shared<SensorExtrinsics::Request>();
+        //     extrinsicRequest->extrinsic_type = SensorExtrinsics::Request::SENSOR_2_SENSOR;
 
-            auto extrinsicResponse = extrinsicsClient->async_send_request(extrinsicRequest);
+        //     auto extrinsicResponse = extrinsicsClient->async_send_request(extrinsicRequest);
 
-            if (pExecutor_->spin_until_future_complete(extrinsicResponse) !=
-                rclcpp::FutureReturnCode::SUCCESS)
-            {
-                RCLCPP_ERROR(pNode_->get_logger(),
-                             "[%s] Failed to get sensor extrinsics. "
-                             "Check if calibration node is initialized!",
-                             guiNodeName_.c_str());
-                return false;
-            }
-            geometry_msgs::msg::Pose& extrinsicPose = extrinsicResponse.get()->extrinsics;
+        //     if (pExecutor_->spin_until_future_complete(extrinsicResponse) !=
+        //         rclcpp::FutureReturnCode::SUCCESS)
+        //     {
+        //         RCLCPP_ERROR(pNode_->get_logger(),
+        //                      "[%s] Failed to get sensor extrinsics. "
+        //                      "Check if calibration node is initialized!",
+        //                      guiNodeName_.c_str());
+        //         return false;
+        //     }
+        //     geometry_msgs::msg::Pose& extrinsicPose = extrinsicResponse.get()->extrinsics;
 
-            //--- check if extrinsic pose is 0
-            if (tf2::Vector3(extrinsicPose.position.x,
-                             extrinsicPose.position.y,
-                             extrinsicPose.position.z) == tf2::Vector3(0, 0, 0) &&
-                tf2::Quaternion(extrinsicPose.orientation.x,
-                                extrinsicPose.orientation.y,
-                                extrinsicPose.orientation.z,
-                                extrinsicPose.orientation.w) == tf2::Quaternion(0, 0, 0, 1))
-            {
-                RCLCPP_ERROR(pNode_->get_logger(),
-                             "[%s] Cannot open calibration visualization. "
-                             "No extrinsic sensor pose available.",
-                             guiNodeName_.c_str());
+        //     //--- check if extrinsic pose is 0
+        //     if (tf2::Vector3(extrinsicPose.position.x,
+        //                      extrinsicPose.position.y,
+        //                      extrinsicPose.position.z) == tf2::Vector3(0, 0, 0) &&
+        //         tf2::Quaternion(extrinsicPose.orientation.x,
+        //                         extrinsicPose.orientation.y,
+        //                         extrinsicPose.orientation.z,
+        //                         extrinsicPose.orientation.w) == tf2::Quaternion(0, 0, 0, 1))
+        //     {
+        //         RCLCPP_ERROR(pNode_->get_logger(),
+        //                      "[%s] Cannot open calibration visualization. "
+        //                      "No extrinsic sensor pose available.",
+        //                      guiNodeName_.c_str());
 
-                return false;
-            }
+        //         return false;
+        //     }
 
-            std::vector<double> temporaryTransformCoeffs = {
-              extrinsicPose.position.x, extrinsicPose.position.y,
-              extrinsicPose.position.z, extrinsicPose.orientation.x,
-              extrinsicPose.orientation.y, extrinsicPose.orientation.z,
-              extrinsicPose.orientation.w};
+        //     std::vector<double> temporaryTransformCoeffs = {
+        //       extrinsicPose.position.x, extrinsicPose.position.y,
+        //       extrinsicPose.position.z, extrinsicPose.orientation.x,
+        //       extrinsicPose.orientation.y, extrinsicPose.orientation.z,
+        //       extrinsicPose.orientation.w};
 
-            rclcpp::NodeOptions options;
+        //     rclcpp::NodeOptions options;
 
-            options.parameter_overrides({
-              rclcpp::Parameter("image_state",
-                                intrinsicResponse.get()->image_state),
-              rclcpp::Parameter("min_depth", 0.5),
-              rclcpp::Parameter("max_depth", 10.0),
-              rclcpp::Parameter("temp_transform", temporaryTransformCoeffs),
-            });
-            options.use_intra_process_comms(true);
-            std::vector<std::string> remapping_arguments = {
-              //   "--ros-args", "--remap",
-              "pointcloud:=" + pCalibrationMetaData_->ref_topic_name,
-              "image:=" + pCalibrationMetaData_->src_topic_name,
-              "image/camera_info:=" + utils::image2CameraInfoTopic(pCalibrationMetaData_->src_topic_name, ""),
-              "calibration:=" + appTitle_ + "/" + CALIB_RESULT_TOPIC_NAME};
-            options.arguments(remapping_arguments);
-            pVisualizerNode_ = std::make_shared<visualizers::PointCloud2ImageNode>(options, visualizerNodeName_);
-        }
+        //     options.parameter_overrides({
+        //       rclcpp::Parameter("image_state",
+        //                         intrinsicResponse.get()->image_state),
+        //       rclcpp::Parameter("min_depth", 0.5),
+        //       rclcpp::Parameter("max_depth", 10.0),
+        //       rclcpp::Parameter("temp_transform", temporaryTransformCoeffs),
+        //     });
+        //     options.use_intra_process_comms(true);
+        //     std::vector<std::string> remapping_arguments = {
+        //       //   "--ros-args", "--remap",
+        //       "pointcloud:=" + pCalibrationMetaData_->ref_topic_name,
+        //       "image:=" + pCalibrationMetaData_->src_topic_name,
+        //       "image/camera_info:=" + utils::image2CameraInfoTopic(pCalibrationMetaData_->src_topic_name, ""),
+        //       "calibration:=" + appTitle_ + "/" + CALIB_RESULT_TOPIC_NAME};
+        //     options.arguments(remapping_arguments);
+        //     pVisualizerNode_ = std::make_shared<visualizers::PointCloud2ImageNode>(options, visualizerNodeName_);
+        // }
 
-        pExecutor_->add_node(pVisualizerNode_);
+        // pExecutor_->add_node(pVisualizerNode_);
 
-        return true;
+        // return true;
+        //
+        return false;
     };
 
     //--- show progress dialog

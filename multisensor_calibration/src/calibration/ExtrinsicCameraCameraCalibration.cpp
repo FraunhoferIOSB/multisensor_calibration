@@ -29,6 +29,7 @@
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/common/utils.hpp"
+#include "sensor_msgs/msg/camera_info.hpp"
 #include <multisensor_calibration_interface/msg/calibration_result.hpp>
 
 namespace multisensor_calibration
@@ -114,9 +115,37 @@ bool ExtrinsicCameraCameraCalibration::initializeDataProcessors()
 }
 
 //==================================================================================================
+void ExtrinsicCameraCameraCalibration::
+  onSrcCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo)
+{
+    if (srcCameraInfo_.width != pCamInfo->width)
+        srcCameraInfo_ = *pCamInfo;
+}
+
+//==================================================================================================
+void ExtrinsicCameraCameraCalibration::
+  onRefCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo)
+{
+    if (refCameraInfo_.width != pCamInfo->width)
+        refCameraInfo_ = *pCamInfo;
+}
+
+//==================================================================================================
 
 bool ExtrinsicCameraCameraCalibration::initializeSubscribers(rclcpp::Node* ipNode)
 {
+    //--- Camera info
+    pSrcCamInfoSubsc_ = ipNode->create_subscription<sensor_msgs::msg::CameraInfo>(
+      srcCameraInfoTopic_, 1,
+      std::bind(&ExtrinsicCameraCameraCalibration::onSrcCameraInfoReceived,
+                this,
+                std::placeholders::_1));
+    pRefCamInfoSubsc_ = ipNode->create_subscription<sensor_msgs::msg::CameraInfo>(
+      refCameraInfoTopic_, 1,
+      std::bind(&ExtrinsicCameraCameraCalibration::onRefCameraInfoReceived,
+                this,
+                std::placeholders::_1));
+
     //--- subscribe to topics
     srcImageSubsc_.subscribe(ipNode, srcTopicName_, "raw");
     refImageSubsc_.subscribe(ipNode, refTopicName_, "raw");
@@ -170,6 +199,17 @@ bool ExtrinsicCameraCameraCalibration::initializeWorkspaceObjects()
 }
 
 //==================================================================================================
+
+bool ExtrinsicCameraCameraCalibration::initializeServices(rclcpp::Node* ipNode)
+{
+    if (!ExtrinsicCalibrationBase::initializeServices(ipNode))
+        return false;
+
+   /* @TODO */
+
+    return true;
+  }
+//==================================================================================================
 bool ExtrinsicCameraCameraCalibration::onRequestRemoveObservation(
   const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
   std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes)
@@ -183,12 +223,206 @@ bool ExtrinsicCameraCameraCalibration::onRequestRemoveObservation(
 }
 
 //==================================================================================================
+bool ExtrinsicCameraCameraCalibration::initializeCameraIntrinsics(
+  CameraDataProcessor* iopCamProcessor,
+  sensor_msgs::msg::CameraInfo& cameraInfo,
+  EImageState imageState,
+  std::string cameraInfoTopic)
+{
+    if (cameraInfo.width != 0)
+    {
+        lib3d::Intrinsics cameraIntr;
+        utils::setCameraIntrinsicsFromCameraInfo(cameraInfo,
+                                                 cameraIntr,
+                                                 imageState);
+        iopCamProcessor->setCameraIntrinsics(cameraIntr);
+
+        return true;
+    }
+    else
+    {
+        RCLCPP_ERROR(CalibrationBase::logger_,
+                     "Wait for message of 'camera_info' topic has timed out. "
+                     "\n'camera_info' topic: %s"
+                     "\nWaiting for next data package.",
+                     cameraInfoTopic.c_str());
+        return false;
+    }
+}
+//==================================================================================================
 
 void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
   const InputImage_Message_T::ConstSharedPtr& ipSrcImgMsg,
   const InputImage_Message_T::ConstSharedPtr& ipRefImgMsg)
 {
+    //--- check if node is initialized
+    if (!isInitialized_)
+    {
+        RCLCPP_ERROR(logger_, "Node is not initialized.");
+        return;
+    }
+    if (pSrcDataProcessor_ == nullptr)
+    {
+        RCLCPP_ERROR(logger_, "Camera data processor is not initialized.");
+        return;
+    }
+    if (pRefDataProcessor_ == nullptr)
+    {
+        RCLCPP_ERROR(logger_, "Lidar data processor is not initialized.");
+        return;
+    }
+
+    //--- get ownership of mutex
+    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+
+    //--- convert input messages to data
+    bool isConversionSuccessful = true;
+
+    // camera image
+    cv::Mat srcCameraImage;
+    isConversionSuccessful &= pSrcDataProcessor_->getSensorDataFromMsg(ipSrcImgMsg, srcCameraImage);
+
+    cv::Mat refCameraImage;
+    isConversionSuccessful &= pSrcDataProcessor_->getSensorDataFromMsg(ipRefImgMsg, refCameraImage);
+
+    if (!isConversionSuccessful)
+    {
+        RCLCPP_ERROR(logger_,
+                     "Something went wrong in getting the sensor data from the input messages.");
+        return;
+    }
+
+    //--- camera intrinsics is not set to camera data processor,
+    //--- wait for camera_info message and set intrinsics
+    if (!pSrcDataProcessor_->isCameraIntrinsicsSet())
+    {
+        if (!initializeCameraIntrinsics(pSrcDataProcessor_.get(), srcCameraInfo_, srcImageState_, srcCameraInfoTopic_))
+            return;
+    }
+    if (!pRefDataProcessor_->isCameraIntrinsicsSet())
+    {
+        if (!initializeCameraIntrinsics(pRefDataProcessor_.get(), refCameraInfo_, refImageState_, refCameraInfoTopic_))
+            return;
+    }
+
+    //--- set frame ids and initialize sensor extrinsics if applicable
+    if (srcFrameId_ != ipSrcImgMsg->header.frame_id ||
+        refFrameId_ != ipRefImgMsg->header.frame_id)
+    {
+        srcFrameId_ = ipSrcImgMsg->header.frame_id;
+        refFrameId_ = ipRefImgMsg->header.frame_id;
+
+        // //--- if base frame id is not empty and unequal to refCloudFrameId use baseFrameID as
+        // //--- reference frame id.
+        // std::string tmpRefFrameId = refFrameId_;
+        // if (!baseFrameId_.empty() && baseFrameId_ != refFrameId_)
+        // {
+        //     tmpRefFrameId = baseFrameId_;
+
+        //     if (tfBuffer_->_frameExists(baseFrameId_))
+        //     {
+        //         /* @TODO */
+        //     }
+        //     else
+        //     {
+        //         RCLCPP_WARN(logger_,
+        //                     "Base Frame '%s' does not exists! "
+        //                     "Removing base frame and calibrating relative to reference cloud.",
+        //                     baseFrameId_.c_str());
+        //         baseFrameId_ = "";
+        //     }
+        // }
+
+        // //--- set sensor extrinsics from either cloud or base frame id and apply frustum culling
+        // if (useTfTreeAsInitialGuess_ &&
+        //     setSensorExtrinsicsFromFrameIds(srcFrameId_, tmpRefFrameId))
+        // {
+        //     /* @TODO */
+        // }
+        // else
+        // {
+        //     /* @TODO */
+        // }
+    }
+
     /* @TODO */
+
+
+    // Level at which to do the processing
+    CameraDataProcessor::EProcessingLevel procLevel = (captureCalibrationTarget_)
+                                                        ? CameraDataProcessor::TARGET_DETECTION
+                                                        : CameraDataProcessor::PREVIEW;
+
+    //--- process camera data asynchronously
+    std::future<CameraDataProcessor::EProcessingResult> camProcFuture =
+      std::async(&CameraDataProcessor::processData,
+                 pSrcDataProcessor_,
+                 srcCameraImage,
+                 procLevel);
+
+    //--- process lidar data asynchronously
+    std::future<CameraDataProcessor::EProcessingResult> lidarProcFuture =
+      std::async(&CameraDataProcessor::processData,
+                 pRefDataProcessor_,
+                 refCameraImage,
+                 static_cast<CameraDataProcessor::EProcessingLevel>(procLevel));
+
+    //--- wait for processing to return
+    CameraDataProcessor::EProcessingResult camProcResult  = camProcFuture.get();
+    CameraDataProcessor::EProcessingResult lidarProcResult = lidarProcFuture.get();
+
+    //--- if processing level is set to preview, publish preview from each sensor if successful
+    if (procLevel == CameraDataProcessor::PREVIEW)
+    {
+        if (camProcResult == CameraDataProcessor::SUCCESS)
+            pSrcDataProcessor_->publishPreview(ipSrcImgMsg->header);
+        if (lidarProcResult == CameraDataProcessor::SUCCESS)
+            pRefDataProcessor_->publishPreview(ipRefImgMsg->header.stamp,
+                                               (baseFrameId_.empty())
+                                                 ? refFrameId_
+                                                 : baseFrameId_);
+    }
+    //--- else if, processing level is target_detection,
+    //--- calibrate only if processing for both sensors is successful
+    else if (procLevel == CameraDataProcessor::TARGET_DETECTION)
+    {
+        if (camProcResult == CameraDataProcessor::SUCCESS &&
+            lidarProcResult == CameraDataProcessor::SUCCESS)
+        {
+            //--- publish detections
+            pSrcDataProcessor_->publishLastTargetDetection(ipSrcImgMsg->header);
+            pRefDataProcessor_->publishLastTargetDetection(ipRefImgMsg->header.stamp,
+                                                           (baseFrameId_.empty())
+                                                             ? refFrameId_
+                                                             : baseFrameId_);
+
+            //--- do calibration
+            calibrateLastObservation();
+        }
+        else
+        {
+            if (camProcResult != CameraDataProcessor::SUCCESS &&
+                lidarProcResult == CameraDataProcessor::SUCCESS)
+                pRefDataProcessor_->removeCalibIteration(calibrationItrCnt_);
+
+            if (camProcResult == CameraDataProcessor::SUCCESS &&
+                lidarProcResult != CameraDataProcessor::SUCCESS)
+                pSrcDataProcessor_->removeCalibIteration(calibrationItrCnt_);
+
+            interf::msg::CalibrationResult calibResultMsg;
+            calibResultMsg.is_successful = false;
+            pCalibResultPub_->publish(calibResultMsg);
+        }
+    }
+
+    //--- if this point is reachted, the target detection was not successful.
+    //--- thus, if data processor is not pending for more data, set capturing flag to false.
+    if (camProcResult != CameraDataProcessor::PENDING &&
+        lidarProcResult != CameraDataProcessor::PENDING)
+    {
+        captureCalibrationTarget_ = false;
+    }
+    return;
 }
 
 //==================================================================================================
@@ -350,7 +584,6 @@ bool ExtrinsicCameraCameraCalibration::readLaunchParameters(const rclcpp::Node* 
     refTopicName_ = CalibrationBase::readStringLaunchParameter(
       ipNode, "ref_camera_image_topic", DEFAULT_CAMERA_IMAGE_TOPIC);
 
-
     //--- camera_info_topic
     srcCameraInfoTopic_ = ipNode->get_parameter("src_camera_info_topic").as_string();
     if (srcCameraInfoTopic_.empty())
@@ -442,13 +675,6 @@ bool ExtrinsicCameraCameraCalibration::shutdownSubscribers()
 
     return true;
 }
-
-//==================================================================================================
-/* @TODO:
-CameraCameraRegistrationParameters
-
-Extrinsic2d2dCalibration
- */
 
 //==================================================================================================
 } // namespace multisensor_calibration
