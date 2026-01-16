@@ -268,7 +268,6 @@ void ExtrinsicCameraCameraConfigWidget::populateComboBoxesFromAvailableTopics()
     auto topicInfos = utils::getTopicList();
     for (auto topicInfo : topicInfos)
     {
-            std::cout << "Topic: " << topicInfo.first << std::endl;
         if (std::find(topicInfo.second.begin(), topicInfo.second.end(), "sensor_msgs/msg/Image") !=
             topicInfo.second.end())
         {

@@ -4,6 +4,7 @@
         <file>settings_templates/robot_ws_settings_template.ini</file>
         <file>settings_templates/intrinsic_camera_calib_ws_settings_template.ini</file>
         <file>settings_templates/extrinsic_camera_lidar_calib_ws_settings_template.ini</file>
+        <file>settings_templates/extrinsic_camera_camera_calib_ws_settings_template.ini</file>
         <file>settings_templates/extrinsic_camera_reference_calib_ws_settings_template.ini</file>
         <file>settings_templates/extrinsic_lidar_lidar_calib_ws_settings_template.ini</file>
         <file>settings_templates/extrinsic_lidar_reference_calib_ws_settings_template.ini</file>
