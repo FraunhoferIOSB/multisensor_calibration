@@ -18,6 +18,7 @@
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/ui/CalibrationGuiBase.h"
 #include "multisensor_calibration/ui/CameraLidarCalibrationGui.h"
+#include "multisensor_calibration/ui/CameraCameraCalibrationGui.h"
 #include "multisensor_calibration/ui/CameraReferenceCalibrationGui.h"
 #include "multisensor_calibration/ui/GuiBase.h"
 #include "multisensor_calibration/ui/LidarLidarCalibrationGui.h"
@@ -125,7 +126,7 @@ void MultiSensorCalibrationGui::runExtrinsicCameraCameraCalibration()
     runExtrinsicCalibration<
       multisensor_calibration::ExtrinsicCameraCameraCalibration,
       MultiSensorCalibrationGui::NULLTYPE,
-      MultiSensorCalibrationGui::NULLTYPE>();
+      CameraCameraCalibrationGui>();
 }
 
 //==================================================================================================

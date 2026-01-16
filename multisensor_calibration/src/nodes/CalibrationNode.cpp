@@ -27,6 +27,7 @@
 #include "multisensor_calibration/guidance/GuidedLidarLidarTargetPlacementNode.h"
 #include "multisensor_calibration/ui/CalibrationGuiBase.h"
 #include "multisensor_calibration/ui/CameraLidarCalibrationGui.h"
+#include "multisensor_calibration/ui/CameraCameraCalibrationGui.h"
 #include "multisensor_calibration/ui/CameraReferenceCalibrationGui.h"
 #include "multisensor_calibration/ui/GuiBase.h"
 #include "multisensor_calibration/ui/LidarLidarCalibrationGui.h"
@@ -210,7 +211,6 @@ int main(int argc, char** argv)
 
     pGui.reset(new multisensor_calibration::LidarReferenceCalibrationGui(TARGET_NAME,
                                                                          multisensor_calibration::GUI_SUB_NAMESPACE));
-
 #elif TARGET == STEREO_CAMERA_CALIBRATION
 
     /*
@@ -232,8 +232,7 @@ int main(int argc, char** argv)
 #endif
 
     /* @TODO: Camera-Camera GUI */
-    pGui.reset(new multisensor_calibration::CameraLidarCalibrationGui(TARGET_NAME,
-                                                                      multisensor_calibration::GUI_SUB_NAMESPACE));
+    pGui.reset(new multisensor_calibration::CameraCameraCalibrationGui(TARGET_NAME, multisensor_calibration::GUI_SUB_NAMESPACE));
 
 #else
     std::cerr << "No valid TARGET passed as compiler define!" << std::endl;

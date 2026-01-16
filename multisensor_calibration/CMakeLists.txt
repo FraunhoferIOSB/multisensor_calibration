@@ -188,6 +188,7 @@ set(LIBRARY_MOC_HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/ImageViewDialog.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/Rviz3dViewDialog.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/CameraLidarCalibrationGui.h"
+    "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/CameraCameraCalibrationGui.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/LidarLidarCalibrationGui.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/CameraReferenceCalibrationGui.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/ObservationsViewDialog.h"
