@@ -8,6 +8,7 @@
 #include "multisensor_calibration/ui/CalibrationGuiBase.h"
 
 // Std
+#include <cassert>
 #include <regex>
 
 // Qt
@@ -430,16 +431,20 @@ void CalibrationGuiBase::onActionResetCalibTriggered()
               { QCoreApplication::processEvents(); },
               100);
 
+            assert(response.valid() && "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failure in calling service '%s'.", serviceName.c_str());
+                return;
             }
-            else if (!response.get()->is_accepted)
+
+            auto data = response.get();
+            if (!data->is_accepted)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failed to reset (service '%s'). %s",
-                             serviceName.c_str(), response.get()->msg.c_str());
+                             serviceName.c_str(), data->msg.c_str());
             }
         }
         else
@@ -570,16 +575,20 @@ void CalibrationGuiBase::onActionImportObservationsTriggered()
                   { QCoreApplication::processEvents(); },
                   100);
 
+                assert(response.valid() && "Response is not valid");
                 if (retCode != rclcpp::FutureReturnCode::SUCCESS)
                 {
                     RCLCPP_ERROR(pNode_->get_logger(),
                                  "Failure in calling service '%s'.", serviceName.c_str());
+                    return;
                 }
-                else if (!response.get()->is_accepted)
+
+                auto data = response.get();
+                if (!data->is_accepted)
                 {
                     RCLCPP_ERROR(pNode_->get_logger(),
                                  "Failed to import marker observations. %s",
-                                 response.get()->msg.c_str());
+                                 data->msg.c_str());
                 }
             }
             else
@@ -632,16 +641,20 @@ void CalibrationGuiBase::onCaptureTargetButtonClicked()
               { QCoreApplication::processEvents(); },
               100);
 
+            assert(response.valid() && "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failure in calling service '%s'.", serviceName.c_str());
+                return;
             }
-            else if (!response.get()->is_accepted)
+
+            auto data = response.get();
+            if (!data->is_accepted)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failed to capture target. %s",
-                             response.get()->msg.c_str());
+                             data->msg.c_str());
             }
         }
         else
@@ -686,16 +699,20 @@ void CalibrationGuiBase::onFinalizeCalibrationButtonClicked()
             auto retCode = utils::doWhileWaiting(pExecutor_, response, [&]()
                                                  { QCoreApplication::processEvents(); }, 100);
 
+            assert(response.valid() && "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failure in calling service '%s'.", serviceName.c_str());
+                return;
             }
-            else if (!response.get()->is_accepted)
+
+            auto data = response.get();
+            if (!data->is_accepted)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failed to finalize calibration. %s",
-                             response.get()->msg.c_str());
+                             data->msg.c_str());
             }
         }
         else
@@ -741,16 +758,20 @@ void CalibrationGuiBase::onRemoveObservationButtonClicked()
             auto retCode = utils::doWhileWaiting(pExecutor_, response, [&]()
                                                  { QCoreApplication::processEvents(); }, 100);
 
+            assert(response.valid() && "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failure in calling service '%s'.", serviceName.c_str());
+                return;
             }
-            else if (!response.get()->is_accepted)
+
+            auto data = response.get();
+            if (!data->is_accepted)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
                              "Failed to remove last observation. %s",
-                             response.get()->msg.c_str());
+                             data->msg.c_str());
             }
         }
         else
