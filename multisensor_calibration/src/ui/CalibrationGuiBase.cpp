@@ -431,7 +431,7 @@ void CalibrationGuiBase::onActionResetCalibTriggered()
               { QCoreApplication::processEvents(); },
               100);
 
-            assert(response.valid() && "Response is not valid");
+            DEBUG_RUNTIME_ASSERT(response.valid(), "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
@@ -575,7 +575,7 @@ void CalibrationGuiBase::onActionImportObservationsTriggered()
                   { QCoreApplication::processEvents(); },
                   100);
 
-                assert(response.valid() && "Response is not valid");
+                DEBUG_RUNTIME_ASSERT(response.valid(), "Response is not valid");
                 if (retCode != rclcpp::FutureReturnCode::SUCCESS)
                 {
                     RCLCPP_ERROR(pNode_->get_logger(),
@@ -641,7 +641,7 @@ void CalibrationGuiBase::onCaptureTargetButtonClicked()
               { QCoreApplication::processEvents(); },
               100);
 
-            assert(response.valid() && "Response is not valid");
+            DEBUG_RUNTIME_ASSERT(response.valid(), "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
@@ -699,7 +699,7 @@ void CalibrationGuiBase::onFinalizeCalibrationButtonClicked()
             auto retCode = utils::doWhileWaiting(pExecutor_, response, [&]()
                                                  { QCoreApplication::processEvents(); }, 100);
 
-            assert(response.valid() && "Response is not valid");
+            DEBUG_RUNTIME_ASSERT(response.valid(), "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),
@@ -758,7 +758,7 @@ void CalibrationGuiBase::onRemoveObservationButtonClicked()
             auto retCode = utils::doWhileWaiting(pExecutor_, response, [&]()
                                                  { QCoreApplication::processEvents(); }, 100);
 
-            assert(response.valid() && "Response is not valid");
+            DEBUG_RUNTIME_ASSERT(response.valid(), "Response is not valid");
             if (retCode != rclcpp::FutureReturnCode::SUCCESS)
             {
                 RCLCPP_ERROR(pNode_->get_logger(),

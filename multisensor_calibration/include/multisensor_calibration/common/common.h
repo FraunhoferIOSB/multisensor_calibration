@@ -64,6 +64,15 @@
 #define VERSION_PATCH 0
 #endif
 
+#ifdef DEBUG_BUILD
+#define DEBUG_RUNTIME_ASSERT(cond, message)  \
+    {                                  \
+        (assert((cond) && (message))); \
+    }
+#else
+#define DEBUG_RUNTIME_ASSERT(cond, message)
+#endif
+
 namespace multisensor_calibration
 {
 
