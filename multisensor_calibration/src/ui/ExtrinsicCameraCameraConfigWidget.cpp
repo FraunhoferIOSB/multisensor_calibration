@@ -304,13 +304,13 @@ void ExtrinsicCameraCameraConfigWidget::setCalibrationOptionsFromSettings()
 
     //--- fill ui elements of calibration options
 
-    ui->srcImageTopicComboBox->setCurrentText(pSettings->value("camera/image_topic").toString());
-    ui->srcInfoTopicComboBox->setCurrentText(pSettings->value("camera/info_topic").toString());
-    ui->srcImageStateComboBox->setCurrentIndex(pSettings->value("camera/image_state").toInt());
+    ui->srcImageTopicComboBox->setCurrentText(pSettings->value("source_camera/image_topic").toString());
+    ui->srcInfoTopicComboBox->setCurrentText(pSettings->value("source_camera/info_topic").toString());
+    ui->srcImageStateComboBox->setCurrentIndex(pSettings->value("source_camera/image_state").toInt());
 
-    ui->refImageTopicComboBox->setCurrentText(pSettings->value("camera/image_topic").toString());
-    ui->refInfoTopicComboBox->setCurrentText(pSettings->value("camera/info_topic").toString());
-    ui->refImageStateComboBox->setCurrentIndex(pSettings->value("camera/image_state").toInt());
+    ui->refImageTopicComboBox->setCurrentText(pSettings->value("reference_camera/image_topic").toString());
+    ui->refInfoTopicComboBox->setCurrentText(pSettings->value("reference_camera/info_topic").toString());
+    ui->refImageStateComboBox->setCurrentIndex(pSettings->value("reference_camera/image_state").toInt());
 
     QString baseFrameIdVal = pSettings->value("calibration/base_frame_id").toString();
     if (!baseFrameIdVal.isEmpty())
