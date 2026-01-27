@@ -73,6 +73,8 @@ void ExtrinsicCameraCameraCalibration::calibrateLastObservation()
 {
 
     /* @TODO */
+    /* Nothing to be done here, the whole calibration is performed at the end. */
+    calibrationItrCnt_++;
 }
 
 //==================================================================================================
@@ -80,6 +82,9 @@ void ExtrinsicCameraCameraCalibration::calibrateLastObservation()
 bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
 {
     /* @TODO */
+    /* @TODO: Remember to tranform end calibration to baseFrameId_ if present */
+
+    return false;
 }
 
 //==================================================================================================
@@ -205,10 +210,10 @@ bool ExtrinsicCameraCameraCalibration::initializeServices(rclcpp::Node* ipNode)
     if (!ExtrinsicCalibrationBase::initializeServices(ipNode))
         return false;
 
-   /* @TODO */
+    /* @TODO */
 
     return true;
-  }
+}
 //==================================================================================================
 bool ExtrinsicCameraCameraCalibration::onRequestRemoveObservation(
   const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
@@ -347,7 +352,6 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
 
     /* @TODO */
 
-
     // Level at which to do the processing
     CameraDataProcessor::EProcessingLevel procLevel = (captureCalibrationTarget_)
                                                         ? CameraDataProcessor::TARGET_DETECTION
@@ -368,45 +372,39 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
                  static_cast<CameraDataProcessor::EProcessingLevel>(procLevel));
 
     //--- wait for processing to return
-    CameraDataProcessor::EProcessingResult camProcResult  = camProcFuture.get();
-    CameraDataProcessor::EProcessingResult lidarProcResult = lidarProcFuture.get();
+    CameraDataProcessor::EProcessingResult srcCamProcResult   = camProcFuture.get();
+    CameraDataProcessor::EProcessingResult refCamProcResult = lidarProcFuture.get();
 
     //--- if processing level is set to preview, publish preview from each sensor if successful
     if (procLevel == CameraDataProcessor::PREVIEW)
     {
-        if (camProcResult == CameraDataProcessor::SUCCESS)
+        if (srcCamProcResult == CameraDataProcessor::SUCCESS)
             pSrcDataProcessor_->publishPreview(ipSrcImgMsg->header);
-        if (lidarProcResult == CameraDataProcessor::SUCCESS)
-            pRefDataProcessor_->publishPreview(ipRefImgMsg->header.stamp,
-                                               (baseFrameId_.empty())
-                                                 ? refFrameId_
-                                                 : baseFrameId_);
+        if (refCamProcResult == CameraDataProcessor::SUCCESS)
+            pRefDataProcessor_->publishPreview(ipRefImgMsg->header);
     }
     //--- else if, processing level is target_detection,
     //--- calibrate only if processing for both sensors is successful
     else if (procLevel == CameraDataProcessor::TARGET_DETECTION)
     {
-        if (camProcResult == CameraDataProcessor::SUCCESS &&
-            lidarProcResult == CameraDataProcessor::SUCCESS)
+        if (srcCamProcResult == CameraDataProcessor::SUCCESS &&
+            refCamProcResult == CameraDataProcessor::SUCCESS)
         {
             //--- publish detections
             pSrcDataProcessor_->publishLastTargetDetection(ipSrcImgMsg->header);
-            pRefDataProcessor_->publishLastTargetDetection(ipRefImgMsg->header.stamp,
-                                                           (baseFrameId_.empty())
-                                                             ? refFrameId_
-                                                             : baseFrameId_);
+            pRefDataProcessor_->publishLastTargetDetection(ipRefImgMsg->header);
 
             //--- do calibration
             calibrateLastObservation();
         }
         else
         {
-            if (camProcResult != CameraDataProcessor::SUCCESS &&
-                lidarProcResult == CameraDataProcessor::SUCCESS)
+            if (srcCamProcResult != CameraDataProcessor::SUCCESS &&
+                refCamProcResult == CameraDataProcessor::SUCCESS)
                 pRefDataProcessor_->removeCalibIteration(calibrationItrCnt_);
 
-            if (camProcResult == CameraDataProcessor::SUCCESS &&
-                lidarProcResult != CameraDataProcessor::SUCCESS)
+            if (srcCamProcResult == CameraDataProcessor::SUCCESS &&
+                refCamProcResult != CameraDataProcessor::SUCCESS)
                 pSrcDataProcessor_->removeCalibIteration(calibrationItrCnt_);
 
             interf::msg::CalibrationResult calibResultMsg;
@@ -415,10 +413,10 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
         }
     }
 
-    //--- if this point is reachted, the target detection was not successful.
+    //--- if this point is reached, the target detection was not successful.
     //--- thus, if data processor is not pending for more data, set capturing flag to false.
-    if (camProcResult != CameraDataProcessor::PENDING &&
-        lidarProcResult != CameraDataProcessor::PENDING)
+    if (srcCamProcResult != CameraDataProcessor::PENDING &&
+        refCamProcResult != CameraDataProcessor::PENDING)
     {
         captureCalibrationTarget_ = false;
     }
@@ -442,7 +440,7 @@ bool ExtrinsicCameraCameraCalibration::saveCalibrationSettingsToWorkspace()
                              QString::fromStdString(srcTopicName_));
 
     pCalibSettings->setValue("source_camera/info_topic",
-                             QString::fromStdString(srcTopicName_));
+                             QString::fromStdString(srcCameraInfoTopic_));
 
     pCalibSettings->setValue("reference_camera/sensor_name",
                              QString::fromStdString(refSensorName_));
@@ -451,7 +449,7 @@ bool ExtrinsicCameraCameraCalibration::saveCalibrationSettingsToWorkspace()
                              QString::fromStdString(refTopicName_));
 
     pCalibSettings->setValue("reference_camera/info_topic",
-                             QString::fromStdString(srcTopicName_));
+                             QString::fromStdString(refCameraInfoTopic_));
 
     pCalibSettings->setValue("misc/sync_queue_size",
                              QVariant::fromValue(syncQueueSize_));
