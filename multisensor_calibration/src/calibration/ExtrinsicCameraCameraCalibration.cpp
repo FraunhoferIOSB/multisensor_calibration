@@ -8,10 +8,13 @@
 #include "multisensor_calibration/calibration/ExtrinsicCameraCameraCalibration.h"
 
 // Std
+#include <cassert>
+#include <cstddef>
 #include <functional>
 #include <future>
 
 // PCL
+#include <opencv2/core/types.hpp>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/registration/icp.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -69,22 +72,107 @@ ExtrinsicCameraCameraCalibration::~ExtrinsicCameraCameraCalibration()
 
 //==================================================================================================
 
-void ExtrinsicCameraCameraCalibration::calibrateLastObservation()
-{
-
-    /* @TODO */
-    /* Nothing to be done here, the whole calibration is performed at the end. */
-    calibrationItrCnt_++;
-}
-
-//==================================================================================================
-
 bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
 {
     /* @TODO */
     /* @TODO: Remember to tranform end calibration to baseFrameId_ if present */
 
-    return false;
+    if (!pSrcDataProcessor_->isCameraIntrinsicsSet() || !pRefDataProcessor_->isCameraIntrinsicsSet())
+    {
+        RCLCPP_ERROR(logger_, "Could not finalize calibration. "
+                              "Camera intrinsics are not set");
+        return false;
+    }
+
+    const auto n_iter = pSrcDataProcessor_->getNumCalibIterations();
+    assert(n_iter == pRefDataProcessor_->getNumCalibIterations());
+
+    std::vector<std::vector<cv::Point2f>> srcPoints;
+    std::vector<std::vector<cv::Point2f>> refPoints;
+    std::vector<std::vector<cv::Point3f>> objPoints;
+
+    srcPoints.reserve(n_iter);
+    refPoints.reserve(n_iter);
+    objPoints.reserve(n_iter);
+
+    for (uint i = 0; i < n_iter; i++)
+    {
+
+        std::set<uint> markerCornerIds;
+        std::vector<cv::Point3f> markerCornerPoints;
+        pSrcDataProcessor_->getMarkerCornersRelative(markerCornerPoints, markerCornerIds, i + 1);
+
+        std::set<uint> srcObservationIds;
+        std::vector<cv::Point2f> srcCornerObservations;
+        pSrcDataProcessor_->getOrderedObservations(srcObservationIds, srcCornerObservations, i + 1, 1);
+
+        std::set<uint> refObservationIds;
+        std::vector<cv::Point2f> refCornerObservations;
+        pRefDataProcessor_->getOrderedObservations(refObservationIds, refCornerObservations, i + 1, 1);
+
+        //--- remove observations that do not have a correspondence in the other list
+        removeCornerObservationsWithoutCorrespondence(srcObservationIds,
+                                                      refObservationIds,
+                                                      refCornerObservations);
+
+        removeCornerObservationsWithoutCorrespondence(refObservationIds,
+                                                      srcObservationIds,
+                                                      srcCornerObservations);
+
+        removeCornerObservationsWithoutCorrespondence(refObservationIds,
+                                                      markerCornerIds,
+                                                      markerCornerPoints);
+
+        if (markerCornerIds.size() != 0)
+        {
+            srcPoints.push_back(std::move(srcCornerObservations));
+            refPoints.push_back(std::move(refCornerObservations));
+            objPoints.push_back(std::move(markerCornerPoints));
+        }
+    }
+
+    if (srcPoints.size() == 0)
+    {
+        RCLCPP_ERROR(logger_, "Could not finalize calibration. "
+                              "No common observations available.");
+        return false;
+    }
+
+#ifdef DEBUG_BUILD
+    uint n_matches = 0;
+    uint o_matches = 0;
+    for (auto it : srcPoints)
+    {
+        n_matches += it.size() / 4;
+    }
+    for (auto it : objPoints)
+    {
+        o_matches += it.size() / 4;
+    }
+
+    std::cout << "Running stereo calib with: " << srcPoints.size() << " iterations and " << n_matches << " matches" << ":: OBJ " << o_matches << std::endl;
+#endif
+
+    lib3d::Extrinsics finalSensorExtrinsics; //  sensor extrinsics after pnp calibration using all targets
+    std::vector<uint> indices;
+    auto result = runStereoMatching(objPoints,
+                                    srcPoints,
+                                    refPoints,
+                                    pSrcDataProcessor_->cameraIntrinsics(),
+                                    pRefDataProcessor_->cameraIntrinsics(),
+                                    1.0,
+                                    false,
+                                    finalSensorExtrinsics);
+
+
+    /* @TODO */
+    ExtrinsicCalibrationBase::updateCalibrationResult(std::make_pair("Mean Reprojection Error (in pixel)", result),
+                                                      static_cast<int>(pRefDataProcessor_->getNumCalibIterations()));
+
+    //--- publish last sensor extrinsics
+    ExtrinsicCalibrationBase::publishLastCalibrationResult();
+
+    return true;
 }
 
 //==================================================================================================
@@ -372,7 +460,7 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
                  static_cast<CameraDataProcessor::EProcessingLevel>(procLevel));
 
     //--- wait for processing to return
-    CameraDataProcessor::EProcessingResult srcCamProcResult   = camProcFuture.get();
+    CameraDataProcessor::EProcessingResult srcCamProcResult = camProcFuture.get();
     CameraDataProcessor::EProcessingResult refCamProcResult = lidarProcFuture.get();
 
     //--- if processing level is set to preview, publish preview from each sensor if successful
@@ -394,8 +482,8 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
             pSrcDataProcessor_->publishLastTargetDetection(ipSrcImgMsg->header);
             pRefDataProcessor_->publishLastTargetDetection(ipRefImgMsg->header);
 
-            //--- do calibration
-            calibrateLastObservation();
+            //--- No iterative calib.
+            calibrationItrCnt_++;
         }
         else
         {

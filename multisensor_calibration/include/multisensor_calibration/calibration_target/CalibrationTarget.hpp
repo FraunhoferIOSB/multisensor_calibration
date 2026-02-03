@@ -74,6 +74,9 @@ struct CalibrationTarget
     /// x,y,z marker positions (top-left) on board relative to top-left corner (planar --> z = 0)
     std::vector<cv::Point3f> markerPositions = {};
 
+    /// x,y,z markers' corners positions on board relative to top-left corner (planar --> z = 0)
+    std::vector<std::vector<cv::Point3f>> boardCorners = {};
+
     /// cutouts on board
     std::vector<std::shared_ptr<Cutout>> pBoardCutouts = {};
 
@@ -107,8 +110,7 @@ struct CalibrationTarget
         uint nMarkers = markerIds.size();
 
         // corner points of each marker on the calibration board
-        std::vector<std::vector<cv::Point3f>> boardCorners =
-          std::vector<std::vector<cv::Point3f>>(nMarkers, std::vector<cv::Point3f>());
+        boardCorners = std::vector<std::vector<cv::Point3f>>(nMarkers, std::vector<cv::Point3f>());
         for (uint i = 0; i < nMarkers; ++i)
         {
             cv::Point3f markerPos = markerPositions[i];
@@ -477,6 +479,25 @@ struct CalibrationTarget
                          static_cast<typename PointT::value_type>(markerCorner(1, 0)),
                          static_cast<typename PointT::value_type>(markerCorner(2, 0)));
             }
+        }
+    }
+
+    /**
+     * @brief Get 3D coordinates of each marker corner relative to the top left corner (Z = 0)
+     *
+     * @param[out] oMarkerCorners List of 4D arrays holding the 3D corner points of each marker
+     * corresponding to the ID in oMarkerIDs. The corner points are given in clockwise order,
+     * starting from the top left.
+     */
+    void getMarkerCornersRelative(std::vector<std::vector<cv::Point3f>>& oMarkerPoints, std::vector<uint>& oMarkerIds) const
+    {
+        //--- compute pose
+        oMarkerIds.clear();
+        oMarkerPoints.clear();
+        for (uint i = 0; i < markerIds.size(); ++i)
+        {
+            oMarkerIds.push_back(markerIds.at(i));
+            oMarkerPoints.push_back(boardCorners.at(i));
         }
     }
 

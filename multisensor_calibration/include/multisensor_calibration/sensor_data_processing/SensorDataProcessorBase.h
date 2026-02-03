@@ -199,7 +199,11 @@ class SensorDataProcessorBase
      */
     virtual bool saveObservations(const fs::path iOutputDir) const;
 
-  protected:
+    /**
+     * @brief Get marker corners in relative ref. system and set marker IDs accordung to iteration number interN
+     */
+    void getMarkerCornersRelative(std::vector<cv::Point3f>& oMarkerPoints, std::set<uint>& oMarkerIds, uint iterN) const;
+
     /**
      * @brief Method to average the observations.
      *
@@ -211,6 +215,7 @@ class SensorDataProcessorBase
     bool averageObservations(const std::vector<lib3d::Extrinsics>& iCalibTargetPoses,
                              lib3d::Extrinsics& oAvgdCalibTargetPose) const;
 
+  protected:
     /**
      * @brief Method to initialize publishers
      *

@@ -66,17 +66,15 @@ class Extrinsic2d2dCalibrationBase
     // METHODS
     //==============================================================================
   protected:
-    std::pair<double, int> runStereoMatching(
-      const std::vector<cv::Point2f>::const_iterator iSrcCamObsBegin,
-      const std::vector<cv::Point2f>::const_iterator iSrcCamObsEnd,
-      const std::vector<cv::Point2f>::const_iterator iRefCamObsBegin,
-      const std::vector<cv::Point2f>::const_iterator iRefCamObsEnd,
-      lib3d::Intrinsics& ioSrcCameraIntrinsics,
-      lib3d::Intrinsics& ioRefCameraIntrinsics,
+    double runStereoMatching(
+      const std::vector<std::vector<cv::Point3f>>& iMarkerPointsRelative,
+      const std::vector<std::vector<cv::Point2f>>& iSrcCamObs,
+      const std::vector<std::vector<cv::Point2f>>& iRefCamObs,
+      lib3d::Intrinsics const& ioSrcCameraIntrinsics,
+      lib3d::Intrinsics const& ioRefCameraIntrinsics,
       float inlierMaxRpjError,
-      bool useIntrinsics,
-      lib3d::Extrinsics& oNewSensorExtrinsics,
-      const std::vector<uint>& indices = {}) const;
+      bool refineIntrinsics,
+      lib3d::Extrinsics& oNewSensorExtrinsics) const;
 };
 
 } // namespace multisensor_calibration

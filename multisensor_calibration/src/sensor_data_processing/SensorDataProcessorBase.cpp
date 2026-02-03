@@ -206,6 +206,29 @@ bool SensorDataProcessorBase<SensorDataT>::saveObservations(fs::path iOutputPath
 
 //==================================================================================================
 template <class SensorDataT>
+void SensorDataProcessorBase<SensorDataT>::getMarkerCornersRelative(std::vector<cv::Point3f>& oMarkerPoints, std::set<uint>& oMarkerIds, uint iterN) const
+{
+    oMarkerIds.clear();
+    oMarkerPoints.clear();
+
+    std::vector<std::vector<cv::Point3f>> buffer;
+    std::vector<uint> markerIds;
+
+    this->calibrationTarget_.getMarkerCornersRelative(buffer, markerIds);
+
+    for (uint i = 0; i < buffer.size(); i++)
+    {
+        const auto& marker = buffer.at(i);
+        for (auto j : marker)
+        {
+            oMarkerPoints.push_back(j);
+        }
+        oMarkerIds.insert(iterN * 100 + markerIds.at(i));
+    }
+}
+
+//==================================================================================================
+template <class SensorDataT>
 bool SensorDataProcessorBase<SensorDataT>::averageObservations(
   const std::vector<lib3d::Extrinsics>& iCalibTargetPoses,
   lib3d::Extrinsics& oAvgdCalibTargetPose) const

@@ -457,6 +457,12 @@ template void ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>:
 template void ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::
   removeCornerObservationsWithoutCorrespondence<uint, cv::Point3f>(
     const std::set<uint>&, std::set<uint>&, std::vector<cv::Point3f>& ioSrcObs) const;
+template void ExtrinsicCalibrationBase<CameraDataProcessor, CameraDataProcessor>::
+  removeCornerObservationsWithoutCorrespondence<uint, cv::Point2f>(
+      const std::set<uint>&, std::set<uint>&, std::vector<cv::Point2f>& ioSrcObs) const;
+template void ExtrinsicCalibrationBase<CameraDataProcessor, CameraDataProcessor>::
+  removeCornerObservationsWithoutCorrespondence<uint, cv::Point3f>(
+      const std::set<uint>&, std::set<uint>&, std::vector<cv::Point3f>& ioSrcObs) const;
 template void ExtrinsicCalibrationBase<CameraDataProcessor, ReferenceDataProcessor3d>::
   removeCornerObservationsWithoutCorrespondence<uint, cv::Point2f>(
     const std::set<uint>&, std::set<uint>&, std::vector<cv::Point2f>& ioSrcObs) const;

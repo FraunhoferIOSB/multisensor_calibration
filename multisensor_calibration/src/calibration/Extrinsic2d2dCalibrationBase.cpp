@@ -26,8 +26,17 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/lib3D/core/extrinsics.hpp"
 #include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
+#include "multisensor_calibration/sensor_data_processing/SensorDataProcessorBase.h"
+#include <cstddef>
 #include <multisensor_calibration/calibration/Extrinsic2d2dCalibrationBase.h>
+#include <numeric>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/core/hal/interface.h>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/types.hpp>
 
 namespace multisensor_calibration
 {
@@ -47,24 +56,61 @@ Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::~Extrinsic2d
 
 //==================================================================================================
 template <class SrcDataProcessorT, class RefDataProcessorT>
-std::pair<double, int> Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runStereoMatching(
-  const std::vector<cv::Point2f>::const_iterator iSrcCamObsBegin,
-  const std::vector<cv::Point2f>::const_iterator iSrcCamObsEnd,
-  const std::vector<cv::Point2f>::const_iterator iRefCamObsBegin,
-  const std::vector<cv::Point2f>::const_iterator iRefCamObsEnd,
-  lib3d::Intrinsics& ioSrcCameraIntrinsics,
-  lib3d::Intrinsics& ioRefCameraIntrinsics,
+double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runStereoMatching(
+  const std::vector<std::vector<cv::Point3f>>& iMarkerPointsRelative,
+  const std::vector<std::vector<cv::Point2f>>& iSrcCamObs,
+  const std::vector<std::vector<cv::Point2f>>& iRefCamObs,
+  lib3d::Intrinsics const& ioSrcCameraIntrinsics,
+  lib3d::Intrinsics const& ioRefCameraIntrinsics,
   float inlierMaxRpjError,
-  bool useIntrinsics,
-  lib3d::Extrinsics& oNewSensorExtrinsics,
-  const std::vector<uint>& indices) const
+  bool refineIntrinsics,
+  lib3d::Extrinsics& oNewSensorExtrinsics) const
 {
+    UNUSED_VAR(inlierMaxRpjError);
+    UNUSED_VAR(refineIntrinsics);
+
+    auto srcIntrinsics = ioSrcCameraIntrinsics.getK_as3x3();
+    auto srcDistCoeff  = ioSrcCameraIntrinsics.getDistortionCoeffs();
+
+    auto refIntrinsics = ioRefCameraIntrinsics.getK_as3x3();
+    auto refDistCoeff  = ioRefCameraIntrinsics.getDistortionCoeffs();
+
+    cv::Size imageSize(ioSrcCameraIntrinsics.getWidth(), ioSrcCameraIntrinsics.getHeight());
+
+    std::vector<lib3d::Extrinsics> iterationsExtrinsics;
+
     double meanError = 0.0;
-    int inlierCount  = 0;
 
-    /* @TODO update sensorExtrinsics_ */
+    for (uint i = 0; i < iMarkerPointsRelative.size(); i++)
+    {
 
-    return {meanError, inlierCount};
+        cv::Mat rotation, translation, E, F;
+        std::vector<double> error;
+
+        std::vector<std::vector<cv::Point3f>> obj = {iMarkerPointsRelative.at(i)};
+        std::vector<std::vector<cv::Point2f>> src = {iSrcCamObs.at(i)};
+        std::vector<std::vector<cv::Point2f>> ref = {iRefCamObs.at(i)};
+
+        cv::stereoCalibrate(obj,
+                            src,
+                            ref,
+                            srcIntrinsics, srcDistCoeff,
+                            refIntrinsics, refDistCoeff,
+                            imageSize,
+                            rotation,
+                            translation,
+                            E, F,
+                            error,
+                            cv::CALIB_FIX_INTRINSIC);
+
+        iterationsExtrinsics.emplace_back(rotation, translation);
+        meanError += error.at(0);
+    }
+
+    this->pSrcDataProcessor_->averageObservations(iterationsExtrinsics, oNewSensorExtrinsics);
+    meanError = meanError / iMarkerPointsRelative.size();
+
+    return meanError;
 }
 
 template class Extrinsic2d2dCalibrationBase<CameraDataProcessor, CameraDataProcessor>;

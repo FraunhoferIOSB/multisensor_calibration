@@ -85,13 +85,6 @@ class ExtrinsicCameraCameraCalibration
     //==============================================================================
     // METHODS
     //==============================================================================
-    /**
-     * @brief Run the extrinsic calibration based on the last observation of the calibration target.
-     *
-     * This will remove observations without correspondence and estimate a rigid transformation
-     * based on the detected marker corners.
-     */
-    void calibrateLastObservation();
 
     /**
      * @brief Method to receive synchronized sensor data, i.e. LiDAR point clouds from the source
