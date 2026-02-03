@@ -298,10 +298,53 @@ bool ExtrinsicCameraCameraCalibration::initializeServices(rclcpp::Node* ipNode)
     if (!ExtrinsicCalibrationBase::initializeServices(ipNode))
         return false;
 
-    /* @TODO */
+    //--- service to get camera intrinsics
+    pCameraIntrSrv_ = ipNode->create_service<interf::srv::CameraIntrinsics>(
+      "~/" + REQUEST_CAM_INTRINSICS_SRV_NAME,
+      std::bind(&ExtrinsicCameraCameraCalibration::onRequestCameraIntrinsics, this,
+                std::placeholders::_1, std::placeholders::_2));
 
     return true;
 }
+
+//==================================================================================================
+bool ExtrinsicCameraCameraCalibration::onRequestCameraIntrinsics(
+  const std::shared_ptr<interf::srv::CameraIntrinsics::Request> ipReq,
+  std::shared_ptr<interf::srv::CameraIntrinsics::Response> opRes)
+{
+    UNUSED_VAR(ipReq);
+
+    lib3d::Intrinsics cameraIntr;
+    if (!isInitialized_ || pSrcDataProcessor_ == nullptr)
+        cameraIntr = lib3d::Intrinsics();
+    else
+        cameraIntr = pSrcDataProcessor_->getCameraIntrinsics();
+
+    //--- image size
+    opRes->intrinsics.width  = cameraIntr.getWidth();
+    opRes->intrinsics.height = cameraIntr.getHeight();
+
+    //--- K
+    cv::Mat K = cv::Mat(cameraIntr.getK_as3x3());
+    std::memcpy(opRes->intrinsics.k.data(), K.data, 9 * K.elemSize1());
+
+    //--- distortion
+    int nDistParams     = cameraIntr.getDistortionCoeffs().total();
+    opRes->intrinsics.d = std::vector<double>(nDistParams);
+    std::memcpy(opRes->intrinsics.d.data(),
+                cameraIntr.getDistortionCoeffs().data,
+                nDistParams * cameraIntr.getDistortionCoeffs().elemSize1());
+
+    //--- P
+    cv::Mat P = cv::Mat(cameraIntr.getK_as3x4());
+    std::memcpy(opRes->intrinsics.p.data(), P.data, 12 * K.elemSize1());
+
+    //--- image state
+    opRes->image_state = IMG_STATE_2_STR.find(srcImageState_)->second;
+
+    return true;
+}
+
 //==================================================================================================
 bool ExtrinsicCameraCameraCalibration::onRequestRemoveObservation(
   const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,

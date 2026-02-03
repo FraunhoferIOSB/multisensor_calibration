@@ -123,6 +123,16 @@ class ExtrinsicCameraCameraCalibration
     void onSrcCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo);
     void onRefCameraInfoReceived(const sensor_msgs::msg::CameraInfo::SharedPtr pCamInfo);
 
+    /**
+     * @brief Handle service call to get camera intrinsics.
+     *
+     * @param[in] ipReq Request, UNUSED.
+     * @param[out] opRes Response.
+     */
+    bool onRequestCameraIntrinsics(
+      const std::shared_ptr<interf::srv::CameraIntrinsics::Request> ipReq,
+      std::shared_ptr<interf::srv::CameraIntrinsics::Response> opRes);
+
     //==============================================================================
     // METHODS: Overrides from parent
     //==============================================================================

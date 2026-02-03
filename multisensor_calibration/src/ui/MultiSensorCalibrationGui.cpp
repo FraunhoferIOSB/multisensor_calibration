@@ -125,7 +125,7 @@ void MultiSensorCalibrationGui::runExtrinsicCameraCameraCalibration()
     /* @TODO: Guidance, Gui for Camera-Camera */
     runExtrinsicCalibration<
       multisensor_calibration::ExtrinsicCameraCameraCalibration,
-      MultiSensorCalibrationGui::NULLTYPE,
+      multisensor_calibration::GuidedCameraLidarTargetPlacementNode,
       CameraCameraCalibrationGui>();
 }
 
