@@ -243,6 +243,8 @@ bool ExtrinsicCameraLidarCalibration::finalizeCalibration()
       false,
       finalSensorExtrinsics);
 
+    sensorExtrinsics_.push_back(finalSensorExtrinsics);
+
     ExtrinsicCalibrationBase::updateCalibrationResult(std::make_pair("Mean Reprojection Error (in pixel)", pnpRetVal.first), static_cast<int>(pRefDataProcessor_->getNumCalibIterations()));
     //--- calculate additional sensor calibrations if camera is to be calibrated as stereo camera
     if (isStereoCamera_ && rightCameraInfo_.width != 0)
