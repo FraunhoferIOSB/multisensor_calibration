@@ -31,6 +31,7 @@
 
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
+#include "multisensor_calibration/common/lib3D/core/extrinsics.hpp"
 #include "multisensor_calibration/common/utils.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"
 #include <multisensor_calibration_interface/msg/calibration_result.hpp>
@@ -74,9 +75,6 @@ ExtrinsicCameraCameraCalibration::~ExtrinsicCameraCameraCalibration()
 
 bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
 {
-    /* @TODO */
-    /* @TODO: Remember to tranform end calibration to baseFrameId_ if present */
-
     if (!pSrcDataProcessor_->isCameraIntrinsicsSet() || !pRefDataProcessor_->isCameraIntrinsicsSet())
     {
         RCLCPP_ERROR(logger_, "Could not finalize calibration. "
@@ -164,13 +162,63 @@ bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
                                     false,
                                     finalSensorExtrinsics);
 
+    // Transform to base frame ID if present
+    std::string tmpRefFrameId = refFrameId_;
+    if (!baseFrameId_.empty() && baseFrameId_ != refFrameId_)
+    {
+        tmpRefFrameId = baseFrameId_;
 
-    /* @TODO */
+        if (tfBuffer_->_frameExists(baseFrameId_))
+        {
+            try
+            {
+                auto t = tfBuffer_->lookupTransform(baseFrameId_, refFrameId_,
+                                                    tf2::TimePointZero);
+
+                tf2::Quaternion q(t.transform.rotation.x, t.transform.rotation.y, t.transform.rotation.z, t.transform.rotation.w);
+                tf2::Vector3 v(t.transform.translation.x, t.transform.translation.y, t.transform.translation.z);
+                tf2::Transform T_B_C(q, v);
+
+                tf2::Matrix3x3 R   = T_B_C.getBasis();
+                tf2::Vector3 trans = T_B_C.getOrigin();
+
+                cv::Mat T_B_C_mat = cv::Mat::eye(4, 4, CV_64F);
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 3; j++)
+                        T_B_C_mat.at<double>(i, j) = R[i][j];
+
+                for (int i = 0; i < 3; i++)
+                    T_B_C_mat.at<double>(i, 3) = trans[i];
+
+                auto tmat = finalSensorExtrinsics.getRTMatrix();
+
+                auto final = tmat * T_B_C_mat;
+                finalSensorExtrinsics.setRTMatrix(final);
+            }
+            catch (tf2::TransformException& ex)
+            {
+                RCLCPP_ERROR(logger_,
+                             "tf2::TransformException while trying to apply final transform to base frame id %s ",
+                             ex.what());
+            }
+        }
+        else
+        {
+            RCLCPP_WARN(logger_,
+                        "Base Frame '%s' does not exists! "
+                        "Removing base frame and calibrating relative to reference cloud.",
+                        baseFrameId_.c_str());
+            baseFrameId_ = "";
+        }
+    }
+
+    sensorExtrinsics_.push_back(finalSensorExtrinsics);
+
     ExtrinsicCalibrationBase::updateCalibrationResult(std::make_pair("Mean Reprojection Error (in pixel)", result),
                                                       static_cast<int>(pRefDataProcessor_->getNumCalibIterations()));
-
     //--- publish last sensor extrinsics
     ExtrinsicCalibrationBase::publishLastCalibrationResult();
+
 
     return true;
 }
@@ -447,41 +495,7 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
     {
         srcFrameId_ = ipSrcImgMsg->header.frame_id;
         refFrameId_ = ipRefImgMsg->header.frame_id;
-
-        // //--- if base frame id is not empty and unequal to refCloudFrameId use baseFrameID as
-        // //--- reference frame id.
-        // std::string tmpRefFrameId = refFrameId_;
-        // if (!baseFrameId_.empty() && baseFrameId_ != refFrameId_)
-        // {
-        //     tmpRefFrameId = baseFrameId_;
-
-        //     if (tfBuffer_->_frameExists(baseFrameId_))
-        //     {
-        //         /* @TODO */
-        //     }
-        //     else
-        //     {
-        //         RCLCPP_WARN(logger_,
-        //                     "Base Frame '%s' does not exists! "
-        //                     "Removing base frame and calibrating relative to reference cloud.",
-        //                     baseFrameId_.c_str());
-        //         baseFrameId_ = "";
-        //     }
-        // }
-
-        // //--- set sensor extrinsics from either cloud or base frame id and apply frustum culling
-        // if (useTfTreeAsInitialGuess_ &&
-        //     setSensorExtrinsicsFromFrameIds(srcFrameId_, tmpRefFrameId))
-        // {
-        //     /* @TODO */
-        // }
-        // else
-        // {
-        //     /* @TODO */
-        // }
     }
-
-    /* @TODO */
 
     // Level at which to do the processing
     CameraDataProcessor::EProcessingLevel procLevel = (captureCalibrationTarget_)
