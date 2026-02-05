@@ -79,36 +79,20 @@ double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runSt
 
     std::vector<lib3d::Extrinsics> iterationsExtrinsics;
 
-    double meanError = 0.0;
+    cv::Mat rotation, translation, E, F;
+    std::vector<double> error;
+    double meanError = cv::stereoCalibrate(iMarkerPointsRelative,
+                        iSrcCamObs,
+                        iRefCamObs,
+                        srcIntrinsics, srcDistCoeff,
+                        refIntrinsics, refDistCoeff,
+                        imageSize,
+                        rotation,
+                        translation,
+                        E, F,
+                        cv::CALIB_FIX_INTRINSIC | cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_FOCAL_LENGTH | cv::CALIB_ZERO_TANGENT_DIST);
 
-    for (uint i = 0; i < iMarkerPointsRelative.size(); i++)
-    {
-
-        cv::Mat rotation, translation, E, F;
-        std::vector<double> error;
-
-        std::vector<std::vector<cv::Point3f>> obj = {iMarkerPointsRelative.at(i)};
-        std::vector<std::vector<cv::Point2f>> src = {iSrcCamObs.at(i)};
-        std::vector<std::vector<cv::Point2f>> ref = {iRefCamObs.at(i)};
-
-        cv::stereoCalibrate(obj,
-                            src,
-                            ref,
-                            srcIntrinsics, srcDistCoeff,
-                            refIntrinsics, refDistCoeff,
-                            imageSize,
-                            rotation,
-                            translation,
-                            E, F,
-                            error,
-                            cv::CALIB_FIX_INTRINSIC);
-
-        iterationsExtrinsics.emplace_back(rotation, translation);
-        meanError += error.at(0);
-    }
-
-    this->pSrcDataProcessor_->averageObservations(iterationsExtrinsics, oNewSensorExtrinsics);
-    meanError = meanError / iMarkerPointsRelative.size();
+    oNewSensorExtrinsics = lib3d::Extrinsics(rotation, translation, lib3d::Extrinsics::REF_2_LOCAL);
 
     return meanError;
 }
