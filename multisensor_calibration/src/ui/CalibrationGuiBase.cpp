@@ -98,7 +98,7 @@ bool CalibrationGuiBase::init(const std::shared_ptr<rclcpp::Executor>& ipExec,
 
     //--- activate visualization push button in gui
     if (pCalibControlWindow_)
-        pCalibControlWindow_->pbVisCalibrationPtr()->setEnabled((pExecutor_ != nullptr));
+        pCalibControlWindow_->pbVisCalibrationPtr()->setEnabled((pExecutor_ != nullptr) && hasCalibVisualizer_);
 
     return true;
 }
@@ -251,7 +251,7 @@ bool CalibrationGuiBase::setupGuiElements()
     pCalibControlWindow_->move(screenGeometry_.topLeft());
     pCalibControlWindow_->setFixedSize((screenGeometry_.width() / 2) - 1,
                                        (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
-    pCalibControlWindow_->pbVisCalibrationPtr()->setEnabled((pExecutor_ != nullptr));
+    pCalibControlWindow_->pbVisCalibrationPtr()->setEnabled((pExecutor_ != nullptr) && hasCalibVisualizer_);
     pCalibControlWindow_->show();
 
     //--- connect close signals

@@ -252,6 +252,9 @@ class CalibrationGuiBase : public GuiBase
 
     /// Pointer to process of rqt_reconfigure
     std::shared_ptr<QProcess> pRqtReconfigureProcess_;
+
+    /// Flag to signal if the current calib. mode has a visualizer
+    bool hasCalibVisualizer_ = true;
 };
 
 } // namespace multisensor_calibration
