@@ -152,18 +152,26 @@ bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
 #endif
 
     lib3d::Extrinsics finalSensorExtrinsics; //  sensor extrinsics after pnp calibration using all targets
+    std::string tmpRefFrameId = refFrameId_;
+
+    // Not supported by OpenCV in stereoCalibrate
+    // if (useTfTreeAsInitialGuess_ &&
+    //     setSensorExtrinsicsFromFrameIds(srcFrameId_, tmpRefFrameId))
+    // {
+    //     finalSensorExtrinsics = sensorExtrinsics_.back();
+    //     finalSensorExtrinsics.setTransfDirection(lib3d::Extrinsics::LOCAL_2_REF);
+    // }
+
     std::vector<uint> indices;
     auto result = runStereoCalib(objPoints,
-                                    srcPoints,
-                                    refPoints,
-                                    pSrcDataProcessor_->cameraIntrinsics(),
-                                    pRefDataProcessor_->cameraIntrinsics(),
-                                    1.0,
-                                    false,
-                                    finalSensorExtrinsics);
+                                 srcPoints,
+                                 refPoints,
+                                 pSrcDataProcessor_->cameraIntrinsics(),
+                                 pRefDataProcessor_->cameraIntrinsics(),
+                                 false,
+                                 finalSensorExtrinsics);
 
     // Transform to base frame ID if present
-    std::string tmpRefFrameId = refFrameId_;
     if (!baseFrameId_.empty() && baseFrameId_ != refFrameId_)
     {
         tmpRefFrameId = baseFrameId_;
@@ -218,7 +226,6 @@ bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
                                                       static_cast<int>(pRefDataProcessor_->getNumCalibIterations()));
     //--- publish last sensor extrinsics
     ExtrinsicCalibrationBase::publishLastCalibrationResult();
-
 
     return true;
 }

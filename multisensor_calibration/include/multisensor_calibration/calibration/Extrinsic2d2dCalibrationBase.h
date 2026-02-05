@@ -72,7 +72,6 @@ class Extrinsic2d2dCalibrationBase
       const std::vector<std::vector<cv::Point2f>>& iRefCamObs,
       lib3d::Intrinsics const& ioSrcCameraIntrinsics,
       lib3d::Intrinsics const& ioRefCameraIntrinsics,
-      float inlierMaxRpjError,
       bool refineIntrinsics,
       lib3d::Extrinsics& oNewSensorExtrinsics) const;
 };

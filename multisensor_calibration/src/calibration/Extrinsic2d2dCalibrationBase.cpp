@@ -26,6 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#include "multisensor_calibration/calibration/ExtrinsicCalibrationBase.h"
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/common/lib3D/core/extrinsics.hpp"
 #include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
@@ -59,12 +60,10 @@ double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runSt
   const std::vector<std::vector<cv::Point2f>>& iRefCamObs,
   lib3d::Intrinsics const& ioSrcCameraIntrinsics,
   lib3d::Intrinsics const& ioRefCameraIntrinsics,
-  float inlierMaxRpjError,
   bool refineIntrinsics,
   lib3d::Extrinsics& oNewSensorExtrinsics) const
 {
-    UNUSED_VAR(inlierMaxRpjError);
-    UNUSED_VAR(refineIntrinsics);
+    UNUSED_VAR(refineIntrinsics); /* @TODO */
 
     auto srcIntrinsics = ioSrcCameraIntrinsics.getK_as3x3();
     auto srcDistCoeff  = ioSrcCameraIntrinsics.getDistortionCoeffs();
@@ -76,7 +75,20 @@ double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runSt
 
     std::vector<lib3d::Extrinsics> iterationsExtrinsics;
 
-    cv::Mat rotation, translation, E, F;
+    cv::Mat E, F;
+    cv::Matx33d rotation;
+    cv::Mat translation;
+
+    int flags =  cv::CALIB_FIX_INTRINSIC | cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_FOCAL_LENGTH | cv::CALIB_ZERO_TANGENT_DIST;
+
+    // Not supported by OpenCV yet
+    // if (ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::useTfTreeAsInitialGuess_)
+    // {
+    //     rotation = oNewSensorExtrinsics.getRotationMat();
+    //     translation = oNewSensorExtrinsics.getTranslationVec();
+    //     flags |= cv::CALIB_USE_EXTRINSIC_GUESS;
+    // }
+
     std::vector<double> error;
     double meanError = cv::stereoCalibrate(iMarkerPointsRelative,
                         iSrcCamObs,
@@ -87,7 +99,7 @@ double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runSt
                         rotation,
                         translation,
                         E, F,
-                        cv::CALIB_FIX_INTRINSIC | cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_FOCAL_LENGTH | cv::CALIB_ZERO_TANGENT_DIST);
+                        flags);
 
     oNewSensorExtrinsics = lib3d::Extrinsics(rotation, translation, lib3d::Extrinsics::LOCAL_2_REF);
 
