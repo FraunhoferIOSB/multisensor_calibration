@@ -331,8 +331,10 @@ void ExtrinsicCameraCameraConfigWidget::setCalibrationOptionsFromSettings()
     ui->initialGuessCheckBox->setChecked(
       pSettings->value("calibration/use_initial_guess").toBool());
 
-    ui->calibrateIntrinsics->setChecked(
-      pSettings->value("intrinsic_calibration").toBool());
+    ui->calibrateIntrinsics->setChecked(false);
+    ui->calibrateIntrinsics->setEnabled(false);
+    // ui->calibrateIntrinsics->setChecked(
+    //   pSettings->value("intrinsic_calibration").toBool());
 
     ui->queueSizeSpinBox->setValue(pSettings->value("misc/sync_queue_size").toInt());
 }

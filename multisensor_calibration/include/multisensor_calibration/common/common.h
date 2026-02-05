@@ -225,7 +225,7 @@ static const int DEFAULT_SYNC_QUEUE_SIZE = 100;
     X(EXTRINSIC_CAMERA_REFERENCE_CALIBRATION, "extrinsic_camera_reference_calibration", "Extrinsic Camera-Reference") \
     X(EXTRINSIC_LIDAR_REFERENCE_CALIBRATION, "extrinsic_lidar_reference_calibration", "Extrinsic LiDAR-Reference")    \
     X(EXTRINSIC_LIDAR_VEHICLE_CALIBRATION, "extrinsic_lidar_vehicle_calibration", "Extrinsic LiDAR-Vehicle")          \
-    X(STEREO_CAMERA_CALIBRATION, "stereo_camera_calibration", "Intrinsic and Extrinsic Camera-Camera")
+    X(STEREO_CAMERA_CALIBRATION, "stereo_camera_calibration", "Extrinsic Camera-Camera")
 
 enum ECalibrationType
 {
