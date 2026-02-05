@@ -66,7 +66,7 @@ class Extrinsic2d2dCalibrationBase
     // METHODS
     //==============================================================================
   protected:
-    double runStereoMatching(
+    double runStereoCalib(
       const std::vector<std::vector<cv::Point3f>>& iMarkerPointsRelative,
       const std::vector<std::vector<cv::Point2f>>& iSrcCamObs,
       const std::vector<std::vector<cv::Point2f>>& iRefCamObs,

@@ -153,7 +153,7 @@ bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
 
     lib3d::Extrinsics finalSensorExtrinsics; //  sensor extrinsics after pnp calibration using all targets
     std::vector<uint> indices;
-    auto result = runStereoMatching(objPoints,
+    auto result = runStereoCalib(objPoints,
                                     srcPoints,
                                     refPoints,
                                     pSrcDataProcessor_->cameraIntrinsics(),
@@ -190,10 +190,10 @@ bool ExtrinsicCameraCameraCalibration::finalizeCalibration()
                 for (int i = 0; i < 3; i++)
                     T_B_C_mat.at<double>(i, 3) = trans[i];
 
-                auto tmat = finalSensorExtrinsics.getRTMatrix();
+                auto tmat = finalSensorExtrinsics.getRTMatrix(lib3d::Extrinsics::LOCAL_2_REF);
 
                 auto final = tmat * T_B_C_mat;
-                finalSensorExtrinsics.setRTMatrix(final);
+                finalSensorExtrinsics.setRTMatrix(final, lib3d::Extrinsics::LOCAL_2_REF);
             }
             catch (tf2::TransformException& ex)
             {

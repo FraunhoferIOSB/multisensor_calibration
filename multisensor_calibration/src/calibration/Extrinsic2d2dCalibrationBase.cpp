@@ -29,10 +29,7 @@
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/common/lib3D/core/extrinsics.hpp"
 #include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
-#include "multisensor_calibration/sensor_data_processing/SensorDataProcessorBase.h"
-#include <cstddef>
 #include <multisensor_calibration/calibration/Extrinsic2d2dCalibrationBase.h>
-#include <numeric>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/core/mat.hpp>
@@ -56,7 +53,7 @@ Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::~Extrinsic2d
 
 //==================================================================================================
 template <class SrcDataProcessorT, class RefDataProcessorT>
-double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runStereoMatching(
+double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runStereoCalib(
   const std::vector<std::vector<cv::Point3f>>& iMarkerPointsRelative,
   const std::vector<std::vector<cv::Point2f>>& iSrcCamObs,
   const std::vector<std::vector<cv::Point2f>>& iRefCamObs,
@@ -92,7 +89,7 @@ double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runSt
                         E, F,
                         cv::CALIB_FIX_INTRINSIC | cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_FOCAL_LENGTH | cv::CALIB_ZERO_TANGENT_DIST);
 
-    oNewSensorExtrinsics = lib3d::Extrinsics(rotation, translation, lib3d::Extrinsics::REF_2_LOCAL);
+    oNewSensorExtrinsics = lib3d::Extrinsics(rotation, translation, lib3d::Extrinsics::LOCAL_2_REF);
 
     return meanError;
 }
