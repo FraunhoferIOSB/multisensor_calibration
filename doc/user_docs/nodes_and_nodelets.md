@@ -439,6 +439,101 @@ NOTE: For a good final calibration a typical mean reprojection error is between 
 
 <hr>
 
+### ExtrinsicCameraCameraCalibration(Nodelet)
+
+Nodelet to perform extrinsic camera-Camera calibration without any ui or guidance.
+
+**How to use as standalone:**
+
+1. After starting up, the calibration nodelet continuously detects the ArUco marker inside the cameras' images. It publishes the
+marker detections.
+2. Visualize the data published in the previous step for example in rviz and make sure that the calibration target is seen in boths cameras.
+3. To trigger the detection of the calibration target and to capture its pose, call the provided service of the calibration nodelet: '~/capture_target'.
+4. Depending on the data, the detection of the target can take up to a couple of seconds.
+5. When the target has successfully been detected, an instant calibration is performed with just this target pose. A corresponding message is printed in the command line with the mean reprojection error of this calibration. If not successful a corresponding message is also printed. Typical reasons for a detection not being successful is either that the target is not detected in both sensors or that the reprojection error exceeds a certain threshold (Default: 2px). If latter is the case the threshold can be increased by calling 'rqt_dynamic_reconfigure'.
+6. If the detected pose is not satisfactory one can remove the last detection by calling the appropriate service: '~/remove_last_observation'.
+7. For a good calibration 5 to 7 different poses of the calibration target should be used, ideally moving it around the three coordinate axes. For each pose, repeat steps 2-6.
+8. When enough different calibration poses are collected, the calibration can be finalized by calling the service: '~/finalize_calibration'. This will do a final calibration, print out the resulting extrinsic parameters as well as the overall mean reprojection error and the confidence of the calibration. The calibration results and a urdf snippet, together with the observations (if requested) are written into the calibration workspace.
+NOTE: For a good final calibration a typical mean reprojection error is between 2-4 pixels.
+
+**Launch-Parameters:**
+
+ - ```robot_ws_path```: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section ['Initialize new Robot workspace'](workspaces.md#initialize-new-robot-workspace) to find out how to create a new one<br>
+    *Type: String*
+ - ```target_config_file```: Path to the file holding the [configuration of the calibration target](calibration_target.md).<br>
+      *E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"*<br>
+    *Type: String*
+ - ```src_camera_sensor_name```: Name of the camera sensor that is to be calibrated.<br>
+    *Type: String*
+ - ```src_camera_image_topic```: Topic name of the corresponding camera images.<br>
+    *Type: String*
+ - ```src_camera_info_topic```: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified ```camera_image_topic```.<br>
+   *Type: String*<br>
+   *Default: ""*
+  - ```image_state```: State of the camera images used.<br>
+    *Type: String*<br>
+    *Default: 'DISTORTED'*<br>
+    *Possible values:*<br>
+      - *'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.*<br>
+      - *'UNDISTORTED': Image with no distortion but not rectified for stereo processing.*<br>
+      - *'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.*
+ - ```ref_camera_sensor_name```: Name of the camera sensor that is to be calibrated.<br>
+    *Type: String*
+ - ```ref_camera_image_topic```: Topic name of the corresponding camera images.<br>
+    *Type: String*
+ - ```ref_camera_info_topic```: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified ```camera_image_topic```.<br>
+   *Type: String*<br>
+   *Default: ""*
+  - ```image_state```: State of the camera images used.<br>
+    *Type: String*<br>
+    *Default: 'DISTORTED'*<br>
+    *Possible values:*<br>
+      - *'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.*<br>
+      - *'UNDISTORTED': Image with no distortion but not rectified for stereo processing.*<br>
+      - *'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.*
+ - ```base_frame_id```: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    *Type: String*<br>
+    *Default: ""*
+ - ```use_initial_guess```: Option to use an initial guess on the extrinsic sensor pose from the TF-tree, if available.<br>
+    *Type: bool*<br>
+    *Default: false*
+ - ```save_observations```: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    *type: bool*<br>
+    *Default: false*
+ - ```sync_queue_size```: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+    *Type: int*<br>
+    *Default: 100*
+ - ```use_exact_sync```: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
+    *Type: bool*<br>
+    *Default: false*
+  
+**Topics Published:**
+
+ - ```~/<src_camera_sensor_name>/annotated_image```: Camera image, which is annotated with the detected markers of the calibration target.
+ - ```~/<src_camera_sensor_name>/target_pattern```: Cloud of the calibration target detected in the camera and reprojected into a 3D cloud.
+ - ```~/<src_camera_sensor_name>/marker_corners```: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of he marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field.
+ - ```~/<src_camera_sensor_name>/board_pose```: 6-DOF pose of the detected calibration target.
+ - ```~/<ref_camera_sensor_name>/regions_of_interest```: Cloud holding separate regions of the input sensor cloud in which the calibration target is searched for. These are the product of the first preprocessing of the sensor cloud to reduce the amount of data to be processed.
+ - ```~/<ref_camera_sensor_name>/target_pattern```: same as above
+ - ```~/<ref_camera_sensor_name>/marker_corners```: same as above
+ - ```~/<ref_camera_sensor_name>/board_pose```: same as above
+ - ```~/calibration_result```: Calibration result published after a successful calibration.
+
+**Services Advertised:**
+
+  - ```~/capture_target```: Service to trigger the capturing of the target in both sensors. This will add an observation to the list, if the target detection was successful.
+  - ```~/remove_last_observation```: Service to remove last observation from the top of the list. This can be executed repeatedly until the observation list is empty.
+  - ```~/finalize_calibration```: Service to finalize calibration, i.e. calibrate the extrinsic pose based on all captured observations.
+  - ```~/reset```: Service to reset the calibration.
+  - ```~/request_calibration_meta_data```: Service to request the meta information of the calibration, e.g. sensor names, topic names, and more.
+  - ```~/request_sensor_extrinsics```: Service to request the currently calculated extrinsic pose between the two sensors.
+  - ```~/request_camera_intrinsics```: Service to request the loaded intrinsics of the src camera sensor.
+
+<hr>
+
 ### ExtrinsicLidarLidarCalibration(Nodelet)
 
 Nodelet to perform extrinsic LiDAR-LiDAR calibration without any ui or guidance.

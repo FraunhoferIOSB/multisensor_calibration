@@ -20,6 +20,7 @@ It provides a variety of methods and applications to calibrate complex multi-sen
 - <b>Extrinsic Camera-LiDAR Calibration</b>,
 - <b>Extrinsic Camera-Reference Calibration</b>,
 - <b>Extrinsic LiDAR-LiDAR Calibration</b>,
+- <b>Extrinsic Camera-Camera Calibration (Stereo)</b>,
 - <b>Extrinsic LiDAR-Reference Calibration</b>, and
 - <b>Extrinsic LiDAR-Vehicle Calibration</b> (prototype).
 
@@ -54,8 +55,8 @@ However, there is a version of the source code available for ROS 1 under the bra
 
 | Service    | devel   | main   |
 | ---------- | ------- | ------ |
-| GitHub     |         | [![deploy](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/docs.yml/badge.svg)](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/docs.yml) |
-|            | [![Jazzy Jalisco](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml/badge.svg?branch=devel)](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml)           | [![Jazzy Jalisco](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml/badge.svg?branch=main)](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml) |
+| Docs     |         | [![deploy](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/docs.yml/badge.svg)](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/docs.yml) |
+| Build           | [![Jazzy Jalisco](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml/badge.svg?branch=devel)](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml)           | [![Jazzy Jalisco](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml/badge.svg?branch=main)](https://github.com/FraunhoferIOSB/multisensor_calibration/actions/workflows/build_and_test_jazzy.yml) |
 
 ------------------------
 
@@ -99,7 +100,7 @@ To build in 'Debug' mode add `-DCMAKE_BUILD_TYPE=Debug` to catkin command.
 If 'CMAKE_BUILD_TYPE' omitted, multisensor_calibration will be build in 'Release' mode.
 
     ```bash
-    MAKEFLAGS='-j 8' colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    MAKEFLAGS='-j 16' colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
     ```
 
 ## Usage
@@ -112,4 +113,3 @@ ros2 launch multisensor_calibration multi_sensor_calib_example.launch.py
 ### Documentation
 
 See the [user documentation](https://fraunhoferiosb.github.io/multisensor_calibration/) for basic usage, tutorials and workflows.
-
