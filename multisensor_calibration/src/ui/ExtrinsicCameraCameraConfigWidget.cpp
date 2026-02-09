@@ -328,8 +328,11 @@ void ExtrinsicCameraCameraConfigWidget::setCalibrationOptionsFromSettings()
 
     ui->observationsCheckBox->setChecked(
       pSettings->value("calibration/save_observations").toBool());
-    ui->initialGuessCheckBox->setChecked(
-      pSettings->value("calibration/use_initial_guess").toBool());
+
+    ui->initialGuessCheckBox->setChecked(false);
+    ui->initialGuessCheckBox->setEnabled(false);
+    // ui->initialGuessCheckBox->setChecked(
+    //   pSettings->value("calibration/use_initial_guess").toBool());
 
     ui->calibrateIntrinsics->setChecked(false);
     ui->calibrateIntrinsics->setEnabled(false);

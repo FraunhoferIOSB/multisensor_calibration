@@ -82,6 +82,7 @@ double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runSt
     int flags =  cv::CALIB_FIX_INTRINSIC | cv::CALIB_FIX_PRINCIPAL_POINT | cv::CALIB_FIX_FOCAL_LENGTH | cv::CALIB_ZERO_TANGENT_DIST;
 
     // Not supported by OpenCV yet
+    // https://github.com/opencv/opencv/blob/aea90a9e314d220dcaa80a616808afc38e1c78b6/modules/calib3d/src/calibration.cpp#L1539
     // if (ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::useTfTreeAsInitialGuess_)
     // {
     //     rotation = oNewSensorExtrinsics.getRotationMat();
@@ -89,7 +90,6 @@ double Extrinsic2d2dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::runSt
     //     flags |= cv::CALIB_USE_EXTRINSIC_GUESS;
     // }
 
-    std::vector<double> error;
     double meanError = cv::stereoCalibrate(iMarkerPointsRelative,
                         iSrcCamObs,
                         iRefCamObs,
