@@ -2,6 +2,9 @@
 Changelog for package multisensor_calibration_interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.0.4 (2025-09-29)
 ------------------
 

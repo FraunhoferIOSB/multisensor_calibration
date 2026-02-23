@@ -2,6 +2,9 @@
 Changelog for package small_gicp_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.0.4 (2025-09-29)
 ------------------
 
