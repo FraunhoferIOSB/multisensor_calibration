@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Multi-Sensor Calibration</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Multi-Sensor Calibration Toolbox";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> Multi-Sensor Calibration
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="tutorial/">Tutorial</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="calibration_target/">Calibration Target</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="data_processing/">Data Processing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="workspaces/">Workspace Handling</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="nodes_and_nodelets/">Nodes and Nodelets</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="troubleshooting/">Troubleshooting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/multisensor_calibration/CHANGELOG.rst">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">Contributing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">Multi-Sensor Calibration</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Multi-Sensor Calibration Toolbox</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/doc/user_docs/index.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="multi-sensor-calibration-toolbox">Multi-Sensor Calibration Toolbox<a class="headerlink" href="#multi-sensor-calibration-toolbox" title="Permanent link">&para;</a></h1>
+<p><img alt="" src="assets/images/camera_lidar_calibration_ui.png" />
+<em>With a graphical user interface the Multi-Sensor Calibration Toolbox guides the user through the calibration of a camera-LiDAR sensor setup.</em></p>
+<h2 id="about">About<a class="headerlink" href="#about" title="Permanent link">&para;</a></h2>
+<p><code>multisensor_calibration</code> is an actively maintained universal calibration toolbox for assisted, target-based multi-sensor calibration with ROS 1 and ROS 2 support. 
+It provides a variety of methods and applications to calibrate complex multi-sensor systems, e.g.</p>
+<ul>
+<li><b>Extrinsic Camera-LiDAR Calibration</b>,</li>
+<li><b>Extrinsic Camera-Reference Calibration</b>,</li>
+<li><b>Extrinsic LiDAR-LiDAR Calibration</b>,</li>
+<li><b>Extrinsic LiDAR-Reference Calibration</b>, and</li>
+<li><b>Extrinsic LiDAR-Vehicle Calibration</b> (prototype).</li>
+</ul>
+<p>The software is licensed under the new <a href="license/">BSD 3-Clause license</a>. If you use this project for your research, please cite:</p>
+<pre><code class="language-text">@inproceedings{
+    ruf2025_multisensor_calibration,
+    title={Multi-Sensor Calibration Toolbox for Large-Scale Offroad Robotics},
+    author={Boitumelo Ruf and Miguel Granero and Raphael Hagmanns and Janko Petereit},
+    conference={German Robotics Conference (GRC) 2025},
+    year={2025},
+} 
+</code></pre>
+<p>The latest source code is available on <a href="https://github.com/FraunhoferIOSB/multisensor_calibration">GitHub</a>.
+Furthermore, the <code>multisensor_calibration</code> is also available as an official package for ROS 2 and be installable with apt.
+Since ROS 1 is soon end-of-life, there will be no official release for ROS 1.
+However, there is a version of the source code available for ROS 1 under the branch <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/tree/noetic">noetic</a>.</p>
+<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
+<ol>
+<li>See our <a href="installation/">Installation</a> page on how to install it with apt-get as ROS 2 package or how to build from source.</li>
+<li>Look at the <a href="tutorial/">Tutorial</a> page on how to use use it to calibrate your sensor setup.</li>
+</ol>
+<h2 id="support">Support<a class="headerlink" href="#support" title="Permanent link">&para;</a></h2>
+<p>Please, use <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/discussions">GitHub Discussions</a> for questions and the <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/issues">GitHub issue tracker</a> for bug reports, feature requests/additions, etc.</p>
+<p>Or look at the <a href="troubleshooting/">troubleshooting</a> page.</p>
+<p>To get information on how to contribute, please look at our <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">contribution guide</a>.</p>
+<h2 id="acknowledgements">Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permanent link">&para;</a></h2>
+<p>This software was developed as part of the projects <a href="https://a-kit.de">AKIT-PRO</a> (grant no. 13N15673) and <a href="https://robdekon.de/">ROBDEKON – Robotic Systems for Decontamination in Hazardous Environments</a> (grant nos. 13N14674 and 13N16538), funded by the Federal Ministry of Education and Research (BMBF) under the German Federal Government’s Research for Civil Security program.</p>
+<p>The Multi-Sensor Calibration Toolbox was originally developed by <a href="https://github.com/boitumeloruf">Boitumelo Ruf</a>. 
+It is currently mainly maintained by <a href="https://github.com/migranram">Miguel Granero</a> supported by other members of the <a href="https://github.com/orgs/FraunhoferIOSB/teams/mrd">Autonomous Robotic Systems</a> group from the Fraunhofer IOSB</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright 2024 - 2025 Fraunhofer IOSB and contributors</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="js/tables.js"></script>
+      <script src="js/mathjax.js"></script>
+      <script src="js/tex-mml-chtml.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-02-23 12:40:53.348275+00:00
+-->

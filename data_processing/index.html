@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Data Processing - Multi-Sensor Calibration</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Data Processing";
+        var mkdocs_page_input_path = "data_processing.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Multi-Sensor Calibration
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">Tutorial</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../calibration_target/">Calibration Target</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Data Processing</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#calibration-target-detection-in-the-camera-data">Calibration Target Detection in the Camera Data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#calibration-target-detection-in-the-lidar-data">Calibration Target Detection in the LiDAR Data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#perspective-n-point-for-2d-3d-pose-estimation">Perspective-n-Point for 2D-3D Pose Estimation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#gicp-for-3d-3d-alignment">GICP for 3D-3D Alignment</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-computation-and-estimation-of-calibration-certainty">Error Computation and Estimation of Calibration Certainty</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workspaces/">Workspace Handling</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../nodes_and_nodelets/">Nodes and Nodelets</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/multisensor_calibration/CHANGELOG.rst">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">Contributing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Multi-Sensor Calibration</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Data Processing</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/doc/user_docs/data_processing.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="data-processing">Data Processing<a class="headerlink" href="#data-processing" title="Permanent link">&para;</a></h1>
+<h2 id="calibration-target-detection-in-the-camera-data">Calibration Target Detection in the Camera Data<a class="headerlink" href="#calibration-target-detection-in-the-camera-data" title="Permanent link">&para;</a></h2>
+<p>The calibration target is detected in the image data by means of the ArUco markers.
+In this, the <a href="https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html">functionalities provided by OpenCV</a> are utilized to detect markers and compute the pose of the calibration target with respect to the camera.
+To deduce the pose of the target from the marker detection, the algorithm requires the intrinsic parameters of the camera, which is why a good intrinsic calibration is vital.
+The image points of the detected markers are stored to be later used as 2D correspondences as part of the PnP algorithm.
+Furthermore, with the image positions of the detected markers and the a priori knowledge about the calibration board geometry, a 3D point cloud of the calibration target is also created. 
+The detections, as well as the 6-DOF Pose of the target and the reconstructed 3D point cloud are published after the detection was successful. 
+In this, the marker ID to which the detected corner belongs is stored in the intensity value of the point.</p>
+<h2 id="calibration-target-detection-in-the-lidar-data">Calibration Target Detection in the LiDAR Data<a class="headerlink" href="#calibration-target-detection-in-the-lidar-data" title="Permanent link">&para;</a></h2>
+<p>The detection and pose estimation of the calibration target within the LiDAR cloud data is realized in a number of consecutive steps.
+In this numerous algorithms from the <a href="https://pointclouds.org/">Point Cloud Library (PCL)</a> are used.</p>
+<ol>
+<li>
+<p>First, the input point cloud is segmented into planer regions using a region growing algorithm.
+This algorithm requires the point cloud to have normal vectors which are computed prior to the region growing.</p>
+</li>
+<li>
+<p>After that each segmented cluster whether its size and aspect ratio fits to the geometry of the calibration target.
+If so, the cluster is considered as region of interest (which are also published as preview) in which a detailed detection and pose estimation of the target is performed.
+In this, the algorithm fits a rotating bounding box to the cluster and checks its dimension.</p>
+</li>
+<li>
+<p>When the actual target detection and pose estimation is to be performed, the orientation of the bounding box is first aligned to the actual orientation of the calibration target using the arrangement of the cutouts.
+In this, all possible orientations are tested by counting the points in the point cloud at the assumed location of the cutouts.
+The orientation for which the smallest number of points have been accumulated is taken as the orientation of the target.</p>
+</li>
+<li>
+<p>This pose is used as an initialization to a RANSAC algorithm which tries to fit a custom sample consensus (SAC) model of the calibration target to the segmented region of interest.
+In this it computes the normal vector of the board based on a random set of points from the cluster and varies position and rotation of the target pose with each RANSAC iteration.
+Finally the pose with the most inliers is chosen as the winner-takes-it-all solution. 
+As inliers all point that lie on the calibration target are chosen. 
+With each point that falls into the circular cutout, the current estimation is penalized by reducing the number of inliers by a certain factor.</p>
+</li>
+<li>
+<p>When RANSAC has found a pose, the coefficients are optimized by fitting a CAD model into the point cloud using GICP. 
+In this only the points forming the convex hull of the cloud segmented from the input cloud are used.</p>
+</li>
+<li>
+<p>Finally, the 3D coordinates of the marker corners are deduced based on the estimated board pose and stored as 3D correspondences.</p>
+</li>
+</ol>
+<p>The detections, as well as the 6-DOF Pose of the target and the segmented 3D point cloud are published after the detection was successful. 
+In this, the marker ID to which the detected corner belongs is stored in the intensity value of the point.</p>
+<p>The parameters for the algorithm outlined above are exposed as dynamic parameters and can be adjusted by calling <code>rqt_reconfigure</code> or opening the preferences from the UI (<em>Edit-&gt;Preferences</em>).
+An overview of these parameters is given blow:</p>
+<p><strong>Input Filter:</strong></p>
+<ul>
+<li><code>max_range</code>: Maximum range at which to filter the incoming point cloud prior to any processing. Any point with a range (absolute distance from sensor) larger than max_range will be discarded. Turn to 0 to switch off.</li>
+</ul>
+<p><strong>Normal Estimation:</strong></p>
+<ul>
+<li><code>normal_estimation_search_method</code>: Select method to use for neighbor search. (0 = RadiusSearch, 1 = NearestNeighborSearch)</li>
+<li><code>normal_estimation_search_radius</code>: Radius in which to search for neighbors. In case of 'RadiusSearch', this is a spatial extend. In case of 'NearestNeighborSearch', this represents the number of nearest neighbors (truncated to int).</li>
+</ul>
+<p><strong>Region Growing:</strong></p>
+<ul>
+<li><code>region_growing_cluster_size_min</code>: Minimum number of points a cluster needs to contain in order to be considered as valid inside the region growing.</li>
+<li><code>region_growing_cluster_size_max</code>: Maximum number of points a cluster needs to contain in order to be considered as valid inside the region growing.</li>
+<li><code>region_growing_number_neighbors</code>: Number of neighbor points to consider during region growing.</li>
+<li><code>region_growing_angle_thresh</code>: Angle in degrees used as the allowable range for the normals deviation. If the deviation between points normals is less than the smoothness threshold then they are suggested to be in the same cluster.</li>
+<li><code>region_growing_curvature_thresh</code>: Second criteria for the region growing.  If two points have a small normals deviation then the disparity between their curvatures is tested.</li>
+</ul>
+<p><strong>Size Filter:</strong></p>
+<ul>
+<li><code>size_filter_width_min_tolerance</code>: Tolerance (in m) of the minimum board width when filtering the clusters based on their size.</li>
+<li><code>size_filter_width_max_tolerance</code>: Tolerance (in m) of the maximum board width when filtering the clusters based on their size.</li>
+<li><code>size_filter_height_min_tolerance</code>: Tolerance (in m) of the minimum board height when filtering the clusters based on their size.</li>
+<li><code>size_filter_height_max_tolerance</code>: Tolerance (in m) of the maximum board height when filtering the clusters based on their size.</li>
+</ul>
+<p><strong>RANSAC:</strong></p>
+<ul>
+<li><code>ransac_distance_thresh</code>: Distance threshold (in m) from model for points to count as inliers during RANSAC.</li>
+<li><code>ransac_rotation_variance</code>: Maximum angle in rotation (in degrees) to be sampled when computing the new coefficients within RANSAC.</li>
+<li><code>ransac_translation_variance</code>: Maximum distance in translation (in m) to be sampled when computing the new coefficients within RANSAC.</li>
+<li><code>ransac_optimize_coefficients</code>: Option to activate the optimization of the coefficients by means of ICP.</li>
+<li><code>target_icp_variant</code>: Select ICP variant to use to optimize coefficients. (0 = ICP, 1 = PlaneICP, 2 = GICP)</li>
+<li><code>target_icp_max_correspondence_distance</code>: Maximum distance for ICP to search for point correspondences. Given as ratio with respect to shorter side of calibration target.</li>
+<li><code>target_icp_rotation_tolerance</code>: Rotation tolerance for convergence check. Given in degrees.</li>
+<li><code>target_icp_translation_tolerance</code>: Translation tolerance for convergence check. Given in unit of the LiDAR point cloud, typically meters.</li>
+</ul>
+<h2 id="perspective-n-point-for-2d-3d-pose-estimation">Perspective-n-Point for 2D-3D Pose Estimation<a class="headerlink" href="#perspective-n-point-for-2d-3d-pose-estimation" title="Permanent link">&para;</a></h2>
+<p>In the extrinsic pose estimation using sets of 2D-3D correspondences (e.g. Camera-LiDAR calibration) the <a href="https://docs.opencv.org/4.x/d5/d1f/calib3d_solvePnP.html">Perspective-n-Point (PnP) algorithm from OpenCV</a> is used.
+The parameters to configure the PnP algorithm are exposed as dynamic parameters and can be adjusted by calling <code>rqt_reconfigure</code> or opening the preferences from the UI (<em>Edit-&gt;Preferences</em>).
+An overview of these parameters is given blow:</p>
+<ul>
+<li><code>limit_single_board_rpj_error</code>: Use max maximum reprojection error to accept during calibration of a single target pose. If false, 'board_max_rpj_error' is ignored.</li>
+<li><code>single_board_max_rpj_error</code>: Limit for maximum reprojection error to accept during calibration of a single target pose. All calibrated poses, that exceed this limit are rejected.</li>
+<li><code>single_board_min_inliers</code>: Threshold for minimum number of inliers to accept during calibration of a single target pose. All calibrated poses, that do not reach this threshold are rejected.</li>
+<li><code>pnp_inlier_rpj_error_limit</code>: Limit for maximum reprojection error for which points are considered as RANSAC inliers during PnP.</li>
+</ul>
+<h2 id="gicp-for-3d-3d-alignment">GICP for 3D-3D Alignment<a class="headerlink" href="#gicp-for-3d-3d-alignment" title="Permanent link">&para;</a></h2>
+<p>In the alignment of 3D point clouds of two LiDAR sensors (e.g. LiDAR-LiDAR calibration) the <a href="https://github.com/koide3/small_gicp">Generalized-ICP (GICP) of 'small_gicp'</a> is used.
+The parameters to configure the GICP algorithm are exposed as dynamic parameters and can be adjusted by calling <code>rqt_reconfigure</code> or opening the preferences from the UI (<em>Edit-&gt;Preferences</em>).
+An overview of these parameters is given blow:</p>
+<ul>
+<li><code>registration_icp_variant</code>: Select ICP variant to use for registration. (0 = ICP, 1 = PlaneICP, 2 = GICP)</li>
+<li><code>registration_icp_max_correspondence_distance</code>: Maximum distance for ICP to search for point correspondences. Given as ratio with respect to shorter side of calibration target.</li>
+<li><code>registration_icp_rotation_tolerance</code>: Rotation tolerance for convergence check. Given in degrees.</li>
+<li><code>registration_icp_translation_tolerance</code>: Translation tolerance for convergence check. Given in unit of the LiDAR point cloud, typically meters.</li>
+</ul>
+<h2 id="error-computation-and-estimation-of-calibration-certainty">Error Computation and Estimation of Calibration Certainty<a class="headerlink" href="#error-computation-and-estimation-of-calibration-certainty" title="Permanent link">&para;</a></h2>
+<p>In the calibration using the PnP algorithm to align two sensors by means of 2D-3D correspondences, the quality of the calibration is measured by the <a href="https://docs.opencv.org/3.4/dc/dbb/tutorial_py_calibration">mean reprojection error</a>.html).
+For a good calibration a typical reprojection error lies between 2-4 Pixels.</p>
+<p>In the calibration of two 3D sensors in which the sensor data gets aligned by means of GIPC, the quality of the calibration is measured using the <a href="https://en.wikipedia.org/wiki/Root_mean_square_deviation">root mean squared error (RMSE)</a>.
+For a good calibration a typical RMSE lies in the range of view centimeters.</p>
+<p>To quantify the certainty of the result, the standard deviation of the individual target poses is also calculated.
+In this, for a given extrinsic calibration the poses of the detected calibration target are projected from the coordinate frame of the source sensor into the coordinate frame of the reference sensor.
+The standard deviation in the translational and rotational difference should give us a good indication on the consistency of the calibration.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../calibration_target/" class="btn btn-neutral float-left" title="Calibration Target"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../workspaces/" class="btn btn-neutral float-right" title="Workspace Handling">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright 2024 - 2025 Fraunhofer IOSB and contributors</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../calibration_target/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../workspaces/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../js/tables.js"></script>
+      <script src="../js/mathjax.js"></script>
+      <script src="../js/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Tutorial - Multi-Sensor Calibration</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Tutorial";
+        var mkdocs_page_input_path = "tutorial.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Multi-Sensor Calibration
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Tutorial</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#calibration-configurator">Calibration Configurator</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#robot-options">Robot Options</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#calibration-options">Calibration Options</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#extrinsic-camera-lidar-calibration">Extrinsic Camera-LiDAR Calibration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#extrinsic-lidar-lidar-calibration">Extrinsic LiDAR-LiDAR Calibration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#extrinsic-camera-reference-calibration">Extrinsic Camera-Reference Calibration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#extrinsic-lidar-reference-calibration">Extrinsic LiDAR-Reference Calibration</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../calibration_target/">Calibration Target</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data_processing/">Data Processing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workspaces/">Workspace Handling</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../nodes_and_nodelets/">Nodes and Nodelets</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/multisensor_calibration/CHANGELOG.rst">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">Contributing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Multi-Sensor Calibration</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Tutorial</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/doc/user_docs/tutorial.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="tutorial">Tutorial<a class="headerlink" href="#tutorial" title="Permanent link">&para;</a></h1>
+<p>To have a unified starting point 'multisensor_calibration' offers a Calibration Configurator which allows to choose and parameterize the desired calibration.
+This can be started without any launch parameters, just by calling </p>
+<pre><code>ros2 run multisensor_calibration multi_sensor_calibration
+</code></pre>
+<p>The <a href="#calibration-configurator">Calibration Configurator</a> provides a graphical user interface to configure and run one of the following sensor calibrations:</p>
+<ul>
+<li><a href="#extrinsic-camera-lidar-calibration">Extrinsic Camera-LiDAR Calibration</a></li>
+<li><a href="#extrinsic-lidar-lidar-calibration">Extrinsic LiDAR-LiDAR Calibration</a></li>
+<li><a href="#extrinsic-camera-reference-calibration">Extrinsic Camera-Reference Calibration</a></li>
+<li><a href="#extrinsic-lidar-reference-calibration">Extrinsic LiDAR-Reference Calibration</a></li>
+</ul>
+<p>Alternatively, the individual calibrations could also be started as standalone nodes without the calibrator. 
+In this, the user has to manually specify the appropriate launch parameters, which is why the use of the Calibration Configurator is recommended. 
+For more information on that please look into the <a href="../nodes_and_nodelets/#nodes">Nodes</a> section.</p>
+<p>The calibration configurations, together with the results are stored and organized within <a href="../workspaces/">workspaces</a>. 
+In this, for each sensor calibration an individual workspace folder is generated and all calibration workspaces belonging to a single robot are, in turn, grouped into a robot workspace.</p>
+<hr>
+
+<h2 id="calibration-configurator">Calibration Configurator<a class="headerlink" href="#calibration-configurator" title="Permanent link">&para;</a></h2>
+<p>The Calibration Configurator provides a graphical user interface to configure and run one of the different sensor calibrations.</p>
+<p><img alt="" src="../assets/images/calibration_configurator.png" />
+<em>Figure 1: Graphical user interface of the Calibration Configurator.</em></p>
+<p>As further discussed on the <a href="../workspaces/">workspace page</a>, the configurations and results of the individual sensor calibrations are organized within a workspace structure consisting of robot and calibration workspaces. 
+Thus, in addition to the individual calibration configurations, a few robot settings also need to be set. </p>
+<p>The Calibration Configurator also allows to install workspace templates. This is especially helpful when running the calibration for the first time.
+For more information on how to add new templates please refer to corresponding <a href="../workspaces/#workspace-templates">section</a></p>
+<h3 id="robot-options">Robot Options<a class="headerlink" href="#robot-options" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Workspace Folder:</strong> Select workspace folder of the robot workspace you wish to open. If a folder is entered that does not yet exist, a new workspace will be generated.</li>
+</ul>
+<p>All the different robot workspace folders are located in the root directory (<em>Default: $HOME/multisensor_calibration</em>), which is listed below the corresponding combo box. 
+To select a different root directory, press the push button next to the combo box of the workspace folder. 
+To install workspace templates into the root directory, press the appropriate push button on the right.
+This will open another dialog, in which the robot and corresponding sensor calibrations can be selected.</p>
+<ul>
+<li><strong>Robot Name:</strong> Name of the robot.</li>
+<li><strong>URDF Model:</strong> Optional URDF model of the robot.</li>
+</ul>
+<h3 id="calibration-options">Calibration Options<a class="headerlink" href="#calibration-options" title="Permanent link">&para;</a></h3>
+<p>When a robot is selected, the calibration type, which is to be executed can be selected by the appropriate combo box:</p>
+<ul>
+<li><strong>Calibration Type:</strong> Calibration type you wish to execute.
+Depending on the selected calibration type, different calibration options will be made available.
+At the start, the combo boxes and text edits will be populated with the available data, i.e. topic names or frame IDs.</li>
+</ul>
+<p><em>If a chosen configuration of 'Calibration Type', 'Source Sensor Name', and 'Reference Sensor Name' has already been calibrated and a corresponding settings file is found in the calibration workspace, the rest of the options will be set according to the data found in the settings file.</em></p>
+<p>In the following the available options for the different calibration types are presented.</p>
+<p><strong>Extrinsic Camera-LiDAR Calibration</strong></p>
+<ul>
+<li><strong>Camera Sensor Name:</strong> Name of the source camera sensor.</li>
+<li><strong>Image Topic:</strong> Topic name on which the camera images are published.</li>
+<li><strong>Camera Info Topic:</strong> Topic name on which the camera images are published.</li>
+<li><strong>Image State:</strong> Select the state of the image data.
+<em>This is need in order to choose the correct data from the camera info messages during calibration.</em><ul>
+<li>DISTORTED: The image directly coming from the sensor, i.e. containing lense distortion. </li>
+<li>UNDISTORTED: The image has been made free of lense distortion.  </li>
+<li>STEREO_RECTIFIED: The image comes from a stereo camera has been rectified so that the images of both cameras align horizontally.</li>
+</ul>
+</li>
+<li><strong>Is Stereo Camera?:</strong> Set to true, if camera is to be calibrated as stereo camera. If activated, 'Right Sensor Name' and 'Right Info Topic' also need to be set.</li>
+<li><strong>Right Sensor Name:</strong> Name of the right camera sensor when the camera is to be calibrated as a stereo camera system. </li>
+<li><strong>Right Info Topic:</strong> Topic name of the camera info corresponding to the right camera. This is needed when the camera is to be calibrated as a stereo camera system.</li>
+<li>
+<p><strong>Rect Suffix:</strong> Suffix of the of the right sensor name as well as the frame id for the rectified images. If the 'Image State' of the input images is DISTORTED or UNDISTORTED, this is added to the rectified frame id. If the 'Image State' is STEREO_RECTIFIED this is removed from the frame ID.</p>
+</li>
+<li>
+<p><strong>LiDAR Sensor Name:</strong> Name of the reference LiDAR sensor.</p>
+</li>
+<li>
+<p><strong>Point Cloud Topic:</strong> Topic name on which the point clouds are published.</p>
+</li>
+<li>
+<p><strong>Calibration Target:</strong> Configuration file of the calibration target.
+<em>Currently not editable.</em></p>
+</li>
+<li>
+<p><strong>Calibrate with respect to base frame?</strong> Calibrate the pose of the source sensor with respect to a base frame.</p>
+</li>
+<li>
+<p><strong>Base Frame ID:</strong> Frame ID of the base frame with respect to which the pose is to be calibrated.</p>
+</li>
+<li>
+<p><strong>Use initial guess from TF-Tree?</strong> Use the data provided by the TF-Tree to extract an initial guess for the calibration.</p>
+</li>
+<li>
+<p><strong>Save Observations?</strong> Save the observations which have been used for the calibration into the calibration workspace.</p>
+</li>
+<li>
+<p><strong>Message Synchronization Policy:</strong> Select which type of time synchronization is to be used to synchronize the sensor messages.</p>
+</li>
+<li><strong>Synchronization Queue Size:</strong> Queue size used for the time synchronization.</li>
+</ul>
+<p><strong>Extrinsic LiDAR-LiDAR Calibration</strong></p>
+<ul>
+<li><strong>Source LiDAR Sensor Name:</strong> Name of the source LiDAR sensor.</li>
+<li>
+<p><strong>Source Point Cloud Topic:</strong> Topic name on which the source point clouds are published.</p>
+</li>
+<li>
+<p><strong>Reference LiDAR Sensor Name:</strong> Name of the reference LiDAR sensor.</p>
+</li>
+<li>
+<p><strong>Reference Point Cloud Topic:</strong> Topic name on which the reference point clouds are published.</p>
+</li>
+<li>
+<p><strong>Calibration Target:</strong> Configuration file of the calibration target.
+<em>Currently not editable.</em></p>
+</li>
+<li>
+<p><strong>Additionally align ground planes?</strong> Set to true, to additionally align the ground planes in the sensor data. 
+If true, this also requires the frame ID of an upright frame in order to find the orientation of the ground plane.</p>
+</li>
+<li>
+<p><strong>Upright Frame ID:</strong> - ID of frame which has an upwards pointing z-axis. Used to detect ground plane in sensor data.</p>
+</li>
+<li>
+<p><strong>Calibrate with respect to base frame?</strong> Calibrate the pose of the source sensor with respect to a base frame.</p>
+</li>
+<li>
+<p><strong>Base Frame ID:</strong> Frame ID of the base frame with respect to which the pose is to be calibrated.</p>
+</li>
+<li>
+<p><strong>Use initial guess from TF-Tree?</strong> Use the data provided by the TF-Tree to extract an initial guess for the calibration.</p>
+</li>
+<li>
+<p><strong>Save Observations?</strong> Save the observations which have been used for the calibration into the calibration workspace.</p>
+</li>
+<li>
+<p><strong>Message Synchronization Policy:</strong> Select which type of time synchronization is to be used to synchronize the sensor messages.</p>
+</li>
+<li><strong>Synchronization Queue Size:</strong> Queue size used for the time synchronization.</li>
+</ul>
+<p><strong>Extrinsic Camera-Reference Calibration</strong></p>
+<ul>
+<li><strong>Camera Sensor Name:</strong> Name of the source camera sensor.</li>
+<li><strong>Image Topic:</strong> Topic name on which the camera images are published.</li>
+<li><strong>Camera Info Topic:</strong> Topic name on which the camera images are published.</li>
+<li><strong>Image State:</strong> Select the state of the image data.
+<em>This is need in order to choose the correct data from the camera info messages during calibration.</em><ul>
+<li>DISTORTED: The image directly coming from the sensor, i.e. containing lense distortion. </li>
+<li>UNDISTORTED: The image has been made free of lense distortion.  </li>
+<li>STEREO_RECTIFIED: The image comes from a stereo camera has been rectified so that the images of both cameras align horizontally.</li>
+</ul>
+</li>
+<li><strong>Is Stereo Camera?:</strong> Set to true, if camera is to be calibrated as stereo camera. If activated, 'Right Sensor Name' and 'Right Info Topic' also need to be set.</li>
+<li><strong>Right Sensor Name:</strong> Name of the right camera sensor when the camera is to be calibrated as a stereo camera system. </li>
+<li><strong>Right Info Topic:</strong> Topic name of the camera info corresponding to the right camera. This is needed when the camera is to be calibrated as a stereo camera system.</li>
+<li>
+<p><strong>Rect Suffix:</strong> Suffix of the of the right sensor name as well as the frame id for the rectified images. If the 'Image State' of the input images is DISTORTED or UNDISTORTED, this is added to the rectified frame id. If the 'Image State' is STEREO_RECTIFIED this is removed from the frame ID.</p>
+</li>
+<li>
+<p><strong>Reference Name:</strong> Name of the reference.</p>
+</li>
+<li>
+<p><strong>Reference Frame ID:</strong> Frame ID in which the reference data is provided.</p>
+</li>
+<li>
+<p><strong>Calibration Target:</strong> Configuration file of the calibration target.
+<em>Currently not editable.</em></p>
+</li>
+<li>
+<p><strong>Calibrate with respect to base frame?</strong> Calibrate the pose of the source sensor with respect to a base frame.</p>
+</li>
+<li>
+<p><strong>Base Frame ID:</strong> Frame ID of the base frame with respect to which the pose is to be calibrated.</p>
+</li>
+<li>
+<p><strong>Use initial guess from TF-Tree?</strong> Use the data provided by the TF-Tree to extract an initial guess for the calibration.</p>
+</li>
+<li><strong>Save Observations?</strong> Save the observations which have been used for the calibration into the calibration workspace.</li>
+</ul>
+<p><strong>Extrinsic LiDAR-Reference Calibration</strong></p>
+<ul>
+<li><strong>Source LiDAR Sensor Name:</strong> Name of the source LiDAR sensor.</li>
+<li>
+<p><strong>Source Point Cloud Topic:</strong> Topic name on which the source point clouds are published.</p>
+</li>
+<li>
+<p><strong>Reference Name:</strong> Name of the reference.</p>
+</li>
+<li>
+<p><strong>Reference Frame ID:</strong> Frame ID in which the reference data is provided.</p>
+</li>
+<li>
+<p><strong>Calibration Target:</strong> Configuration file of the calibration target.
+<em>Currently not editable.</em></p>
+</li>
+<li>
+<p><strong>Calibrate with respect to base frame?</strong> Calibrate the pose of the source sensor with respect to a base frame.</p>
+</li>
+<li>
+<p><strong>Base Frame ID:</strong> Frame ID of the base frame with respect to which the pose is to be calibrated.</p>
+</li>
+<li>
+<p><strong>Use initial guess from TF-Tree?</strong> Use the data provided by the TF-Tree to extract an initial guess for the calibration.</p>
+</li>
+<li><strong>Save Observations?</strong> Save the observations which have been used for the calibration into the calibration workspace.</li>
+</ul>
+<hr>
+
+<h2 id="extrinsic-camera-lidar-calibration">Extrinsic Camera-LiDAR Calibration<a class="headerlink" href="#extrinsic-camera-lidar-calibration" title="Permanent link">&para;</a></h2>
+<p>The camera-LiDAR calibration is comprised of estimating a relative transformation of a given camera sensor with respect to a given LiDAR sensor.
+The calibration is performed by solving the <i>Perspective-n-Point (P-n-P)</i> problem with the help of a series of 2D-3D-point-correspondences.</p>
+<p><img alt="" src="../assets/images/camera_lidar_calibration.png" />
+<em>Figure 1: Graphical user interface of the extrinsic camera-LiDAR calibration after the calibration target has been detected in the camera image and the LiDAR point cloud. In this, the camera image is annotated with the corners of the ArUco markers and the detected target structure is highlighted with yellow in the LiDAR point cloud.</em></p>
+<p>After starting up, the GUI, as depicted in <a href="">Figure 1</a>, will appear. It is made up of,
+- a 'Control Window' (A), 
+- a view on the target detections in the camera images (B),
+- a view of the target detections in the LiDAR cloud (C), as well as 
+- a view on a dialog that is supposed to guide the user in the placement of the calibration target (D) <em>(currently in development)</em>.</p>
+<p>The calibration node continuously detects and tracks the ArUco marker inside the camera image and selects potential candidates of the calibration target inside the LiDAR cloud.
+In this, the markers are framed and for the points of the target candidates in the point cloud are displayed with the corresponding intensity value.</p>
+<p>To perform an extrinsic calibration, follow the steps below:</p>
+<ol>
+<li>Start off by <strong>placing the calibration target</strong> in the center of the camera image and parallel to the image plane. Place the target at such a distance to the camera, that its width will fill out approximately half of the image width.</li>
+<li>Make sure that the markers are detected in the camera image and the target structure is highlighted in the LiDAR cloud.</li>
+<li>If at least 3 markers are detected and the target structure is highlighted, <strong>click on Button 1 'Capture Target Observation'</strong> to trigger full detection and precise estimation of the calibration target in the sensor data and to add the detection to the observation list.
+When finished the corresponding sensor data will be annotated with the detections as seen in <a href="">Figure 1</a>. In this, <ul>
+<li>the camera image will be annotated with the corners of the detected ArUco markers (color coded with rainbow color map according to the ID of the marker).</li>
+<li>the points of the LiDAR cloud that correspond to the detected calibration target are highlighted in yellow. In addition, from the estimated pose of the target, the corners of the ArUco markers are also drawn in the same color scheme as in the camera image.</li>
+</ul>
+</li>
+<li>Perform a <strong>visual inspection</strong> on whether the orientation of the calibration target in the LiDAR cloud was estimated correctly. This is <strong>important</strong>, since accurate 2D-3D correspondences between the marker corners in the camera image and the LiDAR cloud are needed for the P-n-P algorithm to estimate the extrinsic sensor pose.</li>
+<li>If the orientation was not correctly estimated, or if a wrong structure in the LiDAR cloud was supposedly marked as the calibration target, or any other fault, you can remove the last observation from the stack by <strong>clicking on Button 2 'Remove Last Observation'</strong>. This can be repeated multiple times as it will always remove the top-most observation on the stack until no observation is left.</li>
+<li>
+<p>Continue to <strong>add (6-7) different poses</strong> of the calibration target by placing it</p>
+<ul>
+<li>at the top and/or bottom edge of the image,</li>
+<li>at the left and/or right edge of the image, and</li>
+<li>further away.</li>
+</ul>
+<p>At each position, slightly rotate the target inwards. Ideally place the target in a '+' shape in the image space with 5 positions. If not possible, try to place the target at least at 3 positions in a 'L' shape so that the positions are not collinear.</p>
+</li>
+<li>
+<p>For each position <strong>repeat steps 2-5</strong>.</p>
+</li>
+<li>When enough different observations of the calibration target are collected, the calibration can be finalized by clicking on <strong>Button 4 'Calibrate'</strong>. This will do a final calibration, print out the resulting extrinsic parameters, overall mean reprojection error, as well as a standard deviation in the target poses when transforming it from the source sensor to the reference sensor. 
+For a good final calibration a typical mean reprojection error is between 2-4 pixels, a translational (XYZ) standard deviation of 1-3 cm, and a rotational (RPY) standard deviation of 0.1-1.5 degrees.</li>
+<li>After finalization,<ul>
+<li>the calibration can be visualized by clicking the <strong>Button 3 'Visualize Current Calibration'</strong>. This will open a new dialog with the projection of the LiDAR cloud into the camera image and colorized according to their distance from the camera. Thus, if the calibration is good, then the structure in the LiDAR scan (which can be derived from the depth coloring) should align with the object in the image.</li>
+<li>the calibration results, as well as a snippet for the URDF file is written into <a href="../workspaces/">calibration workspace</a>. The workspace folder containing the result files can directly be opened by navigating through the program menu <em>'File' -&gt; 'Open' -&gt; 'Calibration Workspace'</em>.</li>
+</ul>
+</li>
+</ol>
+<p><em>To adjust runtime parameters, e.g. parameters of the algorithm to detect the calibration target or to do the actual calibration algorithm, you can open 'rqt_reconfigure' via 'Edit' -&gt; 'Preferences'.</em></p>
+<hr>
+
+<h2 id="extrinsic-lidar-lidar-calibration">Extrinsic LiDAR-LiDAR Calibration<a class="headerlink" href="#extrinsic-lidar-lidar-calibration" title="Permanent link">&para;</a></h2>
+<p>The LiDAR-LiDAR calibration is comprised of estimating a relative transformation of a given source LiDAR sensor with respect to a given reference LiDAR sensor.
+The calibration is performed by aligning a cloud of the source sensor, holding detections of a calibration target, with the cloud of the reference sensor, holding the same observations, by means of GICP.</p>
+<p><img alt="" src="../assets/images/lidar_lidar_calibration.png" />
+<em>Figure 2: Graphical user interface of the extrinsic LiDAR-LiDAR calibration after the calibration target has been detected in the data of the LiDAR scanners. In this, the detected target structure is highlighted with yellow in the LiDAR point cloud.</em></p>
+<p>After starting up, the GUI, as depicted in <a href="">Figure 2</a>, will appear. It is made up of,
+- a 'Control Window' (A), 
+- a view on the target detections in the source LiDAR cloud (B),
+- a view of the target detections in the reference LiDAR cloud (C), as well as 
+- a view on a dialog that is supposed to guide the user in the placement of the calibration target (D) <em>(currently in development)</em>.</p>
+<p>The calibration node continuously selects potential candidates of the calibration target inside the LiDAR clouds.
+In this, the points of the target candidates in the point cloud are displayed with the corresponding intensity value.</p>
+<p>To perform an extrinsic calibration, follow the steps below:</p>
+<ol>
+<li>Start off by <strong>placing the calibration target</strong> in front of the sensor for which the extrinsic pose is to be calibrated (i.e the source sensor), while at the same time making sure it can also bee seen from the reference sensor. The target should be placed at such a distance, that the circular cutouts on the calibration target can be well identified. In this, a rule of thumb would be that if possible <strong>2-3 scan lines should pass through or touch</strong> a cutout</li>
+<li>Make sure that the structure of the calibration target is highlighted in the data of both sensors, i.e. in window B and C.</li>
+<li>If the target structure is highlighted in the data of both LiDAR scanners, <strong>click on Button 1 'Capture Target Observation'</strong> to trigger full detection and precise estimation of the calibration target in the sensor data and to add the detection to the observation list.
+When finished the corresponding sensor data will be annotated with the detections as seen in <a href="">Figure 2</a>. In this, the points of the LiDAR cloud that correspond to the detected calibration target are highlighted in yellow. 
+    In addition, from the estimated pose of the target, the corners of the ArUco markers are also drawn in the same color scheme as in the camera image.</li>
+<li>Perform a <strong>visual inspection</strong> on whether the orientation of the calibration target in the LiDAR clouds was estimated correctly.</li>
+<li>If the orientation was not correctly estimated, or if a wrong structure in the LiDAR cloud was supposedly marked as the calibration target, or any other fault, you can remove the last observation from the stack by <strong>clicking on Button 2 'Remove Last Observation'</strong>. This can be repeated multiple times as it will always remove the top-most observation on the stack until no observation is left.</li>
+<li>
+<p>Continue to <strong>add (3-5) different poses</strong> of the calibration target by placing it</p>
+<ul>
+<li>at a higher or lower position in front of the source sensor.</li>
+<li>in front of the reference censor, and</li>
+<li>further away.</li>
+</ul>
+<p>In this the positions should make up an 'L' shape, so that a vertical, as well as a horizontal variance is established. Make sure that the positions are not collinear. At each position, slightly rotate the target inwards. </p>
+</li>
+<li>
+<p>For each position <strong>repeat steps 2-5</strong>.</p>
+</li>
+<li>When enough different observations of the calibration target are collected, the calibration can be finalized by clicking on <strong>Button 4 'Calibrate'</strong>. This will do a final calibration, print out the resulting extrinsic parameters, the overall root mean squared error of the GICP, as well as a standard deviation in the target poses when transforming it from the source sensor to the reference sensor. 
+For a good final calibration a typical root mean squared error is between 3-8 cm, a translational (XYZ) standard deviation of 0.5-5 cm, and a rotational (RPY) standard deviation of 0.3-2 degrees.</li>
+<li>After finalization,<ul>
+<li>the calibration can be visualized by clicking the <strong>Button 3 'Visualize Calibration'</strong>. This will open a new dialog visualizing the point-wise distance between the two point clouds. In this, the point-wise distance visualized with a rainbow colormap (red -&gt; yellow -&gt; green -&gt; blue -&gt; violet). This means, that if the calibration is good, the point-wise distance in overlapping regions should be small and, in turn, the corresponding points should ideally be highlighted in red.</li>
+<li>the calibration results, as well as a snippet for the URDF file is written into <a href="../workspaces/">calibration workspace</a>. The workspace folder containing the result files can directly be opened by navigating through the program menu <em>'File' -&gt; 'Open' -&gt; 'Calibration Workspace'</em>.</li>
+</ul>
+</li>
+</ol>
+<p><em>To adjust runtime parameters, e.g. parameters of the algorithm to detect the calibration target or to do the actual calibration algorithm, you can open 'rqt_reconfigure' via 'Edit' -&gt; 'Preferences'.</em></p>
+<hr>
+
+<h2 id="extrinsic-camera-reference-calibration">Extrinsic Camera-Reference Calibration<a class="headerlink" href="#extrinsic-camera-reference-calibration" title="Permanent link">&para;</a></h2>
+<p>The camera-reference calibration is comprised of estimating a relative transformation of a given camera sensor with respect to a reference.
+Similar to the camera-LiDAR calibration, the transformation is calculated by solving the <i>Perspective-n-Point (P-n-P)</i> problem with the help of a series of 2D-3D-point-correspondences.
+However, instead of finding the 3D correspondences by detecting the calibration target in LiDAR data, they can be entered manually by providing the 3D coordinates of the top-left corners of the ArUco markers with respect to a given reference frame ID. </p>
+<p><img alt="" src="../assets/images/camera_reference_calibration.png" />
+<em>Figure 3: Graphical user interface of the extrinsic camera-reference calibration after the calibration target has been detected in the data of the camera. In this, the camera image is annotated with the corners of the ArUco markers.</em></p>
+<p>After starting up, the GUI, as depicted in <a href="">Figure 3</a>, will appear. It is made up of,
+- a 'Control Window' (A), 
+- a view on the target detections in the camera images (B),
+- a table view (C) which allows to enter the XYZ coordinated of the top-left marker corners, as well as 
+- a view on a dialog that is supposed to guide the user in the placement of the calibration target (D) <em>(currently in development)</em>.</p>
+<p>The calibration node continuously detects and tracks the ArUco marker inside the camera image, framing the ArUco markers.</p>
+<p>To perform an extrinsic calibration, follow the steps below:</p>
+<ol>
+<li>Start off by <strong>placing the calibration target</strong> in the center of the camera image and parallel to the image plane. Place the target at such a distance to the camera, that its width will fill out approximately half of the image width.</li>
+<li>Make sure that the markers are detected in the camera image.</li>
+<li>If at least 3 markers are detected, <strong>click on Button 1 'Capture Target Observation'</strong> to trigger full detection and precise estimation of the calibration target in the sensor data and to add the detection to the observation list.
+When finished the corresponding sensor data will be annotated with the detections as seen in <a href="">Figure 3</a>. In this, the camera image will be annotated with the corners of the detected ArUco markers (color coded with rainbow color map according to the ID of the marker).</li>
+<li>If the detection was faulty, you can remove the last observation from the stack by <strong>clicking on Button 2 'Remove Last Observation'</strong>. This can be repeated multiple times as it will always remove the top-most observation on the stack until no observation is left.</li>
+<li>
+<p>Continue to <strong>add (6-7) different poses</strong> of the calibration target by placing it</p>
+<ul>
+<li>at the top and/or bottom edge of the image,</li>
+<li>at the left and/or right edge of the image, and</li>
+<li>further away.</li>
+</ul>
+<p>At each position, slightly rotate the target inwards. Ideally place the target in a '+' shape in the image space with 5 positions. If not possible, try to place the target at least at 3 positions in a 'L' shape so that the positions are not collinear.</p>
+</li>
+<li>
+<p>For each position <strong>repeat steps 2-4</strong>.</p>
+</li>
+<li>After all target poses were captured in the camera image, fill in reference coordinates of the top-left marker corners in the appropriate table, together with the corresponding ID of the target pose and the corresponding marker ID. To this end, it is assumed that the observed target poses are entered in a contiguous order, starting off with the ID 1. Meaning, that the first position of the target gets the ID 1, the second the ID 2, and so on. Furthermore, for each target pose there are to be 4 markers given. You can also enter the reference coordinated successively while you move the target around, however, it is important that the <strong>observations are only 'applied' once at the end</strong>, when all coordinates have been entered.</li>
+<li>When enough different observations of the calibration target are collected and the reference coordinates of the top-left marker corners have been entered and 'applied', the calibration can be finalized by clicking on <strong>Button 4 'Calibrate'</strong>. This will do a final calibration, print out the resulting extrinsic parameters, overall mean reprojection error, as well as a standard deviation in the target poses when transforming it from the source sensor to the reference sensor. </li>
+</ol>
+<p><em>To adjust runtime parameters, e.g. parameters of the algorithm to detect the calibration target or to do the actual calibration algorithm, you can open 'rqt_reconfigure' via 'Edit' -&gt; 'Preferences'.</em></p>
+<hr>
+
+<h2 id="extrinsic-lidar-reference-calibration">Extrinsic LiDAR-Reference Calibration<a class="headerlink" href="#extrinsic-lidar-reference-calibration" title="Permanent link">&para;</a></h2>
+<p>The calibration is performed by aligning a cloud of the source sensor, holding detections of a calibration target, with the cloud of the reference sensor, holding the same observations, by means of GICP.</p>
+<p>The LiDAR-reference calibration is comprised of estimating a relative transformation of a given source LiDAR sensor with respect to a reference.
+Similar to the LiDAR-LiDAR calibration, the transformation is calculated by aligning a cloud of the source sensor, holding detections of a calibration target, with the reference data by means of GICP.
+However, instead of finding the 3D correspondences by detecting the calibration target in the reference LiDAR data, they can be entered manually by providing the 3D coordinates of the top-left corners of the ArUco markers with respect to a given reference frame ID. </p>
+<p><img alt="" src="../assets/images/lidar_reference_calibration.png" />
+<em>Figure 4: Graphical user interface of the extrinsic LiDAR-reference calibration after the calibration target has been detected in the data of the camera. In this, the detected target structure is highlighted with yellow in the LiDAR point cloud.</em></p>
+<p>After starting up, the GUI, as depicted in <a href="">Figure 4</a>, will appear. It is made up of,
+- a 'Control Window' (A), 
+- a view on the target detections in the source LiDAR cloud (B),
+- a table view (C) which allows to enter the XYZ coordinated of the top-left marker corners, as well as
+- a view on a dialog that is supposed to guide the user in the placement of the calibration target (D) <em>(currently in development)</em>.</p>
+<p>The calibration node continuously selects potential candidates of the calibration target inside the LiDAR clouds.
+In this, the points of the target candidates in the point cloud are displayed with the corresponding intensity value.</p>
+<p>To perform an extrinsic calibration, follow the steps below:</p>
+<ol>
+<li>Start off by <strong>placing the calibration target</strong> in front of the sensor for which the extrinsic pose is to be calibrated (i.e the source sensor). The target should be placed at such a distance, that the circular cutouts on the calibration target can be well identified. In this, a rule of thumb would be that if possible <strong>2-3 scan lines should pass through or touch</strong> a cutout</li>
+<li>Make sure that the structure of the calibration target is highlighted in the data of the sensor, i.e. in window B.</li>
+<li>If the target structure is highlighted in the data of the LiDAR scanners, <strong>click on Button 1 'Capture Target Observation'</strong> to trigger full detection and precise estimation of the calibration target in the sensor data and to add the detection to the observation list.
+When finished the corresponding sensor data will be annotated with the detections as seen in <a href="">Figure 4</a>. In this, the points of the LiDAR cloud that correspond to the detected calibration target are highlighted in yellow. 
+    In addition, from the estimated pose of the target, the corners of the ArUco markers are also drawn in the same color scheme as in the camera image.</li>
+<li>Perform a <strong>visual inspection</strong> on whether the orientation of the calibration target in the LiDAR cloud was estimated correctly.</li>
+<li>If the orientation was not correctly estimated, or if a wrong structure in the LiDAR cloud was supposedly marked as the calibration target, or any other fault, you can remove the last observation from the stack by <strong>clicking on Button 2 'Remove Last Observation'</strong>. This can be repeated multiple times as it will always remove the top-most observation on the stack until no observation is left.</li>
+<li>
+<p>Continue to <strong>add (3-5) different poses</strong> of the calibration target by placing it</p>
+<ul>
+<li>at a higher or lower position in front of the source sensor, and</li>
+<li>further away.</li>
+</ul>
+<p>In this the positions should make up an 'L' shape, so that a vertical, as well as a horizontal variance is established. Make sure that the positions are not collinear. At each position, slightly rotate the target inwards. </p>
+</li>
+<li>
+<p>For each position <strong>repeat steps 2-5</strong>.</p>
+</li>
+<li>After all target poses were captured in the camera image, fill in reference coordinates of the top-left marker corners in the appropriate table, together with the corresponding ID of the target pose and the corresponding marker ID. To this end, it is assumed that the observed target poses are entered in a contiguous order, starting off with the ID 1. Meaning, that the first position of the target gets the ID 1, the second the ID 2, and so on. Furthermore, for each target pose there are to be 4 markers given. You can also enter the reference coordinated successively while you move the target around, however, it is important that the <strong>observations are only 'applied' once at the end</strong>, when all coordinates have been entered.</li>
+<li>When enough different observations of the calibration target are collected, the calibration can be finalized by clicking on <strong>Button 4 'Calibrate'</strong>. This will do a final calibration, print out the resulting extrinsic parameters, the overall root mean squared error of the GICP, as well as a standard deviation in the target poses when transforming it from the source sensor to the reference sensor. </li>
+</ol>
+<p><em>To adjust runtime parameters, e.g. parameters of the algorithm to detect the calibration target or to do the actual calibration algorithm, you can open 'rqt_reconfigure' via 'Edit' -&gt; 'Preferences'.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../installation/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../calibration_target/" class="btn btn-neutral float-right" title="Calibration Target">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright 2024 - 2025 Fraunhofer IOSB and contributors</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../calibration_target/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../js/tables.js"></script>
+      <script src="../js/mathjax.js"></script>
+      <script src="../js/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

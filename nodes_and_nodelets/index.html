@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Nodes and Nodelets - Multi-Sensor Calibration</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Nodes and Nodelets";
+        var mkdocs_page_input_path = "nodes_and_nodelets.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Multi-Sensor Calibration
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">Tutorial</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../calibration_target/">Calibration Target</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data_processing/">Data Processing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workspaces/">Workspace Handling</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Nodes and Nodelets</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#nodes">Nodes</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#multisensor_calibration">multisensor_calibration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsic_camera_lidar_calibration">extrinsic_camera_lidar_calibration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsic_lidar_lidar_calibration">extrinsic_lidar_lidar_calibration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsic_camera_reference_calibration">extrinsic_camera_reference_calibration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsic_lidar_reference_calibration">extrinsic_lidar_reference_calibration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#publish_pointcloud">publish_pointcloud</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#initialize_robot_workspace">initialize_robot_workspace</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#composable-nodes-nodelets">Composable Nodes / Nodelets</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cameratargetdetection-cameradataprocessingnodelet">CameraTargetDetection / CameraDataProcessingNodelet</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#lidartargetdetection-lidardataprocessingnodelet">LidarTargetDetection / LidarDataProcessingNodelet</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsiccameralidarcalibrationnodelet">ExtrinsicCameraLidarCalibration(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsiccameracameracalibrationnodelet">ExtrinsicCameraCameraCalibration(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsiclidarlidarcalibrationnodelet">ExtrinsicLidarLidarCalibration(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsiccamerareferencecalibrationnodelet">ExtrinsicCameraReferenceCalibration(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsiclidarreferencecalibrationnodelet">ExtrinsicLidarReferenceCalibration(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#extrinsiclidarvehiclecalibrationnodelet">ExtrinsicLidarVehicleCalibration(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#guidedcameralidartargetplacementnodelet">GuidedCameraLidarTargetPlacement(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#guidedlidarlidartargetplacementnodelet">GuidedLidarLidarTargetPlacement(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pointcloud2imagenodelet">PointCloud2Image(Nodelet)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pointcloud2pointclouddistancenodelet">PointCloud2PointCloudDistance(Nodelet)</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/multisensor_calibration/CHANGELOG.rst">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">Contributing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Multi-Sensor Calibration</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Nodes and Nodelets</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/doc/user_docs/nodes_and_nodelets.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="nodes-composable-nodes-and-nodelets">Nodes, Composable Nodes and Nodelets<a class="headerlink" href="#nodes-composable-nodes-and-nodelets" title="Permanent link">&para;</a></h1>
+<h2 id="nodes">Nodes<a class="headerlink" href="#nodes" title="Permanent link">&para;</a></h2>
+<h3 id="multisensor_calibration">multisensor_calibration<a class="headerlink" href="#multisensor_calibration" title="Permanent link">&para;</a></h3>
+<p>Main and user-friendly entry point to start a multi-sensor calibration.
+This will start the <a href="../tutorial/#calibration-configurator">Calibration Configurator</a> with which any calibration can be parameterized and started.
+This does not require any launch parameters and can just be started like this:</p>
+<pre><code>ros2 run multisensor_calibration multisensor_calibration
+</code></pre>
+<hr>
+
+<h3 id="extrinsic_camera_lidar_calibration">extrinsic_camera_lidar_calibration<a class="headerlink" href="#extrinsic_camera_lidar_calibration" title="Permanent link">&para;</a></h3>
+<p>The node for the <a href="../tutorial/#extrinsic-camera-lidar-calibration">guided extrinsic calibration between a camera and a LiDAR sensor</a> with a user-friendly UI.</p>
+<p>It comprises</p>
+<ul>
+<li>the <a href="#extrinsiccameralidarcalibrationnodelet">ExtrinsicCameraLidarCalibration(Nodelet)</a> performing the actual calibration,</li>
+<li>the <a href="#guidedcameralidartargetplacementnodelet">GuidedCameraLidarTargetPlacement(Nodelet)</a> responsible for guiding the user to place the calibration target, as well as</li>
+<li>an instance of 'CameraLidarCalibrationGui' as a graphical user interface.</li>
+</ul>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>camera_sensor_name</code>: Name of the camera sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>camera_image_topic</code>: Topic name of the corresponding camera images.<br>
+    <em>Type: String</em></li>
+<li><code>lidar_sensor_name</code>: Name of the LiDAR sensor with respect to which the camera is to be
+ calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>camera_info_topic</code>: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified <code>camera_image_topic</code>.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>is_stereo_camera</code>: Set to true, if camera is to be calibrated as stereo camera. If set to true, 'right_camera_sensor_name' and 'right_camera_info_topic' also need to be set.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>right_camera_sensor_name</code>: Name of the right camera sensor when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>right_camera_info_topic</code>: Topic name of the camera info corresponding to the right camera. This is needed when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>rect_suffix</code>: Suffix of the of the right sensor name as well as the frame id for the rectified images. If the 'image_state' of the input images is DISTORTED or UNDISTORTED, this is added to the rectified frame id. If the imageState_ is STEREO_RECTIFIED this is removed from the frame id.<br>
+    <em>Type: String</em><br>
+    <em>Default: "_rect"</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>use_initial_guess</code>: Option to use an initial guess on the extrinsic sensor pose from the TF-tree, if available.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>sync_queue_size</code>: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+    <em>Type: int</em><br>
+    <em>Default: 100</em></li>
+<li><code>use_exact_sync</code>: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<hr>
+
+<h3 id="extrinsic_lidar_lidar_calibration">extrinsic_lidar_lidar_calibration<a class="headerlink" href="#extrinsic_lidar_lidar_calibration" title="Permanent link">&para;</a></h3>
+<p>The node for the <a href="../tutorial/#extrinsic-lidar-lidar-calibration">guided extrinsic calibration between two LiDAR sensors</a> with a user-friendly UI.</p>
+<p>It comprises</p>
+<ul>
+<li>the <a href="#extrinsiclidarlidarcalibrationnodelet">ExtrinsicLidarLidarCalibration(Nodelet)</a> performing the actual calibration,</li>
+<li>the <a href="#guidedlidarlidartargetplacementnodelet">GuidedLidarLidarTargetPlacement(Nodelet)</a> responsible for guiding the user to place the calibration target, as well as</li>
+<li>an instance of 'LidarLidarCalibrationGui' as a graphical user interface.</li>
+</ul>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_sensor_name</code>: Name of the source lidar sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>ref_lidar_sensor_name</code>: ame of the reference LiDAR sensor with respect to which the source LiDAR sensor is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>ref_lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>use_initial_guess</code>: Option to use an initial guess on the extrinsic sensor pose from the TF-tree, if available.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>align_ground_planes</code>: Set to true, to additionally align the ground planes in the sensor data. Additionally specify the upright frame ID.
+    <em>Type: bool</em>
+    <em>Default: false</em></li>
+<li><code>upright_frame_id</code>: ID of Frame which has an upwards pointing z-axis. Used to detect ground plane in sensor data.
+    <em>Type: String</em>
+    <em>Default: ""</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>sync_queue_size</code>: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+    <em>Type: int</em><br>
+    <em>Default: 100</em></li>
+<li><code>use_exact_sync</code>: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<hr>
+
+<h3 id="extrinsic_camera_reference_calibration">extrinsic_camera_reference_calibration<a class="headerlink" href="#extrinsic_camera_reference_calibration" title="Permanent link">&para;</a></h3>
+<p>The node for the <a href="../tutorial/#extrinsic-camera-reference-calibration">guided extrinsic calibration of a camera with respect to a reference</a> with a user-friendly UI.</p>
+<p>It comprises</p>
+<ul>
+<li>the <a href="#extrinsiccamerareferencecalibrationnodelet">ExtrinsicCameraReferenceCalibration(Nodelet)</a> performing the actual calibration,</li>
+<li>the <a href="#guidedcameralidartargetplacementnodelet">GuidedCameraLidarTargetPlacement(Nodelet)</a> responsible for guiding the user to place the calibration target, as well as</li>
+<li>an instance of 'CameraReferenceCalibrationGui' as a graphical user interface.</li>
+</ul>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>camera_sensor_name</code>: Name of the camera sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>camera_image_topic</code>: Topic name of the corresponding camera images.<br>
+    <em>Type: String</em></li>
+<li><code>reference_name</code>: Name of the reference
+ calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>reference_frame_id</code>: Frame ID in which the reference data is provided.<br>
+    <em>Type: String</em></li>
+<li><code>camera_info_topic</code>: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified <code>camera_image_topic</code>.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>is_stereo_camera</code>: Set to true, if camera is to be calibrated as stereo camera. If set to true, 'right_camera_sensor_name' and 'right_camera_info_topic' also need to be set.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>right_camera_sensor_name</code>: Name of the right camera sensor when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>right_camera_info_topic</code>: Topic name of the camera info corresponding to the right camera. This is needed when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>rect_suffix</code>: Suffix of the of the right sensor name as well as the frame id for the rectified images. If the 'image_state' of the input images is DISTORTED or UNDISTORTED, this is added to the rectified frame id. If the imageState_ is STEREO_RECTIFIED this is removed from the frame id.<br>
+    <em>Type: String</em><br>
+    <em>Default: "_rect"</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<hr>
+
+<h3 id="extrinsic_lidar_reference_calibration">extrinsic_lidar_reference_calibration<a class="headerlink" href="#extrinsic_lidar_reference_calibration" title="Permanent link">&para;</a></h3>
+<p>The node for the <a href="../tutorial/#extrinsic-lidar-reference-calibration">guided extrinsic calibration of a LiDAR sensor with respect to a reference</a> with a user-friendly UI.</p>
+<p>It comprises</p>
+<ul>
+<li>the <a href="#extrinsic_lidar_reference_calibration">ExtrinsicLidarReferenceCalibration(Nodelet)</a> performing the actual calibration,</li>
+<li>the <a href="#guidedlidarlidartargetplacementnodelet">GuidedLidarLidarTargetPlacement(Nodelet)</a> responsible for guiding the user to place the calibration target, as well as</li>
+<li>an instance of 'LidarReferenceCalibrationGui' as a graphical user interface.</li>
+</ul>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_sensor_name</code>: Name of the source lidar sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>reference_name</code>: Name of the reference
+ calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>reference_frame_id</code>: Frame ID in which the reference data is provided.<br>
+    <em>Type: String</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<hr>
+
+<h3 id="publish_pointcloud">publish_pointcloud<a class="headerlink" href="#publish_pointcloud" title="Permanent link">&para;</a></h3>
+<p>Node to load a point cloud from a specified PLY file and publish it on the given topic with the given frame_id.</p>
+<p>*This is helpful to publish the model cloud in the context of <a href="#extrinsiclidarvehiclecalibrationnodelet">extrinsic LiDAR-vehicle calibration</a>.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>point_cloud_file</code>: PLY file from which to load the point cloud.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>topic_name</code>: Topic name on which to publish the point cloud.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>frame_id</code>: Frame ID at which to publish the point cloud.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+</ul>
+<hr>
+
+<h3 id="initialize_robot_workspace">initialize_robot_workspace<a class="headerlink" href="#initialize_robot_workspace" title="Permanent link">&para;</a></h3>
+<p>Node to <a href="../workspaces/#initialize-new-robot-workspace">initialize a non-existing robot workspace</a> with given information.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to where the robot workspace is to be initialized.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>robot_name</code>: Name of the robot to which the workspace corresponds.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>urdf_model_path</code>: (Optional) Path to URDF model associated with the robot.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+</ul>
+<hr>
+
+<h2 id="composable-nodes-nodelets">Composable Nodes / Nodelets<a class="headerlink" href="#composable-nodes-nodelets" title="Permanent link">&para;</a></h2>
+<h3 id="cameratargetdetection-cameradataprocessingnodelet">CameraTargetDetection / CameraDataProcessingNodelet<a class="headerlink" href="#cameratargetdetection-cameradataprocessingnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to run the processing of the camera data and, in turn, the detection of the calibration target within the camera data isolated from the rest.
+This is particularly helpful to develop and debug the detection of the calibration target within the camera data.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>camera</code>: Namespace of the camera.<br>
+    <em>Type: String</em><br>
+    <em>Default: "/camera"</em></li>
+<li><code>image</code>: Name of the image topic within the camera namespace.<br>
+    <em>Type: String</em><br>
+    <em>Default: "image_color"</em></li>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/annotated_image</code>: Camera image, which is annotated with the detected markers of the calibration target.</li>
+<li><code>~/target_pattern</code>: Cloud of the calibration target detected in the camera and reprojected into a 3D cloud. 
+    This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. 
+    Each point of the marker corner is enhanced with the ID of the ArUco marker inside the <code>intensity</code> field. 
+    This is  only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/board_pose</code>: 6-DOF pose of the detected calibration target. 
+    This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/request_camera_intrinsics</code>: Service to request the loaded intrinsics of the camera sensor.</li>
+<li><code>~/capture_target</code>: Service to trigger the capturing of the target.</li>
+<li><code>~/request_processor_state</code>: Service to get initialization state of the processor.</li>
+</ul>
+<hr>
+
+<h3 id="lidartargetdetection-lidardataprocessingnodelet">LidarTargetDetection / LidarDataProcessingNodelet<a class="headerlink" href="#lidartargetdetection-lidardataprocessingnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to run the processing of the LiDAR data and, in turn, the detection of the calibration target within the LiDAR point clouds isolated from the rest.
+This is particularly helpful to develop and debug the detection of the calibration target within the camera data.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>cloud</code>: Topic name of the LiDAR cloud messages in which the target is to be detected.<br>
+    <em>Type: String</em><br>
+    Default: "/cloud"*</li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/regions_of_interest</code>: Cloud holding separate regions of the input sensor cloud in which the calibration target is searched for. 
+    These are the product of the first preprocessing of the sensor cloud to reduce the amount of data to be processed.</li>
+<li><code>~/target_pattern</code>: Cloud holding points of the calibration target detected in the LiDAR cloud. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of he marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/board_pose</code>: 6-DOF pose of the detected calibration target. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/capture_target</code>: Service to trigger the capturing of the target.</li>
+<li><code>~/request_processor_state</code>: Service to get initialization state of the processor.</li>
+<li><code>~/add_marker_observations</code>: Service to add the coordinates of the top-left corners of the ArUco marker. This is not relevant for this nodelet.</li>
+<li><code>~/import_marker_observations</code>: Service to import a set of marker observations. This is not relevant for this nodelet.</li>
+</ul>
+<hr>
+
+<h3 id="extrinsiccameralidarcalibrationnodelet">ExtrinsicCameraLidarCalibration(Nodelet)<a class="headerlink" href="#extrinsiccameralidarcalibrationnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to perform extrinsic camera-LiDAR calibration without any ui or guidance.</p>
+<p><strong>How to use as standalone:</strong></p>
+<ol>
+<li>After starting up, the calibration nodelet continuously detects the ArUco marker inside the camera image and selects possible region of interests inside the LiDAR cloud. It publishes the
+marker detections as well as the regions of interest in the topic '~/&lt;camera_sensor_name&gt;/annotated_image' and '~/&lt;lidar_sensor_name&gt;/regions_of_interest', respectively.</li>
+<li>Visualize the data published in the previous step for example in rviz and make sure that the calibration target is seen both in the camera image as well as the LiDAR scan.</li>
+<li>To trigger the detection of the calibration target and to capture its pose, call the provided service of the calibration nodelet: '~/capture_target'.</li>
+<li>Depending on the data, the detection of the target can take up to a couple of seconds.</li>
+<li>When the target has successfully been detected in both the camera image as well as the LiDAR data, an instant calibration is performed with just this target pose. A corresponding message is printed in the command line with the mean reprojection error of this calibration. If not successful a corresponding message is also printed. Typical reasons for a detection not being successful is either that the target is not detected in the LiDAR scan or that the reprojection error exceeds a certain threshold (Default: 2px). If latter is the case the threshold can be increased by calling 'rqt_dynamic_reconfigure'.</li>
+<li>Since the detection of the calibration target from the camera image is very reliable, only the detection inside the LiDAR cloud is published for visual inspection, i.e. inside the topics
+'~/&lt;lidar_sensor_name&gt;/target_pattern' and '~/&lt;lidar_sensor_name&gt;/marker_corners'.</li>
+<li>If the detected pose is not satisfactory one can remove the last detection by calling the appropriate service: '~/remove_last_observation'.</li>
+<li>For a good calibration 5 to 7 different poses of the calibration target should be used, ideally moving it around the three coordinate axes. For each pose, repeat steps 2-7.</li>
+<li>When enough different calibration poses are collected, the calibration can be finalized by calling the service: '~/finalize_calibration'. This will do a final calibration, print out the resulting extrinsic parameters as well as the overall mean reprojection error and the confidence of the calibration. The calibration results and a urdf snippet, together with the observations (if requested) are written into the calibration workspace.
+NOTE: For a good final calibration a typical mean reprojection error is between 2-4 pixels.</li>
+</ol>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>camera_sensor_name</code>: Name of the camera sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>camera_image_topic</code>: Topic name of the corresponding camera images.<br>
+    <em>Type: String</em></li>
+<li><code>lidar_sensor_name</code>: Name of the LiDAR sensor with respect to which the camera is to be
+ calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>camera_info_topic</code>: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified <code>camera_image_topic</code>.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>is_stereo_camera</code>: Set to true, if camera is to be calibrated as stereo camera. If set to true, 'right_camera_sensor_name' and 'right_camera_info_topic' also need to be set.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>right_camera_sensor_name</code>: Name of the right camera sensor when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>right_camera_info_topic</code>: Topic name of the camera info corresponding to the right camera. This is needed when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>rect_suffix</code>: Suffix of the of the right sensor name as well as the frame id for the rectified images. If the 'image_state' of the input images is DISTORTED or UNDISTORTED, this is added to the rectified frame id. If the imageState_ is STEREO_RECTIFIED this is removed from the frame id.<br>
+    <em>Type: String</em><br>
+    <em>Default: "_rect"</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>use_initial_guess</code>: Option to use an initial guess on the extrinsic sensor pose from the TF-tree, if available.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>sync_queue_size</code>: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+    <em>Type: int</em><br>
+    <em>Default: 100</em></li>
+<li><code>use_exact_sync</code>: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/&lt;camera_sensor_name&gt;/annotated_image</code>: Camera image, which is annotated with the detected markers of the calibration target.</li>
+<li><code>~/&lt;camera_sensor_name&gt;/target_pattern</code>: Cloud of the calibration target detected in the camera and reprojected into a 3D cloud. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;camera_sensor_name&gt;/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of he marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;camera_sensor_name&gt;/board_pose</code>: 6-DOF pose of the detected calibration target. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;lidar_sensor_name&gt;/regions_of_interest</code>: Cloud holding separate regions of the input sensor cloud in which the calibration target is searched for. These are the product of the first preprocessing of the sensor cloud to reduce the amount of data to be processed.</li>
+<li><code>~/&lt;lidar_sensor_name&gt;/target_pattern</code>: Cloud holding points of the calibration target detected in the LiDAR cloud. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;lidar_sensor_name&gt;/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of he marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;lidar_sensor_name&gt;/board_pose</code>: 6-DOF pose of the detected calibration target. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/calibration_result</code>: Calibration result published after a successful calibration.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/capture_target</code>: Service to trigger the capturing of the target in both sensors. This will add an observation to the list, if the target detection was successful.</li>
+<li><code>~/remove_last_observation</code>: Service to remove last observation from the top of the list. This can be executed repeatedly until the observation list is empty.</li>
+<li><code>~/finalize_calibration</code>: Service to finalize calibration, i.e. calibrate the extrinsic pose based on all captured observations.</li>
+<li><code>~/reset</code>: Service to reset the calibration.</li>
+<li><code>~/request_calibration_meta_data</code>: Service to request the meta information of the calibration, e.g. sensor names, topic names, and more.</li>
+<li><code>~/request_sensor_extrinsics</code>: Service to request the currently calculated extrinsic pose between the two sensors.</li>
+<li><code>~/request_camera_intrinsics</code>: Service to request the loaded intrinsics of the camera sensor.</li>
+<li><code>~/&lt;lidar_sensor_name&gt;/add_marker_observations</code>: Service to add the coordinates of the top-left corners of the ArUco marker to the LiDAR data as reference.</li>
+<li><code>~/&lt;lidar_sensor_name&gt;/import_marker_observations</code>: Service to import a set of the top-left corners of the ArUco marker to the LiDAR data as reference. This will remove all previous observations captured for this sensor.</li>
+</ul>
+<hr>
+
+<h3 id="extrinsiccameracameracalibrationnodelet">ExtrinsicCameraCameraCalibration(Nodelet)<a class="headerlink" href="#extrinsiccameracameracalibrationnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to perform extrinsic camera-Camera calibration without any ui or guidance.</p>
+<p><strong>How to use as standalone:</strong></p>
+<ol>
+<li>After starting up, the calibration nodelet continuously detects the ArUco marker inside the cameras' images. It publishes the
+marker detections.</li>
+<li>Visualize the data published in the previous step for example in rviz and make sure that the calibration target is seen in boths cameras.</li>
+<li>To trigger the detection of the calibration target and to capture its pose, call the provided service of the calibration nodelet: '~/capture_target'.</li>
+<li>Depending on the data, the detection of the target can take up to a couple of seconds.</li>
+<li>When the target has successfully been detected, an instant calibration is performed with just this target pose. A corresponding message is printed in the command line with the mean reprojection error of this calibration. If not successful a corresponding message is also printed. Typical reasons for a detection not being successful is either that the target is not detected in both sensors or that the reprojection error exceeds a certain threshold (Default: 2px). If latter is the case the threshold can be increased by calling 'rqt_dynamic_reconfigure'.</li>
+<li>If the detected pose is not satisfactory one can remove the last detection by calling the appropriate service: '~/remove_last_observation'.</li>
+<li>For a good calibration 5 to 7 different poses of the calibration target should be used, ideally moving it around the three coordinate axes. For each pose, repeat steps 2-6.</li>
+<li>When enough different calibration poses are collected, the calibration can be finalized by calling the service: '~/finalize_calibration'. This will do a final calibration, print out the resulting extrinsic parameters as well as the overall mean reprojection error and the confidence of the calibration. The calibration results and a urdf snippet, together with the observations (if requested) are written into the calibration workspace.
+NOTE: For a good final calibration a typical mean reprojection error is between 2-4 pixels.</li>
+</ol>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>src_camera_sensor_name</code>: Name of the camera sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>src_camera_image_topic</code>: Topic name of the corresponding camera images.<br>
+    <em>Type: String</em></li>
+<li><code>src_camera_info_topic</code>: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified <code>camera_image_topic</code>.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>ref_camera_sensor_name</code>: Name of the camera sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>ref_camera_image_topic</code>: Topic name of the corresponding camera images.<br>
+    <em>Type: String</em></li>
+<li><code>ref_camera_info_topic</code>: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified <code>camera_image_topic</code>.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>use_initial_guess</code>: Option to use an initial guess on the extrinsic sensor pose from the TF-tree, if available.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>sync_queue_size</code>: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+    <em>Type: int</em><br>
+    <em>Default: 100</em></li>
+<li><code>use_exact_sync</code>: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/&lt;src_camera_sensor_name&gt;/annotated_image</code>: Camera image, which is annotated with the detected markers of the calibration target.</li>
+<li><code>~/&lt;src_camera_sensor_name&gt;/target_pattern</code>: Cloud of the calibration target detected in the camera and reprojected into a 3D cloud.</li>
+<li><code>~/&lt;src_camera_sensor_name&gt;/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of he marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field.</li>
+<li><code>~/&lt;src_camera_sensor_name&gt;/board_pose</code>: 6-DOF pose of the detected calibration target.</li>
+<li><code>~/&lt;ref_camera_sensor_name&gt;/regions_of_interest</code>: Cloud holding separate regions of the input sensor cloud in which the calibration target is searched for. These are the product of the first preprocessing of the sensor cloud to reduce the amount of data to be processed.</li>
+<li><code>~/&lt;ref_camera_sensor_name&gt;/target_pattern</code>: same as above</li>
+<li><code>~/&lt;ref_camera_sensor_name&gt;/marker_corners</code>: same as above</li>
+<li><code>~/&lt;ref_camera_sensor_name&gt;/board_pose</code>: same as above</li>
+<li><code>~/calibration_result</code>: Calibration result published after a successful calibration.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/capture_target</code>: Service to trigger the capturing of the target in both sensors. This will add an observation to the list, if the target detection was successful.</li>
+<li><code>~/remove_last_observation</code>: Service to remove last observation from the top of the list. This can be executed repeatedly until the observation list is empty.</li>
+<li><code>~/finalize_calibration</code>: Service to finalize calibration, i.e. calibrate the extrinsic pose based on all captured observations.</li>
+<li><code>~/reset</code>: Service to reset the calibration.</li>
+<li><code>~/request_calibration_meta_data</code>: Service to request the meta information of the calibration, e.g. sensor names, topic names, and more.</li>
+<li><code>~/request_sensor_extrinsics</code>: Service to request the currently calculated extrinsic pose between the two sensors.</li>
+<li><code>~/request_camera_intrinsics</code>: Service to request the loaded intrinsics of the src camera sensor.</li>
+</ul>
+<hr>
+
+<h3 id="extrinsiclidarlidarcalibrationnodelet">ExtrinsicLidarLidarCalibration(Nodelet)<a class="headerlink" href="#extrinsiclidarlidarcalibrationnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to perform extrinsic LiDAR-LiDAR calibration without any ui or guidance.</p>
+<p><strong>How to use as standalone:</strong></p>
+<ol>
+<li>After starting up, the calibration nodelet continuously selects possible region of interests inside both LiDAR clouds. It publishes the marker detections as well as the regions of interest in the topics '~/&lt;[src|ref]_lidar_sensor_name&gt;/regions_of_interest'.</li>
+<li>Visualize the data published in the previous step for example in rviz and make sure that the calibration target is seen both in the camera image as well as the LiDAR scan.</li>
+<li>To trigger the detection of the calibration target and to capture its pose, call the provided service of the calibration nodelet: '~/capture_target'.</li>
+<li>Depending on the data, the detection of the target can take up to a couple of seconds.</li>
+<li>When the target has successfully been detected in both LiDAR data, an instant calibration is performed with just this target pose. A corresponding message is printed in the command line with the mean reprojection error of this calibration. If not successful a corresponding message is also printed. Typical reasons for a detection not being successful is that the target is not detected in the LiDAR scan.</li>
+<li>The detection inside the LiDAR cloud is published for visual inspection, i.e. inside the topics '~/&lt;[src|ref]_lidar_sensor_name&gt;/target_pattern' and '~/&lt;[src|ref]_lidar_sensor_name&gt;/marker_corners'.</li>
+<li>If the detected pose is not satisfactory one can remove the last detection by calling the appropriate service: '~/remove_last_observation'.</li>
+<li>For a good calibration 3 to 5 different poses of the calibration target should be used, ideally moving it around the three coordinate axes. For each pose, repeat steps 2-7.</li>
+<li>When enough different calibration poses are collected, the calibration can be finalized by calling the service: '~/finalize_calibration'. This will do a final calibration, print out the resulting extrinsic parameters as well as the overall root mean squared error and the confidence of the calibration. The calibration results and a urdf snippet, together with the observations (if requested) are written into the calibration workspace.</li>
+</ol>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_sensor_name</code>: Name of the source lidar sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>ref_lidar_sensor_name</code>: ame of the reference LiDAR sensor with respect to which the source LiDAR sensor is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>ref_lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>use_initial_guess</code>: Option to use an initial guess on the extrinsic sensor pose from the TF-tree, if available.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>align_ground_planes</code>: Set to true, to additionally align the ground planes in the sensor data. Additionally specify the upright frame ID.
+    <em>Type: bool</em>
+    <em>Default: false</em></li>
+<li><code>upright_frame_id</code>: ID of Frame which has an upwards pointing z-axis. Used to detect ground plane in sensor data.
+    <em>Type: String</em>
+    <em>Default: ""</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>sync_queue_size</code>: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+    <em>Type: int</em><br>
+    <em>Default: 100</em></li>
+<li><code>use_exact_sync</code>: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/regions_of_interest</code>: Cloud holding separate regions of the source LiDAR cloud in which the calibration target is searched for. These are the product of the first preprocessing of the sensor cloud to reduce the amount of data to be processed.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/board_pose</code>: 6-DOF pose of the detected calibration target in the source LiDAR cloud. This is only available after the calibration target has been detected in the source LiDAR cloud.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/target_pattern</code>: Cloud holding points of the calibration target detected in the source LiDAR cloud. This is only available after the calibration target has been detected in the source LiDAR cloud.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of the marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;ref_lidar_sensor_name&gt;/regions_of_interest</code>: Cloud holding separate regions of the input reference LiDAR cloud in which the calibration target is searched for. These are the product of the first preprocessing of the sensor cloud to reduce the amount of data to be processed.</li>
+<li><code>~/&lt;ref_lidar_sensor_name&gt;/board_pose</code>: 6-DOF pose of the detected calibration target in the reference LiDAR cloud. This is only available after the calibration target has been detected in the reference LiDAR cloud.</li>
+<li><code>~/&lt;ref_lidar_sensor_name&gt;/target_pattern</code>: Cloud holding points of the calibration target detected in the reference LiDAR cloud. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;ref_lidar_sensor_name&gt;/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of the marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/calibration_result</code>: Calibration result published after a successful calibration.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/capture_target</code>: Service to trigger the capturing of the target in both sensors. This will add an observation to the list, if the target detection was successful.</li>
+<li><code>~/remove_last_observation</code>: Service to remove last observation from the top of the list. This can be executed repeatedly until the observation list is empty.</li>
+<li><code>~/finalize_calibration</code>: Service to finalize calibration, i.e. calibrate the extrinsic pose based on all captured observations.</li>
+<li><code>~/reset</code>: Service to reset the calibration.</li>
+<li><code>~/request_calibration_meta_data</code>: Service to request the meta information of the calibration, e.g. sensor names, topic names, and more.</li>
+<li><code>~/request_sensor_extrinsics</code>: Service to request the currently calculated extrinsic pose between the two sensors.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/add_marker_observations</code>: Service to add the coordinates of the top-left corners of the ArUco marker to the source LiDAR data.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/import_marker_observations</code>: Service to import a set of the top-left corners of the ArUco marker to the source LiDAR data. This will remove all previous observations captured for this sensor.</li>
+<li><code>~/&lt;ref_lidar_sensor_name&gt;/add_marker_observations</code>: Service to add the coordinates of the top-left corners of the ArUco marker to the reference LiDAR data.</li>
+<li><code>~/&lt;ref_lidar_sensor_name&gt;/import_marker_observations</code>: Service to import a set of the top-left corners of the ArUco marker to the reference LiDAR data. This will remove all previous observations captured for this sensor.</li>
+</ul>
+<hr>
+
+<h3 id="extrinsiccamerareferencecalibrationnodelet">ExtrinsicCameraReferenceCalibration(Nodelet)<a class="headerlink" href="#extrinsiccamerareferencecalibrationnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to perform extrinsic camera-reference calibration without any ui or guidance.</p>
+<p><strong>How to use as standalone:</strong></p>
+<ol>
+<li>After starting up, the calibration nodelet continuously detects the ArUco marker inside the camera image. It publishes the marker detections in the topic '~/&lt;camera_sensor_name&gt;/annotated_image', respectively.</li>
+<li>Visualize the data published in the previous step for example in rviz and make sure that the calibration target is seen both in the camera image as well as the LiDAR scan.</li>
+<li>To trigger the detection of the calibration target and to capture its pose in the camera image, call the provided service of the calibration nodelet: '~/capture_target'.</li>
+<li>Depending on the data, the detection of the target can take up to a couple of seconds.</li>
+<li>When the target has successfully been detected a corresponding message is printed in the command line. If not successful a corresponding message is also printed.</li>
+<li>If the detected pose is not satisfactory one can remove the last detection by calling the appropriate service: '~/remove_last_observation'.</li>
+<li>Measure the top-left corner of each ArUco marker, for example, with a Total Station.</li>
+<li>Pass all measured coordinates of the top-left marker corners to the calibration by calling 'ros2 service call /&lt;node_name&gt;/<reference_name/>/add_marker_observations iosb_calibration_interface/srv/AddMarkerObservations "{ observation: { marker_ids: [1, 2, 3, 4], marker_top_left_point: [{x: 1.0, y: 2.0, z: 3.0}, {x: 1.0, y: 2.0, z: 3.0}, {x: 1.0, y: 2.0, z: 3.0}, {x: 1.0, y: 2.0, z: 3.0}]} }'.</li>
+<li>For a good calibration 5 to 7 different poses of the calibration target should be used, ideally moving it around the three coordinate axes. For each pose, repeat steps 2-8.</li>
+<li>When enough different calibration poses are collected, the calibration can be finalized by calling the service: '~/finalize_calibration'. This will do a final calibration, print out the resulting extrinsic parameters as well as the overall mean reprojection error and the confidence of the calibration. The calibration results and a urdf snippet, together with the observations (if requested) are written into the calibration workspace. For a good final calibration a typical mean reprojection error is between 2-4 pixels.</li>
+</ol>
+<p><strong>NOTE:</strong> Step 8 (entering of the reference coordinates) does not necessarily need to be done directly after each measuring of the coordinates. It is can also be done iteratively for all observations before Step 10. However, it is important that the measurements are added in the correct order.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>camera_sensor_name</code>: Name of the camera sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>camera_image_topic</code>: Topic name of the corresponding camera images.<br>
+    <em>Type: String</em></li>
+<li><code>reference_name</code>: Name of the reference
+ calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>reference_frame_id</code>: Frame ID in which the reference data is provided.<br>
+    <em>Type: String</em></li>
+<li><code>camera_info_topic</code>: Name of the camera info topic. If this parameter is omitted the camera
+   info topic name is constructed from the specified <code>camera_image_topic</code>.<br>
+   <em>Type: String</em><br>
+   <em>Default: ""</em></li>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>is_stereo_camera</code>: Set to true, if camera is to be calibrated as stereo camera. If set to true, 'right_camera_sensor_name' and 'right_camera_info_topic' also need to be set.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>right_camera_sensor_name</code>: Name of the right camera sensor when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>right_camera_info_topic</code>: Topic name of the camera info corresponding to the right camera. This is needed when the camera is to be calibrated as a stereo camera system. Required if <code>is_stereo_camera == true</code>.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>rect_suffix</code>: Suffix of the of the right sensor name as well as the frame id for the rectified images. If the 'image_state' of the input images is DISTORTED or UNDISTORTED, this is added to the rectified frame id. If the imageState_ is STEREO_RECTIFIED this is removed from the frame id.<br>
+    <em>Type: String</em><br>
+    <em>Default: "_rect"</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/&lt;camera_sensor_name&gt;/annotated_image</code>: Camera image, which is annotated with the detected markers of the calibration target.</li>
+<li><code>~/&lt;camera_sensor_name&gt;/target_pattern</code>: Cloud of the calibration target detected in the camera and reprojected into a 3D cloud. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;camera_sensor_name&gt;/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of he marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/&lt;camera_sensor_name&gt;/board_pose</code>: 6-DOF pose of the detected calibration target. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/calibration_result</code>: Calibration result published after a successful calibration.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/capture_target</code>: Service to trigger the capturing of the target in both sensors. This will add an observation to the list, if the target detection was successful.</li>
+<li><code>~/remove_last_observation</code>: Service to remove last observation from the top of the list. This can be executed repeatedly until the observation list is empty.</li>
+<li><code>~/finalize_calibration</code>: Service to finalize calibration, i.e. calibrate the extrinsic pose based on all captured observations.</li>
+<li><code>~/reset</code>: Service to reset the calibration.</li>
+<li><code>~/request_calibration_meta_data</code>: Service to request the meta information of the calibration, e.g. sensor names, topic names, and more.</li>
+<li><code>~/request_sensor_extrinsics</code>: Service to request the currently calculated extrinsic pose between the two sensors.</li>
+<li><code>~/request_camera_intrinsics</code>: Service to request the loaded intrinsics of the camera sensor.</li>
+<li><code>~/&lt;reference_name&gt;/add_marker_observations</code>: Service to add the coordinates of the top-left corners of the ArUco marker to the LiDAR data as reference.</li>
+<li><code>~/&lt;reference_name&gt;/import_marker_observations</code>: Service to import a set of the top-left corners of the ArUco marker to the LiDAR data as reference. This will remove all previous observations captured for this sensor.</li>
+</ul>
+<hr>
+
+<h3 id="extrinsiclidarreferencecalibrationnodelet">ExtrinsicLidarReferenceCalibration(Nodelet)<a class="headerlink" href="#extrinsiclidarreferencecalibrationnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to perform extrinsic lidar-reference calibration without any ui or guidance.</p>
+<p><strong>How to use as standalone:</strong></p>
+<ol>
+<li>After starting up, the calibration nodelet continuously selects possible region of interests inside the LiDAR cloud. It publishes the marker detections as well as the regions of interest in the topics '~/<src_lidar_sensor_name>/regions_of_interest'.</li>
+<li>Visualize the data published in the previous step for example in rviz and make sure that the calibration target is seen both in the camera image as well as the LiDAR scan.</li>
+<li>To trigger the detection of the calibration target and to capture its pose in the camera image, call the provided service of the calibration nodelet: '~/capture_target'.</li>
+<li>Depending on the data, the detection of the target can take up to a couple of seconds.</li>
+<li>When the target has successfully been detected a corresponding message is printed in the command line. If not successful a corresponding message is also printed.</li>
+<li>If the detected pose is not satisfactory one can remove the last detection by calling the appropriate service: '~/remove_last_observation'.</li>
+<li>Measure the top-left corner of each ArUco marker, for example, with a Total Station.</li>
+<li>Pass all measured coordinates of the top-left marker corners to the calibration by calling 'ros2 service call /&lt;node_name&gt;/<reference_name/>/add_marker_observations iosb_calibration_interface/srv/AddMarkerObservations "{ observation: { marker_ids: [1, 2, 3, 4], marker_top_left_point: [{x: 1.0, y: 2.0, z: 3.0}, {x: 1.0, y: 2.0, z: 3.0}, {x: 1.0, y: 2.0, z: 3.0}, {x: 1.0, y: 2.0, z: 3.0}]} }'.</li>
+<li>For a good calibration 3 to 5 different poses of the calibration target should be used, ideally moving it around the three coordinate axes. For each pose, repeat steps 2-8.</li>
+<li>When enough different calibration poses are collected, the calibration can be finalized by calling the service: '~/finalize_calibration'. This will do a final calibration, print out the resulting extrinsic parameters as well as the overall root mean squared error and the confidence of the calibration. The calibration results and a urdf snippet, together with the observations (if requested) are written into the calibration workspace. </li>
+</ol>
+<p><strong>NOTE:</strong> Step 8 (entering of the reference coordinates) does not necessarily need to be done directly after each measuring of the coordinates. It is can also be done iteratively for all observations before Step 10. However, it is important that the measurements are added in the correct order.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_sensor_name</code>: Name of the source lidar sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>reference_name</code>: Name of the reference
+ calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>reference_frame_id</code>: Frame ID in which the reference data is provided.<br>
+    <em>Type: String</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/regions_of_interest</code>: Cloud holding separate regions of the source LiDAR cloud in which the calibration target is searched for. These are the product of the first preprocessing of the sensor cloud to reduce the amount of data to be processed.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/board_pose</code>: 6-DOF pose of the detected calibration target in the source LiDAR cloud. This is only available after the calibration target has been detected in the source LiDAR cloud.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/target_pattern</code>: Cloud holding points of the calibration target detected in the source LiDAR cloud. This is only available after the calibration target has been detected in the source LiDAR cloud.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/marker_corners</code>: Corners of the ArUco markers on the calibration target deduced from the detected pose of the target. Each point of the marker corner is enhanced with the ID of the ArUco marker inside the 'intensity' field. This is only available after the calibration target has been detected in the LiDAR cloud.</li>
+<li><code>~/calibration_result</code>: Calibration result published after a successful calibration.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/capture_target</code>: Service to trigger the capturing of the target in both sensors. This will add an observation to the list, if the target detection was successful.</li>
+<li><code>~/remove_last_observation</code>: Service to remove last observation from the top of the list. This can be executed repeatedly until the observation list is empty.</li>
+<li><code>~/finalize_calibration</code>: Service to finalize calibration, i.e. calibrate the extrinsic pose based on all captured observations.</li>
+<li><code>~/reset</code>: Service to reset the calibration.</li>
+<li><code>~/request_calibration_meta_data</code>: Service to request the meta information of the calibration, e.g. sensor names, topic names, and more.</li>
+<li><code>~/request_sensor_extrinsics</code>: Service to request the currently calculated extrinsic pose between the two sensors.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/add_marker_observations</code>: Service to add the coordinates of the top-left corners of the ArUco marker to the source LiDAR data.</li>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/import_marker_observations</code>: Service to import a set of the top-left corners of the ArUco marker to the source LiDAR data. This will remove all previous observations captured for this sensor.</li>
+<li><code>~/&lt;reference_name&gt;/add_marker_observations</code>: Service to add the coordinates of the top-left corners of the ArUco marker to the LiDAR data as reference.</li>
+<li><code>~/&lt;reference_name&gt;/import_marker_observations</code>: Service to import a set of the top-left corners of the ArUco marker to the LiDAR data as reference. This will remove all previous observations captured for this sensor.</li>
+</ul>
+<hr>
+
+<h3 id="extrinsiclidarvehiclecalibrationnodelet">ExtrinsicLidarVehicleCalibration(Nodelet)<a class="headerlink" href="#extrinsiclidarvehiclecalibrationnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to perform extrinsic LiDAR-LiDAR calibration without any ui.
+The idea in this calibration is that for which have LiDAR sensors that also "see" part of the robots body, on can estimate the position of the LiDAR sensor by aligning the LiDAR scans to a model of the robots body.
+This is done by manually selecting corresponding regions in both sensor cloud and model. To do so, use the point picking tool of rviz to pick a point in the corresponding clouds round which a planar region is to be estimated. The selected regions are then aligned using a GICP. For region selection a plane is fitted into the cloud at a selected marker point using RANSAC. Prior to GICP the clouds are filtered using Statistical Outlier Removal. The transformation guess for the GICP is computed by using a Levenberg-Marquardt algorithm to estimate a rigid transformation from the seed points around the selected region markers.
+<strong>NOTE:</strong> This work, however, is a prototype implementation and needs further development.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>robot_ws_path</code>: Path to the folder holding the robot workspace. This will NOT be created if it does not yet exist. 
+    See section <a href="../workspaces/#initialize-new-robot-workspace">'Initialize new Robot workspace'</a> to find out how to create a new one<br>
+    <em>Type: String</em></li>
+<li><code>target_config_file</code>: Path to the file holding the <a href="../calibration_target/">configuration of the calibration target</a>.<br>
+      <em>E.g. "$(find multisensor_calibration)/config/TargetWithCirclesAndAruco.yaml"</em><br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_sensor_name</code>: Name of the source lidar sensor that is to be calibrated.<br>
+    <em>Type: String</em></li>
+<li><code>src_lidar_cloud_topic</code>: Topic name of the corresponding LiDAR cloud.<br>
+    <em>Type: String</em></li>
+<li><code>ref_lidar_cloud_topic</code>: Topic name of the reference LiDAR cloud from CAD model.<br>
+    <em>Type: String</em></li>
+<li><code>base_frame_id</code>: If specified, the extrinsic pose will be calculated with respect to frame of the given frame ID. This does not change the frame ID of the reference sensor, i.e. the LiDAR sensor, but will perform an a posteriori transformation of the estimated extrinsic pose into the specified frame. If not specified, or left empty, the extrinsic pose will be calculated with respect to the frame of the reference sensor.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>use_initial_guess</code>: Option to use an initial guess on the extrinsic sensor pose from the TF-tree, if available.<br>
+    <em>Type: bool</em><br>
+    <em>Default: false</em></li>
+<li><code>save_observations</code>: Option to save recorded observations that have been used for the calibration to the workspace<br>
+    <em>type: bool</em><br>
+    <em>Default: false</em></li>
+</ul>
+<p><strong>Topics Published:</strong></p>
+<ul>
+<li><code>~/&lt;src_lidar_sensor_name&gt;/regions_of_interest</code>: Cloud holding regions of the source sensor which are used to align the sensor cloud to the cloud of the vehicle model. These are computed based on the seed points clicked.</li>
+<li><code>~/&lt;ref_lidar_sensor_name&gt;/regions_of_interest</code>: Cloud holding regions of the source sensor which are used to align the sensor cloud to the cloud of the vehicle model. These are computed based on the seed points clicked.</li>
+<li><code>~/calibration_result</code>: Calibration result published after a successful calibration.</li>
+</ul>
+<p><strong>Services Advertised:</strong></p>
+<ul>
+<li><code>~/remove_last_observation</code>: Service to remove last observation from the top of the list. This can be executed repeatedly until the observation list is empty.</li>
+<li><code>~/finalize_calibration</code>: Service to finalize calibration, i.e. calibrate the extrinsic pose based on all captured observations.</li>
+<li><code>~/reset</code>: Service to reset the calibration.</li>
+<li><code>~/request_calibration_meta_data</code>: Service to request the meta information of the calibration, e.g. sensor names, topic names, and more.</li>
+<li><code>~/request_sensor_extrinsics</code>: Service to request the currently calculated extrinsic pose between the two sensors.</li>
+<li><code>~/add_region_marker</code>: Service to a new seed point for a region which is later to be used to align the sensor cloud to that of the vehicle cad. Use the frame ID to distinguish between sensor cloud and vehicle cloud.</li>
+</ul>
+<p><strong>Subscribed Topics:</strong></p>
+<ul>
+<li><code>clicked_point</code>: Message topic provided by rviz when a point is clicked.</li>
+</ul>
+<hr>
+
+<h3 id="guidedcameralidartargetplacementnodelet">GuidedCameraLidarTargetPlacement(Nodelet)<a class="headerlink" href="#guidedcameralidartargetplacementnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet for guided target placement in the context of extrinsic camera-lidar calibration.</p>
+<p><strong>NOTE: </strong>The guidance feature of multisensor_calibration is currently still in development and not yet fully functional.</p>
+<hr>
+
+<h3 id="guidedlidarlidartargetplacementnodelet">GuidedLidarLidarTargetPlacement(Nodelet)<a class="headerlink" href="#guidedlidarlidartargetplacementnodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet for guided target placement in the context of extrinsic lidar-lidar calibration.</p>
+<p><strong>NOTE: </strong>The guidance feature of multisensor_calibration is currently still in development and not yet fully functional.</p>
+<hr>
+
+<h3 id="pointcloud2imagenodelet">PointCloud2Image(Nodelet)<a class="headerlink" href="#pointcloud2imagenodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to fuse a point cloud and a camera image by projecting the geometric 3D information from the point cloud into the camera image.
+In this, the projected points from the point cloud are colorized based on their depth, i.e. distance from the camera. The colorization is performed by applying the RAINBOW colormap from
+<a href="https://docs.opencv.org/master/d3/d50/group__imgproc__colormap.html"><code>cv::ColorMap</code></a>. This colorizes the range from <code>min_depth</code> to <code>max_depth</code> going from red to violet.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>image_state</code>: State of the camera images used.<br>
+    <em>Type: String</em><br>
+    <em>Default: 'DISTORTED'</em><br>
+    <em>Possible values:</em><br><ul>
+<li><em>'DISTORTED': As it comes from the camera, i.e. image distortion has not yet been corrected and it is not rectified for stereo processing.</em><br></li>
+<li><em>'UNDISTORTED': Image with no distortion but not rectified for stereo processing.</em><br></li>
+<li><em>'STEREO_RECTIFIED': Image rectified for stereo processing, i.e. the epipolar lines are horizontally aligned.</em></li>
+</ul>
+</li>
+<li><code>camera_namespace</code>: Optional parameter to provide a separate camera namespace from which the topic name of the camera info can be constructed.<br>
+    <em>Type: String</em><br>
+    <em>Default: ""</em></li>
+<li><code>min_depth</code>: Minimum depth for which to project points from the point cloud into the image. All points that are closer to the camera than the specified min. depth will be discarded.<br>
+  <em>Type: float</em><br>
+  <em>Default: 0.1</em></li>
+<li><code>max_depth</code>: Maximum depth for which to project points from the point cloud into the image. All points that are further away from the camera than the specified max. depth will be discarded.<br>
+  <em>Type: float</em><br>
+  <em>Default: 20.0</em></li>
+<li><code>``sync_queue_size</code>: Queue size for the data synchronization using the method approximated time synchronization. Not evaluated when using exact time synchronization.<br>
+  <em>Type: int</em><br>
+  <em>Default: 100</em></li>
+<li><code>use_exact_sync</code>: Flag to activate method for exact time synchronization.<br>
+  <em>Type: bool</em>
+  <em>Default: </em>false*</li>
+<li><code>temp_transform</code>: Temporary transform of camera with respect to LiDAR given in the form of XYZ and RPY. The values are to be given as string list separated by whitespace. If left empty or omitted the transformation will be extracted from the TF-tree by using the frame IDs of the images and the clouds.<br>
+  <em>Type: String</em>
+  <em>Default: ""</em></li>
+</ul>
+<p><strong>Subscribed Topics:</strong></p>
+<ul>
+<li>
+<p><code>pointcloud</code>: Subscribes to point cloud that is to be projected into the camera image.<br>
+    <em>Type: sensor_msgs::PointCloud2</em></p>
+</li>
+<li>
+<p><code>image</code>: Subscribes to RGB input image from which to draw the pixel information to enhance the point cloud with color information.<br>
+    <em>Type: sensor_msgs::Image</em></p>
+</li>
+</ul>
+<p><strong>Published Topics:</strong></p>
+<ul>
+<li><code>~/fused_image</code>: Publishes the resulting RGB image in which the input camera vis image is fused with the input point cloud. The projected points from the point cloud are colorized based on their depth, i.e. distance from the camera.<br>
+    <em>Type: sensor_msgs::Image</em></li>
+</ul>
+<hr>
+
+<h3 id="pointcloud2pointclouddistancenodelet">PointCloud2PointCloudDistance(Nodelet)<a class="headerlink" href="#pointcloud2pointclouddistancenodelet" title="Permanent link">&para;</a></h3>
+<p>Nodelet to calculate the n-to-n distance for a list of point clouds.
+For each point cloud in the list, the smallest distance with respect to all other point clouds is found.
+The calculated distance is normalized with respect to a given maximum distance and stored in the intensity field of the source point cloud.
+This can then be used to colorize the distance in a point cloud viewer, such as rviz.</p>
+<p>To calculate the distance between the point clouds, this nodelet uses two distance measures, which can be selected by the appropriate launch parameter:</p>
+<ul>
+<li><code>point_2_point</code>: This calculates the euclidean distance between each point in the source point cloud and the nearest neighbor in the target point cloud (transformed into the frame of the source point cloud). 
+In this, it finds the <em>n</em> nearest neighbors (ordered by their distance) and takes the distance to the first one in the list.</li>
+<li><code>point_2_surface</code>: In order to calculate the distance of a point to a surface, information on the surface normal needs be available. 
+Thus, in this case, the nodelet first computes the normal vectors for the transformed target point cloud. 
+It then, again, finds the <em>n</em> nearest neighbors in the target point cloud to each point in the source cloud. 
+The distance is then calculated by first computing the plane parameterization for each neighbor and its corresponding normal vector.
+This followed by calculating the orthogonal distances of the source point w.r.t. each parameterized surface.<br />
+The smallest of these orthogonal distances is then selected as the point-2-surface distance.</li>
+</ul>
+<p>Prior to calculating the distance between two point clouds, the target point cloud is transformed into the coordinate system of the source point cloud.
+In this way, since the source cloud is to be enhanced with distance information, the source cloud does not need to be transformed back prior to publishing.
+The transformation is found, by first extracting the frame IDs from header of each point cloud, which can then be used to look it up in the TF tree.</p>
+<p><strong>Launch-Parameters:</strong></p>
+<ul>
+<li><code>number_of_clouds</code>: Number of clouds to process. The input topics are appended with a index as suffix: <code>cloud_0</code>, <code>cloud_1</code>, ..., <code>cloud_N-1</code>.<br>
+    <em>Type: int</em><br>
+    <em>Default: 2</em></li>
+<li><code>processing_rate</code>: Rate in (Hz) at which to process the received point cloud.<br>
+    <em>Type: int</em><br>
+    <em>Default: 1</em></li>
+<li><code>distance_measure</code>: Enum: {0 = <strong>point_2_point</strong>, 1 = <strong>point_2_surface</strong>}<br>
+    <em>Type: Enum: {0 = point_2_point, 1 = point_2_surface}</em><br>
+    <em>Default: 0</em><br>
+    <em>NOTE: The point_2_surface measure is more robust with a higher number of nearest neighbors. Especially when using point clouds from a rotating LiDAR, as a parameterization of a small number of neighbors might lead to a selection of all neighbors on one ring, making the surface estimation less accurate.</em></li>
+<li><code>num_nearest_neighbors</code>: Number of nearest neighbors to consider in the target cloud for each point in the source cloud.<br>
+    <em>Type: int</em><br>
+    <em>Default: 5</em></li>
+<li><code>max_distance</code>: Maximum distance at which to truncate. This is also used for normalization when calculating the intensity.<br>
+    <em>Type: float</em><br>
+    <em>Default: 5.0</em></li>
+<li><code>clamp_distance_threshold</code>: Distance at which to clamp the source point cloud. Points exceeding the distance are removed. It is truncated to a minimum of 'max_distance'.<br>
+    <em>Type: float</em><br>
+    <em>Default: FLT_MAX</em></li>
+<li><code>temp_transform</code>: <em>(Only available if 'number_of_clouds = 2')</em> Temporary transform of camera with respect to LiDAR given in the form of XYZ and RPY. The values are to be given as string list separated by whitespace. If left empty or omitted the transformation will be extracted from the TF-tree by using the frame IDs of the images and the clouds.<br>
+  <em>Type: String</em>
+  <em>Default: ""</em></li>
+</ul>
+<p><strong>Subscribed Topics:</strong></p>
+<ul>
+<li><code>cloud_&lt;idx&gt;</code>: Point cloud for which the distance is to be calculated.<br>
+    <em>Type: sensor_msgs::PointCloud2</em></li>
+</ul>
+<p><strong>Published Topics:</strong></p>
+<ul>
+<li><code>~/cloud_&lt;idx&gt;_enhanced</code>: Source point cloud enhanced with the point-wise normalized distance (with the range of [0,1]) to the target point cloud in the intensity field.<br>
+    <em>Type: sensor_msgs::PointCloud2</em></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../workspaces/" class="btn btn-neutral float-left" title="Workspace Handling"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright 2024 - 2025 Fraunhofer IOSB and contributors</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../workspaces/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../js/tables.js"></script>
+      <script src="../js/mathjax.js"></script>
+      <script src="../js/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

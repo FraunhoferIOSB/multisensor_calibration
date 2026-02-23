@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Calibration Target - Multi-Sensor Calibration</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Calibration Target";
+        var mkdocs_page_input_path = "calibration_target.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Multi-Sensor Calibration
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tutorial/">Tutorial</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Calibration Target</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#using-a-custom-calibration-target">Using a Custom Calibration Target</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data_processing/">Data Processing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../workspaces/">Workspace Handling</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../nodes_and_nodelets/">Nodes and Nodelets</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/multisensor_calibration/CHANGELOG.rst">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/CONTRIBUTING.md">Contributing</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Multi-Sensor Calibration</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Calibration Target</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration/blob/main/doc/user_docs/calibration_target.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="calibration-target">Calibration Target<a class="headerlink" href="#calibration-target" title="Permanent link">&para;</a></h1>
+<p>For extrinsic Multi-Sensor Calibration the toolbox was developed to use an asymmetric calibration target as depicted below.
+The asymmetry allows to detect a full 6-DOF pose of the target within the sensor data, reducing possible ambiguities in the correspondence search and making the calibration process more robust.</p>
+<p><img alt="" src="../assets/images/extrinsic_calibration_target.png" />
+<em>Figure 1: Picture of the asymmetric calibration target used for extrinsic calibration.</em></p>
+<p>The default calibration target used by 'multisensor_calibration' has the following properties:</p>
+<ul>
+<li><strong>Width:</strong> 1.2m</li>
+<li>
+<p><strong>Height:</strong> 0.8m</p>
+</li>
+<li>
+<p>Three <strong>Circular Cutouts</strong></p>
+<ul>
+<li>with a <strong>Radius:</strong> 0.12m</li>
+<li><strong>located</strong> plus-minus 0.15m in X-Y direction around the center.</li>
+</ul>
+</li>
+<li>
+<p>Four <strong>ArUco Markers</strong> from <code>DICT_6X6_250</code></p>
+<ul>
+<li>with the <strong>IDs:</strong> 1, 2, 3, 4 (arranged clockwise, starting from top-left)</li>
+<li>with an <strong>Edge Length:</strong> 0.18m</li>
+<li><strong>located</strong> plus-minus 0.05m in X-Y direction from the respective corner of the board</li>
+</ul>
+</li>
+</ul>
+<h2 id="using-a-custom-calibration-target">Using a Custom Calibration Target<a class="headerlink" href="#using-a-custom-calibration-target" title="Permanent link">&para;</a></h2>
+<p>The Multi-Sensor Calibration the toolbox, however, allows to adjust the parameters of the calibration target by editing them within a yaml file: <code>&lt;repository&gt;/mutlisensor_calibration/cfg/TargetWithCirclesAndAruco.yaml</code></p>
+<pre><code class="language-yaml">%YAML:1.0
+board_width: 1.2        # width of board in meters
+board_height: 0.8       # height of board in meters
+marker_size: 0.18       # side length of aruco markers in meters
+marker_ids:             # ids of marker used as a single column matrix
+    rows: 4
+    cols: 1
+    dt: i
+    data: [1, 2, 3, 4]  # marker order goes clockwise, starting from top left of board
+marker_positions:       # x,y marker positions (top-left) on board relative to center, stored row-by-row in meters. x: rightwards, y: upwards
+    rows: 4
+    cols: 2
+    dt: f
+    data: [-0.55, 0.35,
+           0.37, 0.35,
+           0.37, -0.17,
+           -0.55, -0.17]
+cutouts:                # Cutouts (id + parameters) stored as a single row matrix. x: rightwards, y: upwards
+    rows: 1
+    cols: 12
+    dt: f
+    data: [1, -0.15, 0.15, 0.12,    # Circular cutout: (id: 1, parameters: {X,Y,Radius})
+           1, 0.15, -0.15, 0.12,    
+           1, -0.15, -0.15, 0.12]   
+min_marker_detection: 2 # minimum number of markers that need to be detected in the camera image
+cad_model_mesh: &quot;calibration_target_3holes_cad_mesh.ply&quot; # relative file path to CAD model of the calibration target as mesh
+cad_model_cloud: &quot;calibration_target_3holes_cad_cloud.ply&quot; # relative file path to CAD model of the calibration target as cloud
+</code></pre>
+<p><em>The CAD model mesh/cloud is used for the optimization of the detected target pose by aligning the model data to the segmented point cloud by means of GICP.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tutorial/" class="btn btn-neutral float-left" title="Tutorial"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../data_processing/" class="btn btn-neutral float-right" title="Data Processing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright 2024 - 2025 Fraunhofer IOSB and contributors</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/FraunhoferIOSB/multisensor_calibration" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../tutorial/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../data_processing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../js/tables.js"></script>
+      <script src="../js/mathjax.js"></script>
+      <script src="../js/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
