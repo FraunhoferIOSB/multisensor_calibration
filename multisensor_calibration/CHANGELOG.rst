@@ -2,8 +2,8 @@
 Changelog for package multisensor_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2026-02-23)
+------------------
 * feat: add camera-camera extrinsic calibration
 * refactor: clean calibration inheritance structure
 * Contributors: Miguel Granero
