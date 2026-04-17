@@ -412,15 +412,15 @@ target_link_libraries(${PUB_PC_NODE_TARGET_NAME}
 )
 
 ######################################
-# aggregate_point_cloud
+# accumulate_point_cloud
 ######################################
-set(AGGREGATE_PC_NODE_TARGET_NAME aggregate_point_cloud)
-add_executable(${AGGREGATE_PC_NODE_TARGET_NAME} src/nodes/AggregatePointCloudNode.cpp)
-target_compile_definitions(${AGGREGATE_PC_NODE_TARGET_NAME} PRIVATE
+set(ACCUMULATE_PC_NODE_TARGET_NAME accumulate_point_cloud)
+add_executable(${ACCUMULATE_PC_NODE_TARGET_NAME} src/nodes/AccumulatePointCloudNode.cpp)
+target_compile_definitions(${ACCUMULATE_PC_NODE_TARGET_NAME} PRIVATE
     ${COMMON_COMPILE_DEFINITIONS}
-    -DTARGET_NAME="${AGGREGATE_PC_NODE_TARGET_NAME}"                   # see COMMON_COMPILE_DEFINITIONS for enum
+    -DTARGET_NAME="${ACCUMULATE_PC_NODE_TARGET_NAME}"
 )
-target_link_libraries(${AGGREGATE_PC_NODE_TARGET_NAME}
+target_link_libraries(${ACCUMULATE_PC_NODE_TARGET_NAME}
     ${LIBRARY_TARGET_NAME}
 )
 
@@ -445,7 +445,7 @@ install(TARGETS
     ${LIDAR_VEHICLE_CALIB_NODE_TARGET_NAME}
     ${INIT_ROBOT_WS_NODE_TARGET_NAME}
     ${PUB_PC_NODE_TARGET_NAME}
-    ${AGGREGATE_PC_NODE_TARGET_NAME}
+    ${ACCUMULATE_PC_NODE_TARGET_NAME}
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
