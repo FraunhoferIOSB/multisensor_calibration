@@ -30,12 +30,16 @@
 #define MULTISENSORCALIBRATION_UI_IMAGEVIEWDIALOG_H
 
 // std
+#include <atomic>
 #include <memory>
 
 // Qt
 #include <QDialog>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QResizeEvent>
+#include <QSize>
 
 // ROS
 #include <image_transport/image_transport.hpp>
@@ -92,6 +96,9 @@ class ImageViewDialog : public QDialog
      */
     void subscribeToImageTopic(rclcpp::Node* ipNode, const std::string& iTopicName);
 
+  protected:
+    void resizeEvent(QResizeEvent* event) override;
+
     //--- MEMBER DECLARATION ---//
 
   private:
@@ -109,6 +116,12 @@ class ImageViewDialog : public QDialog
 
     /// Subscriber to the image topic.
     image_transport::Subscriber imageSubsc_;
+
+    /// Guards against queuing multiple pending frame updates on the GUI thread.
+    std::atomic<bool> pendingFrameUpdate_{false};
+
+    /// Last displayed image size; used to avoid redundant fitInView() calls.
+    QSize lastImageSize_;
 };
 
 } // namespace multisensor_calibration

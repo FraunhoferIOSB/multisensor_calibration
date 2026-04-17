@@ -152,3 +152,4 @@ multisensor_calibration/launch/*
 *.ddeb
 debian/
 .obj*/
+.cache

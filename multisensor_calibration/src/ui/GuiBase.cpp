@@ -30,7 +30,8 @@ GuiBase::GuiBase(const std::string& iAppTitle,
   pExecutor_(nullptr)
 {
     //--- initialize spin timer
-    spinTimer_.setInterval(100);
+    // 16ms ≈ 60 Hz: drain callbacks every frame budget instead of every 100ms
+    spinTimer_.setInterval(16);
     spinTimer_.setSingleShot(false);
     connect(&spinTimer_, &QTimer::timeout, this, &GuiBase::spinOnce);
 }
@@ -89,7 +90,7 @@ bool GuiBase::init(const std::shared_ptr<rclcpp::Executor>& ipExec,
 void GuiBase::spinOnce()
 {
     if (!pExecutor_->is_spinning())
-        pExecutor_->spin_some(std::chrono::milliseconds(60));
+        pExecutor_->spin_some(std::chrono::milliseconds(0));
 
     if (!rclcpp::ok())
     {

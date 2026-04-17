@@ -50,6 +50,7 @@
 #include "CalibrationControlWindow.h"
 #include "GuiBase.h"
 #include <multisensor_calibration_interface/srv/calibration_meta_data.hpp>
+#include <rclcpp/client.hpp>
 
 namespace interf = multisensor_calibration_interface;
 
@@ -231,6 +232,9 @@ class CalibrationGuiBase : public GuiBase
 
     /// Member variable holding calibration meta data.
     std::shared_ptr<interf::srv::CalibrationMetaData::Response> pCalibrationMetaData_;
+
+    /// Cached service client for calibration metadata polling (created once in init()).
+    rclcpp::Client<interf::srv::CalibrationMetaData>::SharedPtr pMetaDataClient_;
 
     /// QTimer object to trigger service call to get calibration meta data. This needs to be a QTimer,
     /// since the event loop runs in Qt.

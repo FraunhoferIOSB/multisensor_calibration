@@ -268,8 +268,9 @@ bool LidarLidarCalibrationGui::setupGuiElements()
         return false;
     pPlacementGuidanceDialog_->setWindowTitle("Target Placement Guidance");
     pPlacementGuidanceDialog_->move(screenGeometry_.topLeft() + QPoint(screenGeometry_.width() / 2, 0));
-    pPlacementGuidanceDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
-                                            (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
+    pPlacementGuidanceDialog_->setMinimumSize(400, 300);
+    pPlacementGuidanceDialog_->resize((screenGeometry_.width() / 2) - 1,
+                                      (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
     pCalibControlWindow_->attachPlacementGuidanceDialog(pPlacementGuidanceDialog_.get());
     pPlacementGuidanceDialog_->show();
 
@@ -279,8 +280,9 @@ bool LidarLidarCalibrationGui::setupGuiElements()
         return false;
     pSrcLidarTargetDialog_->setWindowTitle("Source LiDAR Target Detections");
     pSrcLidarTargetDialog_->move(screenGeometry_.topLeft() + QPoint(0, (screenGeometry_.height() / 2) + (2 * titleBarHeight_)));
-    pSrcLidarTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
-                                         (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
+    pSrcLidarTargetDialog_->setMinimumSize(400, 300);
+    pSrcLidarTargetDialog_->resize((screenGeometry_.width() / 2) - 1,
+                                    (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
 
     pCalibControlWindow_->attachSourceDialog(pSrcLidarTargetDialog_.get());
     pSrcLidarTargetDialog_->show();
@@ -292,8 +294,9 @@ bool LidarLidarCalibrationGui::setupGuiElements()
     pRefLidarTargetDialog_->setWindowTitle("Reference LiDAR Target Detections");
     pRefLidarTargetDialog_->move(screenGeometry_.topLeft() + QPoint(screenGeometry_.width() / 2,
                                                                     (screenGeometry_.height() / 2) + (2 * titleBarHeight_)));
-    pRefLidarTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
-                                         (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
+    pRefLidarTargetDialog_->setMinimumSize(400, 300);
+    pRefLidarTargetDialog_->resize((screenGeometry_.width() / 2) - 1,
+                                    (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
     pCalibControlWindow_->attachReferenceDialog(pRefLidarTargetDialog_.get());
     pRefLidarTargetDialog_->show();
 

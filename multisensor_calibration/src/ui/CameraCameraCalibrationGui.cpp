@@ -159,8 +159,9 @@ bool CameraCameraCalibrationGui::setupGuiElements()
         return false;
     pPlacementGuidanceDialog_->setWindowTitle("Target Placement Guidance");
     pPlacementGuidanceDialog_->move(screenGeometry_.topLeft() + QPoint(screenGeometry_.width() / 2, 0));
-    pPlacementGuidanceDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
-                                            (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
+    pPlacementGuidanceDialog_->setMinimumSize(400, 300);
+    pPlacementGuidanceDialog_->resize((screenGeometry_.width() / 2) - 1,
+                                      (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
     pCalibControlWindow_->attachPlacementGuidanceDialog(pPlacementGuidanceDialog_.get());
     pPlacementGuidanceDialog_->show();
 
@@ -170,8 +171,9 @@ bool CameraCameraCalibrationGui::setupGuiElements()
         return false;
     psrcCameraTargetDialog_->setWindowTitle("Src Camera Target Detections");
     psrcCameraTargetDialog_->move(screenGeometry_.topLeft() + QPoint(0, (screenGeometry_.height() / 2) + (2 * titleBarHeight_)));
-    psrcCameraTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
-                                       (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
+    psrcCameraTargetDialog_->setMinimumSize(400, 300);
+    psrcCameraTargetDialog_->resize((screenGeometry_.width() / 2) - 1,
+                                     (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
 
     pCalibControlWindow_->attachSourceDialog(psrcCameraTargetDialog_.get());
     psrcCameraTargetDialog_->show();
@@ -183,8 +185,9 @@ bool CameraCameraCalibrationGui::setupGuiElements()
     prefCameraTargetDialog_->setWindowTitle("Ref Camera Target Detections");
     prefCameraTargetDialog_->move(screenGeometry_.topLeft() + QPoint(screenGeometry_.width() / 2,
                                                                  (screenGeometry_.height() / 2) + (2 * titleBarHeight_)));
-    prefCameraTargetDialog_->setFixedSize((screenGeometry_.width() / 2) - 1,
-                                      (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
+    prefCameraTargetDialog_->setMinimumSize(400, 300);
+    prefCameraTargetDialog_->resize((screenGeometry_.width() / 2) - 1,
+                                     (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
     pCalibControlWindow_->attachReferenceDialog(prefCameraTargetDialog_.get());
     prefCameraTargetDialog_->show();
 

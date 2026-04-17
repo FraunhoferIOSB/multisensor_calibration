@@ -18,6 +18,7 @@
 #include <QDesktopWidget>
 #include <QDirIterator>
 #include <QFileDialog>
+#include <QGuiApplication>
 #include <QLocale>
 #include <QMenu>
 #include <QMessageBox>
@@ -83,6 +84,10 @@ bool CalibrationGuiBase::init(const std::shared_ptr<rclcpp::Executor>& ipExec,
     calibratorNodeName_ = appTitle_;
     guidanceNodeName_   = appTitle_ + "_" + GUIDANCE_SUB_NAMESPACE;
     visualizerNodeName_ = appTitle_ + "_" + VISUALIZER_SUB_NAMESPACE;
+
+    //--- create metadata service client once; reused by getCalibrationMetaData() each timer tick
+    pMetaDataClient_ = pNode_->create_client<interf::srv::CalibrationMetaData>(
+      calibratorNodeName_ + "/" + REQUEST_META_DATA_SRV_NAME);
 
     //--- initialize subscribers
     isInitialized_ &= initializeSubscribers(pNode_.get());
@@ -240,7 +245,10 @@ bool CalibrationGuiBase::setupGuiElements()
 {
     //--- get screen geometry to later place the individual windows
     screenGeometry_ = QApplication::primaryScreen()->availableGeometry();
-    screenGeometry_.setHeight(screenGeometry_.height() - 100); // X11: availableGeometry also returns space which is reserved by window manager.
+    // Under X11, availableGeometry() may include space reserved by the window manager;
+    // subtract a safety margin. Under Wayland this is handled correctly by the compositor.
+    if (QGuiApplication::platformName() == "xcb")
+        screenGeometry_.setHeight(screenGeometry_.height() - 100);
 
     //--- get height of titlebar
     titleBarHeight_ = QApplication::style()->pixelMetric(QStyle::PM_TitleBarHeight);
@@ -249,8 +257,9 @@ bool CalibrationGuiBase::setupGuiElements()
     pCalibControlWindow_ = std::make_shared<CalibrationControlWindow>();
     pCalibControlWindow_->setWindowTitle(QString::fromStdString(appTitle_.substr(1)));
     pCalibControlWindow_->move(screenGeometry_.topLeft());
-    pCalibControlWindow_->setFixedSize((screenGeometry_.width() / 2) - 1,
-                                       (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
+    pCalibControlWindow_->setMinimumSize(400, 300);
+    pCalibControlWindow_->resize((screenGeometry_.width() / 2) - 1,
+                                  (screenGeometry_.height() / 2) - titleBarHeight_ - 1);
     pCalibControlWindow_->pbVisCalibrationPtr()->setEnabled((pExecutor_ != nullptr) && hasCalibVisualizer_);
     pCalibControlWindow_->show();
 
@@ -306,50 +315,38 @@ void CalibrationGuiBase::showProgressDialog(const QString& iBusyText)
 //==================================================================================================
 void CalibrationGuiBase::getCalibrationMetaData()
 {
-    //--- get calibration meta data
-    auto pMetaDataClient =
-      pNode_->create_client<interf::srv::CalibrationMetaData>(calibratorNodeName_ +
-                                                              "/" + REQUEST_META_DATA_SRV_NAME);
-
-    bool isServiceAvailable = false;
-    const int MAX_TRIES     = 10;
-    int cntr                = 0;
-
-    while (!isServiceAvailable && cntr < MAX_TRIES)
+    if (!pMetaDataClient_->service_is_ready())
     {
-        isServiceAvailable = pMetaDataClient->wait_for_service(500ms);
-        cntr++;
+        RCLCPP_DEBUG(pNode_->get_logger(),
+                     "Service '%s' not yet available, retrying in 1s.",
+                     (calibratorNodeName_ + "/" + REQUEST_META_DATA_SRV_NAME).c_str());
+        return;
     }
 
-    if (isServiceAvailable)
+    auto request  = std::make_shared<interf::srv::CalibrationMetaData::Request>();
+    auto response = pMetaDataClient_->async_send_request(request);
+
+    //--- allow the progress dialog and UI to repaint while waiting for the response
+    auto retCode = utils::doWhileWaiting(
+      pExecutor_, response,
+      [&]() { QCoreApplication::processEvents(QEventLoop::AllEvents, 10); },
+      100);
+
+    if (retCode == rclcpp::FutureReturnCode::SUCCESS)
     {
+        pCalibrationMetaData_ = response.get();
 
-        auto request  = std::make_shared<interf::srv::CalibrationMetaData::Request>();
-        auto response = pMetaDataClient->async_send_request(request);
-
-        if (pExecutor_->spin_until_future_complete(response) ==
-            rclcpp::FutureReturnCode::SUCCESS)
+        //--- if calibration metadata is complete stop timer
+        if (pCalibrationMetaData_->is_complete)
         {
-            pCalibrationMetaData_ = response.get();
-
-            //--- if calibration metadata is complete stop timer
-            if (pCalibrationMetaData_->is_complete)
-            {
-                calibMetaDataTimer_.stop();
-                initializeGuiContents();
-            }
-        }
-        else
-        {
-            RCLCPP_ERROR(pNode_->get_logger(),
-                         "Failure in getting calibration meta data.\n"
-                         "Check if calibration node is initialized!");
+            calibMetaDataTimer_.stop();
+            initializeGuiContents();
         }
     }
     else
     {
         RCLCPP_ERROR(pNode_->get_logger(),
-                     "Service to get calibration meta data is not available.\n"
+                     "Failure in getting calibration meta data.\n"
                      "Check if calibration node is initialized!");
     }
 }
@@ -387,18 +384,18 @@ void CalibrationGuiBase::onActionPreferencesTriggered()
     }
     if (pRqtReconfigureProcess_ && pRqtReconfigureProcess_->state() == QProcess::Running)
     {
-        //--- Kill process to bring window to the front
-
+        //--- Kill the running instance; restart it asynchronously via the finished signal
+        //--- to avoid blocking the GUI thread with waitForFinished().
+        disconnect(pRqtReconfigureProcess_.get(),
+                   qOverload<int, QProcess::ExitStatus>(&QProcess::finished), nullptr, nullptr);
+        connect(pRqtReconfigureProcess_.get(),
+                qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
+                this, [this](int, QProcess::ExitStatus)
+                {
+                    pRqtReconfigureProcess_->start();
+                });
         pRqtReconfigureProcess_->kill();
-
-        bool isFinished = false;
-        do
-        {
-            QCoreApplication::processEvents();
-            isFinished = pRqtReconfigureProcess_->waitForFinished(500);
-        } while (!isFinished);
-
-        pRqtReconfigureProcess_->start();
+        return;
     }
 }
 

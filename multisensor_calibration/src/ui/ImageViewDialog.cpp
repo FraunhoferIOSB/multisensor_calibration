@@ -11,6 +11,7 @@
 #include <QCloseEvent>
 #include <QImage>
 #include <QMessageBox>
+#include <QMetaObject>
 
 // ROS
 #include <cv_bridge/cv_bridge.hpp>
@@ -74,13 +75,44 @@ void ImageViewDialog::imageMessageCallback(const InputImage_Message_T::ConstShar
     else
         pCvBridgeImg->image.copyTo(cvImage);
 
-    //--- create qimage with shared memory
-    if (!pPixmapItem_)
-        pPixmapItem_ = pImageGraphicsScene_->addPixmap(
-          QPixmap::fromImage(lib3d::cvMat2QImage_shared(cvImage)));
-    else
-        pPixmapItem_->setPixmap(QPixmap::fromImage(lib3d::cvMat2QImage_shared(cvImage)));
-    pImageGraphicsView_->fitInView(pPixmapItem_, Qt::KeepAspectRatio);
+    QImage qimg = lib3d::cvMat2QImage_shared(cvImage).copy();
+
+    //--- frame-drop: skip if a frame is already queued for the GUI thread
+    bool expected = false;
+    if (!pendingFrameUpdate_.compare_exchange_strong(expected, true))
+        return;
+
+    //--- marshal all Qt scene updates onto the GUI thread (thread-safe)
+    QMetaObject::invokeMethod(this, [this, qimg = std::move(qimg)]() mutable
+    {
+        pendingFrameUpdate_ = false;
+        QSize newSize = qimg.size();
+
+        if (!pPixmapItem_)
+        {
+            pPixmapItem_ = pImageGraphicsScene_->addPixmap(QPixmap::fromImage(qimg));
+            pImageGraphicsView_->fitInView(pPixmapItem_, Qt::KeepAspectRatio);
+            lastImageSize_ = newSize;
+        }
+        else
+        {
+            pPixmapItem_->setPixmap(QPixmap::fromImage(qimg));
+            //--- only re-fit when image dimensions change; resizeEvent handles dialog resize
+            if (newSize != lastImageSize_)
+            {
+                pImageGraphicsView_->fitInView(pPixmapItem_, Qt::KeepAspectRatio);
+                lastImageSize_ = newSize;
+            }
+        }
+    }, Qt::QueuedConnection);
+}
+
+//==================================================================================================
+void ImageViewDialog::resizeEvent(QResizeEvent* event)
+{
+    QDialog::resizeEvent(event);
+    if (pPixmapItem_)
+        pImageGraphicsView_->fitInView(pPixmapItem_, Qt::KeepAspectRatio);
 }
 
 //==================================================================================================
