@@ -16,6 +16,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegExpValidator>
+#include <QSet>
 
 // multisensor_calibration
 #include "multisensor_calibration/ui/CalibrationGuiBase.h"
@@ -434,8 +435,43 @@ void ObservationsViewDialog::handleTableWidgetCellChanged(int row, int column)
 void ObservationsViewDialog::handleTableWidgetContextMenuRequest(const QPoint& pos)
 {
     //--- create context menu
-    QMenu* menu     = new QMenu(this);
-    QAction* action = new QAction("Set marker coordinates by CSV");
+    QMenu* menu = new QMenu(this);
+
+    //--- "Add Row" action: inserts an empty row after the current row (or at the end)
+    QAction* addRowAction = new QAction("Add Row", menu);
+    connect(addRowAction, &QAction::triggered, this, [this]()
+    {
+        int insertAt = pUi_->observationsTableWidget->currentRow() + 1;
+        if (insertAt <= 0)
+            insertAt = pUi_->observationsTableWidget->rowCount();
+        pUi_->observationsTableWidget->insertRow(insertAt);
+    });
+    menu->addAction(addRowAction);
+
+    //--- "Remove Selected Row(s)" action: removes all selected rows
+    QAction* removeRowsAction = new QAction("Remove Selected Row(s)", menu);
+    connect(removeRowsAction, &QAction::triggered, this, [this]()
+    {
+        QList<QTableWidgetItem*> selected = pUi_->observationsTableWidget->selectedItems();
+        QSet<int> rowsToRemove;
+        for (QTableWidgetItem* item : selected)
+            rowsToRemove.insert(item->row());
+
+        QList<int> sortedRows = rowsToRemove.values();
+        std::sort(sortedRows.begin(), sortedRows.end(), std::greater<int>());
+        for (int row : sortedRows)
+            pUi_->observationsTableWidget->removeRow(row);
+
+        //--- ensure at least one row remains
+        if (pUi_->observationsTableWidget->rowCount() == 0)
+            pUi_->observationsTableWidget->insertRow(0);
+    });
+    removeRowsAction->setEnabled(!pUi_->observationsTableWidget->selectedItems().isEmpty());
+    menu->addAction(removeRowsAction);
+
+    menu->addSeparator();
+
+    QAction* action = new QAction("Set marker coordinates by CSV", menu);
 
     //--- get currently selected row and add to action
     QVariant currentRowVar = QVariant(pUi_->observationsTableWidget->currentRow());
