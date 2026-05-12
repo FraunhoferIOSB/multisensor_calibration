@@ -26,8 +26,8 @@
 #include "multisensor_calibration/guidance/GuidedCameraLidarTargetPlacementNode.h"
 #include "multisensor_calibration/guidance/GuidedLidarLidarTargetPlacementNode.h"
 #include "multisensor_calibration/ui/CalibrationGuiBase.h"
-#include "multisensor_calibration/ui/CameraLidarCalibrationGui.h"
 #include "multisensor_calibration/ui/CameraCameraCalibrationGui.h"
+#include "multisensor_calibration/ui/CameraLidarCalibrationGui.h"
 #include "multisensor_calibration/ui/CameraReferenceCalibrationGui.h"
 #include "multisensor_calibration/ui/GuiBase.h"
 #include "multisensor_calibration/ui/LidarLidarCalibrationGui.h"
@@ -50,6 +50,24 @@ int main(int argc, char** argv)
 {
     std::setlocale(LC_ALL, "en_US.UTF-8");
 
+    std::vector<std::string> non_ros_args = rclcpp::remove_ros_arguments(argc, argv);
+    auto env                              = QProcessEnvironment::systemEnvironment();
+    if (env.value("XDG_SESSION_TYPE") == "wayland" &&
+        non_ros_args.end() == std::find(non_ros_args.begin(), non_ros_args.end(),
+                                        "-platform") &&
+        !env.contains("QT_QPA_PLATFORM"))
+    {
+        non_ros_args.emplace_back("-platform");
+        non_ros_args.emplace_back("xcb");
+    }
+
+    std::vector<char*> non_ros_args_c_strings;
+    for (auto& arg : non_ros_args)
+    {
+        non_ros_args_c_strings.push_back(&arg.front());
+    }
+    int non_ros_argc = static_cast<int>(non_ros_args_c_strings.size());
+
     //--- initialize ROS
     rclcpp::init(argc, argv);
 
@@ -64,7 +82,7 @@ int main(int argc, char** argv)
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     //--- initialize Qt
-    QApplication app(argc, argv);
+    QApplication app(non_ros_argc, non_ros_args_c_strings.data());
 
     //--- Load nodes and setup Gui
     std::shared_ptr<multisensor_calibration::GuiBase> pGui = nullptr;
