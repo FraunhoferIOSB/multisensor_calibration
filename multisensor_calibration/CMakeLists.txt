@@ -71,6 +71,12 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wno-array-bounds)
 endif()
 
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+endif()
+
 # suppress developer warnings
 set(no_dev_warnings_backup "$CACHE{CMAKE_SUPPRESS_DEVELOPER_WARNINGS}")
 set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS ON CACHE INTERNAL "" FORCE)
@@ -126,7 +132,6 @@ set(COMMON_COMPILE_DEFINITIONS
     -DVERSION_MAJOR=${VERSION_MAJOR}
     -DVERSION_MINOR=${VERSION_MINOR}
     -DVERSION_PATCH=${VERSION_PATCH}
-    -DPCL_NO_PRECOMPILE
     -DMULTI_SENSOR_CALIBRATION_TARGET=0
     -DEXTRINSIC_CAMERA_LIDAR_CALIBRATION_TARGET=1
     -DEXTRINSIC_LIDAR_LIDAR_CALIBRATION_TARGET=2
@@ -249,6 +254,15 @@ target_compile_definitions(${LIBRARY_TARGET_NAME} PRIVATE
 ament_target_dependencies(${LIBRARY_TARGET_NAME}
     ${DEPENDENCIES}
 )
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
+    target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
+        <multisensor_calibration/common/utils.hpp>
+    )
+    set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
+        UNITY_BUILD ON
+        UNITY_BUILD_BATCH_SIZE 8
+    )
+endif()
 ament_export_targets(export_${LIBRARY_TARGET_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(${DEPENDENCIES})
 
