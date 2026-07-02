@@ -11,7 +11,9 @@
 #include <vector>
 
 // ROS
+#if __has_include(<tf2/LinearMath/Transform.hpp>)
 #include <tf2/LinearMath/Transform.hpp>
+#endif
 
 // multisensor_calibration
 #include "multisensor_calibration/common/utils.hpp"

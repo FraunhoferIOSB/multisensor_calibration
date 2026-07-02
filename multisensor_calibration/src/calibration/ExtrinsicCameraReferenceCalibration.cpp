@@ -18,7 +18,9 @@
 // ROS
 #include <memory>
 #include <sensor_msgs/msg/camera_info.hpp>
+#if __has_include(<tf2/LinearMath/Transform.hpp>)
 #include <tf2/LinearMath/Transform.hpp>
+#endif
 
 // PCL
 #include <pcl/conversions.h>

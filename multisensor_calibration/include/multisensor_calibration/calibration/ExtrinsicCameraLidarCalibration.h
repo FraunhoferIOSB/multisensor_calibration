@@ -40,7 +40,9 @@
 #include <message_filters/sync_policies/exact_time.hpp>
 #include <message_filters/synchronizer.hpp>
 #include <rclcpp/node.hpp>
+#if __has_include(<tf2/LinearMath/Transform.hpp>)
 #include <tf2/LinearMath/Transform.hpp>
+#endif
 
 // PCL
 #include <pcl/filters/frustum_culling.h>

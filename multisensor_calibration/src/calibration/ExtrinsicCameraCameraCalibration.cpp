@@ -21,7 +21,9 @@
 
 // ROS
 #include <memory>
+#if __has_include(<tf2/LinearMath/Transform.hpp>)
 #include <tf2/LinearMath/Transform.hpp>
+#endif
 
 // Qt
 #include <QFile>

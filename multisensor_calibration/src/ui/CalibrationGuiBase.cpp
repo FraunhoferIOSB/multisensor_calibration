@@ -15,7 +15,6 @@
 #include <QAction>
 #include <QApplication>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QDirIterator>
 #include <QFileDialog>
 #include <QGuiApplication>

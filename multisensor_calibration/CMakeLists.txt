@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.14)
 
 # get version from package.xml
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/package.xml" package_xml_str)
@@ -69,6 +69,8 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic -Wdeprecated -fPIC)
     add_compile_options(-Wno-array-bounds)
+    # Qt6 QFlags uses private member 'i' in template bodies; GCC 13+ -Wpedantic flags this
+    add_compile_options(-Wno-template-body)
 endif()
 
 find_program(CCACHE_PROGRAM ccache)
@@ -88,6 +90,15 @@ find_package(rclcpp_components REQUIRED)
 
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
+
+# VTK 9.5 (pulled by PCL) declares VTK::jsoncpp with interface dep JsonCpp::JsonCpp,
+# but that target only exists after jsoncpp is found. Pre-find it here so the alias
+# is in scope before PCLConfig.cmake loads VTK-targets.cmake.
+find_package(jsoncpp QUIET)
+if(TARGET jsoncpp_lib AND NOT TARGET JsonCpp::JsonCpp)
+    add_library(JsonCpp::JsonCpp ALIAS jsoncpp_lib)
+endif()
+
 find_package(pcl_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(tf2 REQUIRED)
@@ -113,7 +124,16 @@ find_package(small_gicp REQUIRED)
 
 find_package(OpenMP)
 
-find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+# Use the same Qt major version that rviz_common (and the rest of the ROS stack)
+# was compiled against — avoids mixing Qt5 and Qt6 targets in the same binary.
+if(TARGET Qt6::Core)
+    set(QT_VERSION_MAJOR 6)
+elseif(TARGET Qt5::Core)
+    set(QT_VERSION_MAJOR 5)
+else()
+    # Nothing loaded Qt yet; fall back to the normal detection order
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+endif()
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
 # setup qt
@@ -168,7 +188,6 @@ set(DEPENDENCIES
   visualization_msgs
   multisensor_calibration_interface
   small_gicp
-  small_gicp_vendor
 )
 
 
@@ -237,24 +256,46 @@ add_library(${LIBRARY_TARGET_NAME} SHARED
     ${LIBRARY_UI_FILES}
     ${QRC_SRC_FILES}
 )
-target_link_libraries(${LIBRARY_TARGET_NAME}
+target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE
     ${OpenCV_LIBRARIES}
     pcl_visualization
-    small_gicp::small_gicp
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Gui
 )
+# small_gicp headers are used in public headers (CalibrationTargetSacModel.h),
+# so the include path must propagate to consumers of this library.
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC
+    small_gicp::small_gicp
+)
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(${LIBRARY_TARGET_NAME} OpenMP::OpenMP_CXX)
+    target_link_libraries(${LIBRARY_TARGET_NAME} PRIVATE OpenMP::OpenMP_CXX)
 endif()
 target_compile_definitions(${LIBRARY_TARGET_NAME} PRIVATE
     -DTARGET_NAME="${LIBRARY_TARGET_NAME}"
     ${COMMON_COMPILE_DEFINITIONS}
 )
-ament_target_dependencies(${LIBRARY_TARGET_NAME}
-    ${DEPENDENCIES}
+target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC
+    rclcpp::rclcpp
+    rclcpp_components::component_manager
+    cv_bridge::cv_bridge
+    image_transport::image_transport
+    pcl_ros::pcl_ros_tf
+    tf2::tf2
+    tf2_ros::tf2_ros
+    tinyxml2::tinyxml2
+    urdf::urdf
+    rviz_common::rviz_common
+    ${std_msgs_TARGETS}
+    ${sensor_msgs_TARGETS}
+    ${geometry_msgs_TARGETS}
+    ${visualization_msgs_TARGETS}
+    ${multisensor_calibration_interface_TARGETS}
 )
+# pcl_conversions is a proper imported target in Lyrical but header-only (no target) in Jazzy
+if(TARGET pcl_conversions::pcl_conversions)
+    target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC pcl_conversions::pcl_conversions)
+endif()
 if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
     target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
         <multisensor_calibration/common/utils.hpp>
@@ -265,7 +306,7 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
     )
 endif()
 ament_export_targets(export_${LIBRARY_TARGET_NAME} HAS_LIBRARY_TARGET)
-ament_export_dependencies(${DEPENDENCIES})
+ament_export_dependencies(${DEPENDENCIES})  # kept for ament consumers; CMake consumers use the exported target directly
 
 rclcpp_components_register_nodes(${LIBRARY_TARGET_NAME} "multisensor_calibration::visualizers::PointCloud2PointCloudDistanceNode")
 rclcpp_components_register_nodes(${LIBRARY_TARGET_NAME} "multisensor_calibration::visualizers::PointCloud2ImageNode")

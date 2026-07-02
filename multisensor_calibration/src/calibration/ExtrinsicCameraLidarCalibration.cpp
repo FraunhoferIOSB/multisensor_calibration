@@ -311,7 +311,7 @@ bool ExtrinsicCameraLidarCalibration::initializeSubscribers(rclcpp::Node* ipNode
 
     //--- subscribe to topics
     imageSubsc_.subscribe(ipNode, srcTopicName_, "raw");
-    cloudSubsc_.subscribe(ipNode, refTopicName_);
+    cloudSubsc_.subscribe(*ipNode, refTopicName_, rclcpp::SensorDataQoS());
 
     //--- initialize synchronizers
     if (useExactSync_)

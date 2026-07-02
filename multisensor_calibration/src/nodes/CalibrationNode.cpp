@@ -77,9 +77,11 @@ int main(int argc, char** argv)
     rclcpp::NodeOptions options;
     options.use_intra_process_comms(true);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     //--- Qt platform attributes must be set before QApplication construction (Qt5 requirement)
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
 
     //--- initialize Qt
     QApplication app(non_ros_argc, non_ros_args_c_strings.data());
