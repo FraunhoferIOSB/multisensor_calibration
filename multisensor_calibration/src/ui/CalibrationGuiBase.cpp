@@ -325,11 +325,14 @@ void CalibrationGuiBase::getCalibrationMetaData()
     auto request  = std::make_shared<interf::srv::CalibrationMetaData::Request>();
     auto response = pMetaDataClient_->async_send_request(request);
 
-    //--- allow the progress dialog and UI to repaint while waiting for the response
-    auto retCode = utils::doWhileWaiting(
-      pExecutor_, response,
-      [&]() { QCoreApplication::processEvents(QEventLoop::AllEvents, 10); },
-      100);
+    constexpr int MAX_TRIES = 5;
+    auto retCode = rclcpp::FutureReturnCode::TIMEOUT;
+    for (int i = 0; i < MAX_TRIES && retCode == rclcpp::FutureReturnCode::TIMEOUT; ++i)
+    {
+        retCode = pExecutor_->spin_until_future_complete(
+          response, std::chrono::milliseconds(100));
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    }
 
     if (retCode == rclcpp::FutureReturnCode::SUCCESS)
     {
@@ -344,9 +347,10 @@ void CalibrationGuiBase::getCalibrationMetaData()
     }
     else
     {
-        RCLCPP_ERROR(pNode_->get_logger(),
-                     "Failure in getting calibration meta data.\n"
-                     "Check if calibration node is initialized!");
+        pMetaDataClient_->remove_pending_request(response.request_id);
+        RCLCPP_WARN_THROTTLE(pNode_->get_logger(), *pNode_->get_clock(), 5000,
+                             "Calibration meta data service did not respond. "
+                             "Check if calibration node is running.");
     }
 }
 
