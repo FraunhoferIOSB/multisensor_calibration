@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 
 # get version from package.xml
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/package.xml" package_xml_str)
@@ -290,15 +290,10 @@ target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC
 if(TARGET pcl_conversions::pcl_conversions)
     target_link_libraries(${LIBRARY_TARGET_NAME} PUBLIC pcl_conversions::pcl_conversions)
 endif()
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
-    target_precompile_headers(${LIBRARY_TARGET_NAME} PRIVATE
-        <multisensor_calibration/common/utils.hpp>
-    )
-    set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
-        UNITY_BUILD ON
-        UNITY_BUILD_BATCH_SIZE 8
-    )
-endif()
+set_target_properties(${LIBRARY_TARGET_NAME} PROPERTIES
+    UNITY_BUILD ON
+    UNITY_BUILD_BATCH_SIZE 8
+)
 ament_export_targets(export_${LIBRARY_TARGET_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(${DEPENDENCIES})  # kept for ament consumers; CMake consumers use the exported target directly
 
