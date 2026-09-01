@@ -311,7 +311,6 @@ rclcpp_components_register_nodes(${LIBRARY_TARGET_NAME} "multisensor_calibration
 set(CAMERA_LIDAR_CALIB_NODE_TARGET_NAME extrinsic_camera_lidar_calibration)
 add_executable(${CAMERA_LIDAR_CALIB_NODE_TARGET_NAME}
     src/nodes/CalibrationNode.cpp
-    ${QRC_SRC_FILES}
 )
 target_compile_definitions(${CAMERA_LIDAR_CALIB_NODE_TARGET_NAME} PRIVATE
     ${COMMON_COMPILE_DEFINITIONS}
@@ -332,7 +331,6 @@ target_link_libraries(${CAMERA_LIDAR_CALIB_NODE_TARGET_NAME}
 set(CAMERA_REFERENCE_CALIB_NODE_TARGET_NAME extrinsic_camera_reference_calibration)
 add_executable(${CAMERA_REFERENCE_CALIB_NODE_TARGET_NAME}
     src/nodes/CalibrationNode.cpp
-    ${QRC_SRC_FILES}
 )
 target_compile_definitions(${CAMERA_REFERENCE_CALIB_NODE_TARGET_NAME} PRIVATE
     ${COMMON_COMPILE_DEFINITIONS}
@@ -353,7 +351,6 @@ target_link_libraries(${CAMERA_REFERENCE_CALIB_NODE_TARGET_NAME}
 set(LIDAR_LIDAR_CALIB_NODE_TARGET_NAME extrinsic_lidar_lidar_calibration)
 add_executable(${LIDAR_LIDAR_CALIB_NODE_TARGET_NAME}
     src/nodes/CalibrationNode.cpp
-    ${QRC_SRC_FILES}
 )
 target_compile_definitions(${LIDAR_LIDAR_CALIB_NODE_TARGET_NAME} PRIVATE
     ${COMMON_COMPILE_DEFINITIONS}
@@ -374,7 +371,6 @@ target_link_libraries(${LIDAR_LIDAR_CALIB_NODE_TARGET_NAME}
 set(LIDAR_REFERENCE_CALIB_NODE_TARGET_NAME extrinsic_lidar_reference_calibration)
 add_executable(${LIDAR_REFERENCE_CALIB_NODE_TARGET_NAME}
     src/nodes/CalibrationNode.cpp
-    ${QRC_SRC_FILES}
 )
 target_compile_definitions(${LIDAR_REFERENCE_CALIB_NODE_TARGET_NAME} PRIVATE
     ${COMMON_COMPILE_DEFINITIONS}
@@ -395,7 +391,6 @@ target_link_libraries(${LIDAR_REFERENCE_CALIB_NODE_TARGET_NAME}
 set(CAMERA_CAMERA_CALIB_NODE_TARGET_NAME extrinsic_camera_camera_calibration)
 add_executable(${CAMERA_CAMERA_CALIB_NODE_TARGET_NAME}
     src/nodes/CalibrationNode.cpp
-    ${QRC_SRC_FILES}
 )
 target_compile_definitions(${CAMERA_CAMERA_CALIB_NODE_TARGET_NAME} PRIVATE
     ${COMMON_COMPILE_DEFINITIONS}
@@ -416,7 +411,6 @@ target_link_libraries(${CAMERA_CAMERA_CALIB_NODE_TARGET_NAME}
 set(MULTI_SENSOR_CALIB_NODE_TARGET_NAME multi_sensor_calibration)
 add_executable(${MULTI_SENSOR_CALIB_NODE_TARGET_NAME}
     src/nodes/CalibrationNode.cpp
-    ${QRC_SRC_FILES}
 )
 target_compile_definitions(${MULTI_SENSOR_CALIB_NODE_TARGET_NAME} PRIVATE
     ${COMMON_COMPILE_DEFINITIONS}
@@ -436,7 +430,6 @@ target_link_libraries(${MULTI_SENSOR_CALIB_NODE_TARGET_NAME}
 set(INIT_ROBOT_WS_NODE_TARGET_NAME initialize_robot_workspace)
 add_executable(${INIT_ROBOT_WS_NODE_TARGET_NAME}
     src/nodes/InitializeRobotWsNode.cpp
-    ${QRC_SRC_FILES}
 )
 target_link_libraries(${INIT_ROBOT_WS_NODE_TARGET_NAME}
     ${LIBRARY_TARGET_NAME}
