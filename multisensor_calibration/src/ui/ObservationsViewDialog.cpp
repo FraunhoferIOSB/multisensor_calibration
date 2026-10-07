@@ -10,6 +10,7 @@
 // Qt
 #include <QAction>
 #include <QDialogButtonBox>
+#include <QFileDialog>
 #include <QInputDialog>
 #include <QItemDelegate>
 #include <QLineEdit>
@@ -23,7 +24,10 @@
 #include <QSet>
 
 // multisensor_calibration
+#include "multisensor_calibration/io/ReferencePointsCsvReader.h"
 #include "multisensor_calibration/ui/CalibrationGuiBase.h"
+#include "multisensor_calibration/ui/ImportReferencePointsDialog.h"
+#include "multisensor_calibration/ui/PositiveIntegerCellDelegate.h"
 #include "ui_ObservationsViewDialog.h"
 #include <multisensor_calibration/common/utils.hpp>
 #include <multisensor_calibration_interface/srv/add_marker_observations.hpp>
@@ -34,44 +38,6 @@ static std::vector<int> MARKER_IDS_FOR_ITEM_DELEGATE = {1, 2, 3, 4};
 using namespace multisensor_calibration_interface::srv;
 namespace multisensor_calibration
 {
-
-/**
- * @brief Delegate class to create cells with a validator that only accepts positive integers
- */
-class PositiveIntegerCellDelegate : public QItemDelegate
-{
-  public:
-    PositiveIntegerCellDelegate() = delete;
-
-    PositiveIntegerCellDelegate(QObject* parent) :
-      QItemDelegate(parent)
-    {
-    }
-
-    virtual ~PositiveIntegerCellDelegate()
-    {
-    }
-
-  protected:
-    QWidget* createEditor(QWidget* parent,
-                          const QStyleOptionViewItem& option,
-                          const QModelIndex& index) const
-    {
-        Q_UNUSED(option)
-        Q_UNUSED(index)
-
-        QLineEdit* lineEdit = new QLineEdit(parent);
-        lineEdit->setLocale(QLocale::English);
-        lineEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        lineEdit->setValidator(new QRegExpValidator(QRegExp("^\\d*$"), lineEdit));
-#else
-        lineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^\\d*$"), lineEdit));
-#endif
-        return lineEdit;
-    }
-};
 
 /**
  * @brief Delegate class to create cells holding the target pose ID.
@@ -330,7 +296,7 @@ void ObservationsViewDialog::handleButtonBoxClicked(QAbstractButton* button)
 
         //--- if the pose index of the current message is 1 less than the pose index of the current
         //--- row, add new message to the list and increment the current pose index.
-        if (currentPoseIdx == poseIdx || currentPoseIdx == (poseIdx - 1))
+        if (poseIdx >= 1 && (currentPoseIdx == poseIdx || currentPoseIdx == (poseIdx - 1)))
         {
             //--- add new message to the list and increment the current pose index
             if (currentPoseIdx == (poseIdx - 1))
@@ -366,8 +332,11 @@ void ObservationsViewDialog::handleButtonBoxClicked(QAbstractButton* button)
         }
     }
 
+    // Messages of observations rejected by the calibration node.
+    QStringList rejectionMsgs;
+
     // Function to do service call
-    auto doServiceCall = [&](AddMarkerObservations::Request::SharedPtr srvMsg)
+    auto doServiceCall = [&](AddMarkerObservations::Request::SharedPtr srvMsg, int poseId)
     {
         std::string serviceName = pCalibrationGui_->getCalibratorNodeName() + "/" +
                                   sensorName_ + "/" + ADD_MARKER_OBS_SRV_NAME;
@@ -383,19 +352,31 @@ void ObservationsViewDialog::handleButtonBoxClicked(QAbstractButton* button)
             RCLCPP_ERROR(pCalibrationGui_->nodePtr()->get_logger(),
                          "[%s] Failed to add observation. Called Service: %s",
                          pCalibrationGui_->getGuiNodeName().c_str(), serviceName.c_str());
+            return;
         }
+
+        auto response = addObservationResponse.get();
+        if (!response->is_accepted)
+            rejectionMsgs << QString("Pose %1: %2")
+                               .arg(poseId)
+                               .arg(QString::fromStdString(response->msg));
     };
 
     pCalibrationGui_->showProgressDialog(
       "Submitting '" + this->windowTitle() + "' observations...");
 
     //--- loop over messages and to service calls
-    for (AddMarkerObservations::Request::SharedPtr msg : srvMsgs)
+    for (size_t i = 0; i < srvMsgs.size(); ++i)
     {
-        doServiceCall(msg);
+        doServiceCall(srvMsgs[i], static_cast<int>(i) + 1);
     }
 
     pCalibrationGui_->hideProgressDialog();
+
+    if (!rejectionMsgs.isEmpty())
+        QMessageBox::critical(this, this->windowTitle(),
+                              "The following observations were rejected:\n" +
+                                rejectionMsgs.join("\n"));
 
     pUi_->uncommittedChangesLabel->setVisible(false);
     pUi_->buttonBox->setEnabled(false);
@@ -541,50 +522,23 @@ void ObservationsViewDialog::handleTableWidgetContextMenuRequest(const QPoint& p
             //--- if coordinatesCsv matches reg exp, enter into table, else show message box
             if (rxMatches)
             {
-                QLineEdit* leItem;
                 QStringList coordinateList = coordinatesCsv.split(',');
                 for (int i = 0; i < coordinateList.size(); ++i)
-                {
-                    QLineEdit* leItem = dynamic_cast<QLineEdit*>(
-                      this->pUi_->observationsTableWidget->item(currentRow, i + 2));
-
-                    if (leItem)
-                    {
-                        leItem->setText(coordinateList[i].simplified());
-                    }
-                    else
-                    {
-                        QTableWidgetItem* newItem =
-                          new QTableWidgetItem(coordinateList[i].simplified());
-                        pUi_->observationsTableWidget->setItem(currentRow, i + 2, newItem);
-                    }
-                }
+                    pUi_->observationsTableWidget->setItem(
+                      currentRow, i + 2, new QTableWidgetItem(coordinateList[i].simplified()));
 
                 //--- add value for target pose
                 //--- This is done by assuming that the poses are entered in a contigious order starting
                 //--- from 1. Thus the pose index is the result of a integer division of the row by
                 //--- 4 (number of markers) and adding 1.
                 QString poseStr = QString::number((currentRow / 4) + 1);
-                leItem          = dynamic_cast<QLineEdit*>(
-                  this->pUi_->observationsTableWidget->item(currentRow, 0));
-                if (leItem)
-                    leItem->setText(poseStr);
-                else
-                    pUi_->observationsTableWidget->setItem(
-                      currentRow, 0, new QTableWidgetItem(poseStr));
+                pUi_->observationsTableWidget->setItem(currentRow, 0, new QTableWidgetItem(poseStr));
 
                 //--- add preset for marker id
-                //--- This is done by assuming that the poses are entered in a contigious order starting
-                //--- from 1. Thus the pose index is the result of a integer division of the row by
-                //--- 4 (number of markers) and adding 1.
+                //--- This is done by assuming that the 4 markers of each pose are entered in the
+                //--- order of MARKER_IDS_FOR_ITEM_DELEGATE.
                 QString markerStr = QString::number(MARKER_IDS_FOR_ITEM_DELEGATE[(currentRow % 4)]);
-                leItem            = dynamic_cast<QLineEdit*>(
-                  this->pUi_->observationsTableWidget->item(currentRow, 1));
-                if (leItem)
-                    leItem->setText(markerStr);
-                else
-                    pUi_->observationsTableWidget->setItem(
-                      currentRow, 1, new QTableWidgetItem(markerStr));
+                pUi_->observationsTableWidget->setItem(currentRow, 1, new QTableWidgetItem(markerStr));
 
                 isValid = true;
             }
@@ -598,9 +552,109 @@ void ObservationsViewDialog::handleTableWidgetContextMenuRequest(const QPoint& p
     };
     connect(action, &QAction::triggered, this, setCoordinatesByCSV);
 
+    QAction* importCsvFileAction = new QAction("Import marker coordinates from CSV file...", menu);
+    connect(importCsvFileAction, &QAction::triggered,
+            this, &ObservationsViewDialog::importMarkerCoordinatesFromCsvFile);
+
     //--- show menu
     menu->addAction(action);
+    menu->addAction(importCsvFileAction);
     menu->popup(pUi_->observationsTableWidget->viewport()->mapToGlobal(pos));
+}
+
+//==================================================================================================
+void ObservationsViewDialog::importMarkerCoordinatesFromCsvFile()
+{
+    const QString title = "Import Marker Coordinates";
+
+    QString filePath = QFileDialog::getOpenFileName(this, title, QString(),
+                                                    "CSV files (*.csv *.txt);;All files (*)");
+    if (filePath.isEmpty())
+        return;
+
+    ReferencePointsCsvContent csvContent;
+    if (!readReferencePointsFromCsv(filePath.toStdString(), csvContent))
+    {
+        QMessageBox::critical(this, title, QString("Could not open file '%1'.").arg(filePath));
+        return;
+    }
+
+    if (csvContent.points.empty())
+    {
+        QMessageBox::critical(this, title,
+                              QString("No valid points found in file '%1'. Expected rows with "
+                                      "name, x, y, z.")
+                                .arg(filePath));
+        return;
+    }
+
+    if (!csvContent.invalidLines.empty())
+    {
+        QStringList lineNumbers;
+        for (int lineNumber : csvContent.invalidLines)
+            lineNumbers << QString::number(lineNumber);
+
+        QMessageBox::warning(this, title,
+                             QString("The following line(s) could not be read and are skipped: "
+                                     "%1.\nExpected rows with name, x, y, z.")
+                               .arg(lineNumbers.join(", ")));
+    }
+
+    ImportReferencePointsDialog importDialog(csvContent.points, this);
+    if (importDialog.exec() != QDialog::Accepted)
+        return;
+
+    QTableWidget* table = pUi_->observationsTableWidget;
+
+    bool isTableEmpty = true;
+    for (int r = 0; r < table->rowCount() && isTableEmpty; ++r)
+    {
+        for (int c = 0; c < table->columnCount() && isTableEmpty; ++c)
+            isTableEmpty = (!table->item(r, c) || table->item(r, c)->text().isEmpty());
+    }
+
+    if (!isTableEmpty &&
+        QMessageBox::question(this, title,
+                              "The observations table is not empty. Replace its rows with the "
+                              "imported marker coordinates?") != QMessageBox::Yes)
+        return;
+
+    // Trailing zeros are stripped and no exponent notation is used, to match the cell validator.
+    auto formatCoordinate = [](double value)
+    {
+        QString str = QString::number(value, 'f', 6);
+        while (str.endsWith('0'))
+            str.chop(1);
+        if (str.endsWith('.'))
+            str.append('0');
+        return str;
+    };
+
+    std::vector<ReferencePointAssignment> assignments = importDialog.getAssignedPoints();
+
+    //--- signals are blocked, since the cell-changed handler would add a row per changed cell
+    table->blockSignals(true);
+    table->setRowCount(0);
+    table->setRowCount(static_cast<int>(assignments.size()) + 1);
+    for (int r = 0; r < static_cast<int>(assignments.size()); ++r)
+    {
+        const ReferencePointAssignment& assignment = assignments[r];
+        const QStringList cellTexts = {QString::number(assignment.poseId),
+                                       QString::number(assignment.markerId),
+                                       formatCoordinate(assignment.point.x),
+                                       formatCoordinate(assignment.point.y),
+                                       formatCoordinate(assignment.point.z)};
+        for (int c = 0; c < cellTexts.size(); ++c)
+        {
+            QTableWidgetItem* item = new QTableWidgetItem(cellTexts[c]);
+            item->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            table->setItem(r, c, item);
+        }
+    }
+    table->blockSignals(false);
+
+    pUi_->uncommittedChangesLabel->setVisible(true);
+    pUi_->buttonBox->setEnabled(true);
 }
 
 } // namespace multisensor_calibration

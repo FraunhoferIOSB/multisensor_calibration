@@ -107,6 +107,12 @@ class ObservationsViewDialog : public QDialog
 
     void handleTableWidgetContextMenuRequest(const QPoint& pos);
 
+    /**
+     * @brief Read marker coordinates from a CSV file chosen by the user, let the user assign
+     * them to target poses and markers, and replace the rows of the table with the result.
+     */
+    void importMarkerCoordinatesFromCsvFile();
+
     //--- MEMBER DECLARATION ---//
 
   private:

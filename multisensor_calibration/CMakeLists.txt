@@ -211,6 +211,7 @@ set(LIBRARY_MOC_HEADER_FILES
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/LidarLidarCalibrationGui.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/CameraReferenceCalibrationGui.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/ObservationsViewDialog.h"
+    "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/ImportReferencePointsDialog.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/LidarReferenceCalibrationGui.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/ExtrinsicCameraLidarConfigWidget.h"
     "${CMAKE_CURRENT_LIST_DIR}/include/multisensor_calibration/ui/ExtrinsicCameraReferenceConfigWidget.h"
