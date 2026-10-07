@@ -5,9 +5,9 @@ name: Jazzy Jalisco
 
 on: # this determines when this workflow is run
   push:
-    branches: [ main, devel ]
+    branches: [ main, devel, jazzy ]
   pull_request:
-    branches: [ main, devel ] # when there is a pull request against master
+    branches: [ main, devel, jazzy ] # when there is a pull request against master
   workflow_dispatch: # allow manually starting this workflow
 
 jobs:
