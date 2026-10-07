@@ -18,7 +18,9 @@
 
 // ROS
 #include <memory>
+#if __has_include(<tf2/LinearMath/Transform.hpp>)
 #include <tf2/LinearMath/Transform.hpp>
+#endif
 
 // Qt
 #include <QFile>
@@ -353,8 +355,8 @@ bool ExtrinsicLidarLidarCalibration::initializeDataProcessors()
 bool ExtrinsicLidarLidarCalibration::initializeSubscribers(rclcpp::Node* ipNode)
 {
     //--- subscribe to topics
-    srcCloudSubsc_.subscribe(ipNode, srcTopicName_);
-    refCloudSubsc_.subscribe(ipNode, refTopicName_);
+    srcCloudSubsc_.subscribe(*ipNode, srcTopicName_, rclcpp::SensorDataQoS());
+    refCloudSubsc_.subscribe(*ipNode, refTopicName_, rclcpp::SensorDataQoS());
 
     //--- initialize synchronizers
     if (useExactSync_)

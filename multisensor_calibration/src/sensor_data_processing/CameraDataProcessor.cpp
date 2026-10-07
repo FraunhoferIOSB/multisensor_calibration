@@ -35,7 +35,11 @@ CameraDataProcessor::CameraDataProcessor(const std::string& iLoggerName,
   imageState_(STR_2_IMG_STATE.at(DEFAULT_IMG_STATE_STR))
 {
     //--- initialized settings of aruco detection
-    pArucoDetectorParameters_                         = cv::aruco::DetectorParameters::create();
+#if CV_VERSION_MAJOR > 4 || (CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR >= 7)
+    pArucoDetectorParameters_ = cv::makePtr<cv::aruco::DetectorParameters>();
+#else
+    pArucoDetectorParameters_ = cv::aruco::DetectorParameters::create();
+#endif
     pArucoDetectorParameters_->cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
 
     //--- initialize marker id color lookup

@@ -301,12 +301,10 @@ bool PointCloud2ImageNode::initializePublishers()
 bool PointCloud2ImageNode::initializeSubscribers()
 {
     //--- subscribe to topics
-    rmw_qos_profile_t qos = rmw_qos_profile_default;
-    qos.history           = RMW_QOS_POLICY_HISTORY_KEEP_LAST;
-    qos.depth             = 1;
+    rclcpp::QoS qos(rclcpp::KeepLast(1));
 
-    imageSubsc_.subscribe(this, INPUT_IMAGE_TOPIC_NAME, qos);
-    cloudSubsc_.subscribe(this, INPUT_CLOUD_TOPIC_NAME, qos);
+    imageSubsc_.subscribe(*this, INPUT_IMAGE_TOPIC_NAME, qos);
+    cloudSubsc_.subscribe(*this, INPUT_CLOUD_TOPIC_NAME, qos);
 
     //--- initialize synchronizers
     //--- choose synchronization model and message callback dependent on fusion mode

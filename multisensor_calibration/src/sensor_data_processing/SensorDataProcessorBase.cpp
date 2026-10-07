@@ -15,7 +15,9 @@
 #include <Eigen/Geometry>
 
 // ROS
+#if __has_include(<tf2/LinearMath/Transform.hpp>)
 #include <tf2/LinearMath/Transform.hpp>
+#endif
 
 // OpenCV
 #include <opencv2/core/eigen.hpp>

@@ -15,7 +15,11 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
-#include <QRegExpValidator>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#  include <QRegExpValidator>
+#else
+#  include <QRegularExpressionValidator>
+#endif
 #include <QSet>
 
 // multisensor_calibration
@@ -60,8 +64,11 @@ class PositiveIntegerCellDelegate : public QItemDelegate
         lineEdit->setLocale(QLocale::English);
         lineEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-        QRegExp rx("^\\d*$");
-        lineEdit->setValidator(new QRegExpValidator(rx, lineEdit));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        lineEdit->setValidator(new QRegExpValidator(QRegExp("^\\d*$"), lineEdit));
+#else
+        lineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^\\d*$"), lineEdit));
+#endif
         return lineEdit;
     }
 };
@@ -159,8 +166,11 @@ class FloatCellDelegate : public QItemDelegate
         lineEdit->setLocale(QLocale::English);
         lineEdit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-        QRegExp rx("^[-]?\\d*[.]?\\d*$");
-        lineEdit->setValidator(new QRegExpValidator(rx, lineEdit));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        lineEdit->setValidator(new QRegExpValidator(QRegExp("^[-]?\\d*[.]?\\d*$"), lineEdit));
+#else
+        lineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("^[-]?\\d*[.]?\\d*$"), lineEdit));
+#endif
         return lineEdit;
     }
 };
@@ -516,12 +526,20 @@ void ObservationsViewDialog::handleTableWidgetContextMenuRequest(const QPoint& p
             //--- construct regular expression, expecting 3 floats separated by ',' with any
             //--- white space in between
             QString floatRegExpStr = "[-]?\\d*[.]?\\d*";
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             QRegExp rx("^\\s*" + floatRegExpStr +
                        "\\s*[,]\\s*" + floatRegExpStr +
                        "\\s*[,]\\s*" + floatRegExpStr + "\\s*$");
+            bool rxMatches = rx.exactMatch(coordinatesCsv);
+#else
+            QRegularExpression rx("^\\s*" + floatRegExpStr +
+                                  "\\s*[,]\\s*" + floatRegExpStr +
+                                  "\\s*[,]\\s*" + floatRegExpStr + "\\s*$");
+            bool rxMatches = rx.match(coordinatesCsv).hasMatch();
+#endif
 
             //--- if coordinatesCsv matches reg exp, enter into table, else show message box
-            if (rx.exactMatch(coordinatesCsv))
+            if (rxMatches)
             {
                 QLineEdit* leItem;
                 QStringList coordinateList = coordinatesCsv.split(',');

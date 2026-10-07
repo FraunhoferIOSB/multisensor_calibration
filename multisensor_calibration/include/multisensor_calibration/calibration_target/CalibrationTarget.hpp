@@ -102,7 +102,13 @@ struct CalibrationTarget
     void createArUcoBoard()
     {
         //--- create ArUco dictionary
+        // OpenCV 4.7+ returns Dictionary by value; older versions return Ptr<Dictionary>
+#if CV_VERSION_MAJOR > 4 || (CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR >= 7)
+        pArucoDictionary = cv::makePtr<cv::aruco::Dictionary>(
+            cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250));
+#else
         pArucoDictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+#endif
 
         //--- create arUco board
 
@@ -125,8 +131,14 @@ struct CalibrationTarget
 
         try
         {
+            // Board::create() was removed in OpenCV 4.7+; use constructor via makePtr
+#if CV_VERSION_MAJOR > 4 || (CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR >= 7)
+            pArucoBoard = cv::makePtr<cv::aruco::Board>(boardCorners, *pArucoDictionary,
+                                                        markerIds);
+#else
             pArucoBoard = cv::aruco::Board::create(boardCorners, pArucoDictionary,
                                                    markerIds);
+#endif
         }
         catch (cv::Exception& ex)
         {

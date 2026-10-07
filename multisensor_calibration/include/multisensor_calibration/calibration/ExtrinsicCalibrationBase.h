@@ -33,7 +33,22 @@
 #include <string>
 
 // ROS
-#include <tf2/LinearMath/Transform.h>
+// Lyrical removed Transform.h; .hpp is available on all supported distros (Humble+).
+// Only fall back to Bullet if neither exists (future-proofing).
+#if __has_include(<tf2/LinearMath/Transform.hpp>)
+  #include <tf2/LinearMath/Transform.hpp>
+#elif __has_include(<tf2/LinearMath/Transform.h>)
+  #include <tf2/LinearMath/Transform.h>
+#elif !defined(TF2_LINEAR_MATH_COMPAT_DEFINED)
+  #define TF2_LINEAR_MATH_COMPAT_DEFINED
+  #include <bullet/LinearMath/btTransform.h>
+  namespace tf2 {
+    using Transform  = btTransform;
+    using Vector3    = btVector3;
+    using Quaternion = btQuaternion;
+    using Matrix3x3  = btMatrix3x3;
+  }
+#endif
 
 // PCL
 #include <pcl/point_cloud.h>
