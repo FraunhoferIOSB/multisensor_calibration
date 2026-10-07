@@ -1,7 +1,7 @@
 # This config uses industrial_ci (https://github.com/ros-industrial/industrial_ci.git).
 # For troubleshooting, see README (https://github.com/ros-industrial/industrial_ci/blob/master/README.rst)
 
-name: Jazzy Jalisco
+name: Lyrical Luth
 
 on: # this determines when this workflow is run
   push:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       # fail-fast: false # uncomment if failing jobs should not cancel the others immediately
       matrix: # matrix is the product of entries
-        ROS_DISTRO: [jazzy]
+        ROS_DISTRO: [lyrical]
         ROS_REPO: [main]
     env:
       CCACHE_DIR: "${{ github.workspace }}/.ccache" # directory for ccache (and how we enable ccache in industrial_ci)
