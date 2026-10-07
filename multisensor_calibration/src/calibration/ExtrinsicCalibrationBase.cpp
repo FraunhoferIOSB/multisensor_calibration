@@ -167,6 +167,31 @@ bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::onRequestCa
                           !opRes->ref_topic_name.empty() &&
                           !opRes->ref_frame_id.empty());
 
+    if (!opRes->is_complete)
+    {
+        std::string missing;
+        if (opRes->robot_ws_path.empty())
+            missing += "\n\t> robot_ws_path (robot workspace does not exist)";
+        if (opRes->calib_ws_path.empty())
+            missing += "\n\t> calib_ws_path (calibration workspace does not exist)";
+        if (opRes->calib_target_file_path.empty())
+            missing += "\n\t> calib_target_file_path";
+        if (opRes->src_sensor_name.empty())
+            missing += "\n\t> src_sensor_name";
+        if (opRes->src_topic_name.empty())
+            missing += "\n\t> src_topic_name";
+        if (opRes->src_frame_id.empty())
+            missing += "\n\t> src_frame_id (no synchronized sensor data received yet)";
+        if (opRes->ref_sensor_name.empty())
+            missing += "\n\t> ref_sensor_name";
+        if (opRes->ref_topic_name.empty())
+            missing += "\n\t> ref_topic_name";
+        if (opRes->ref_frame_id.empty())
+            missing += "\n\t> ref_frame_id (no synchronized sensor data received yet)";
+
+        RCLCPP_WARN(logger_, "Calibration meta data is incomplete. Missing:%s", missing.c_str());
+    }
+
     return true;
 }
 
