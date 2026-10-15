@@ -53,8 +53,9 @@ template <class SrcDataProcessorT, class RefDataProcessorT>
 bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::initializePublishers(
   rclcpp::Node* ipNode)
 {
+    //--- transient local so that late-joining subscribers (visualizers, remote UIs) get the last result
     pCalibResultPub_ = ipNode->create_publisher<CalibrationResult_Message_T>(
-      "~/" + CALIB_RESULT_TOPIC_NAME, 10);
+      "~/" + CALIB_RESULT_TOPIC_NAME, rclcpp::QoS(rclcpp::KeepLast(1)).transient_local());
 
     return true;
 }

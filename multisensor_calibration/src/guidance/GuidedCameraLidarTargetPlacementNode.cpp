@@ -67,6 +67,21 @@ GuidedCameraLidarTargetPlacementNode::GuidedCameraLidarTargetPlacementNode(std::
 }
 
 //==================================================================================================
+GuidedCameraLidarTargetPlacementNode::GuidedCameraLidarTargetPlacementNode(const rclcpp::NodeOptions& iOptions) :
+  GuidanceBase(this),
+  rclcpp::Node(GUIDANCE_SUB_NAMESPACE, iOptions),
+  pCamIntrinsicsTimer_(nullptr)
+{
+    resetNextTargetPose();
+
+    calibratorNodeName_ = declare_parameter<std::string>("calibrator_node_name",
+                                                         CALIB_TYPE_2_NODE_NAME.at(EXTRINSIC_CAMERA_LIDAR_CALIBRATION));
+    appTitle_           = calibratorNodeName_;
+
+    init();
+}
+
+//==================================================================================================
 GuidedCameraLidarTargetPlacementNode::~GuidedCameraLidarTargetPlacementNode()
 {
 }
@@ -695,3 +710,6 @@ void GuidedCameraLidarTargetPlacementNode::resetNextTargetPose()
 }
 
 } // namespace multisensor_calibration
+
+#include "rclcpp_components/register_node_macro.hpp"
+RCLCPP_COMPONENTS_REGISTER_NODE(multisensor_calibration::GuidedCameraLidarTargetPlacementNode)

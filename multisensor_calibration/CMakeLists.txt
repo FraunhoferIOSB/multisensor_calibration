@@ -300,6 +300,15 @@ ament_export_dependencies(${DEPENDENCIES})  # kept for ament consumers; CMake co
 
 rclcpp_components_register_nodes(${LIBRARY_TARGET_NAME} "multisensor_calibration::visualizers::PointCloud2PointCloudDistanceNode")
 rclcpp_components_register_nodes(${LIBRARY_TARGET_NAME} "multisensor_calibration::visualizers::PointCloud2ImageNode")
+rclcpp_components_register_nodes(${LIBRARY_TARGET_NAME}
+    "multisensor_calibration::ExtrinsicCameraLidarCalibration"
+    "multisensor_calibration::ExtrinsicCameraReferenceCalibration"
+    "multisensor_calibration::ExtrinsicLidarLidarCalibration"
+    "multisensor_calibration::ExtrinsicLidarReferenceCalibration"
+    "multisensor_calibration::ExtrinsicCameraCameraCalibration"
+    "multisensor_calibration::GuidedCameraLidarTargetPlacementNode"
+    "multisensor_calibration::GuidedLidarLidarTargetPlacementNode"
+)
 
 ######################################
 # extrinsic_camera_lidar_calibration

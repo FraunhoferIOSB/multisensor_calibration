@@ -64,6 +64,13 @@ class GuidedCameraLidarTargetPlacementNode : public GuidanceBase, public rclcpp:
     GuidedCameraLidarTargetPlacementNode(std::string iNodeName, rclcpp::NodeOptions iOptions);
 
     /**
+     * @brief Component constructor. The node name is taken from the node options, the
+     * calibrator node name from the 'calibrator_node_name' parameter (default: node name of
+     * the corresponding calibration type).
+     */
+    explicit GuidedCameraLidarTargetPlacementNode(const rclcpp::NodeOptions& iOptions);
+
+    /**
      * @brief Destructor
      */
     virtual ~GuidedCameraLidarTargetPlacementNode();

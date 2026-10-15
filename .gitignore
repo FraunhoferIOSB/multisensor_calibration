@@ -143,6 +143,8 @@ multisensor_calibration/launch/*
 !launch/example
 !launch/multi_sensor_calib_example.launch
 !multisensor_calibration/launch/example
+!launch/headless
+!multisensor_calibration/launch/headless
 !multisensor_calibration/launch/multi_sensor_calib_example.launch
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,ros,c++
