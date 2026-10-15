@@ -507,6 +507,33 @@ if(BUILD_TESTING)
     #   ament_flake8()
     #   find_package(ament_cmake_lint_cmake REQUIRED)
     #   ament_lint_cmake()
+
+    find_package(ament_cmake_gtest REQUIRED)
+
+    set(TEST_TARGET_NAMES
+        test_calibration_target
+        test_extrinsic_solvers
+        test_lib3d
+        test_reference_points_csv_reader
+        test_utils
+        test_workspace
+    )
+
+    foreach(TEST_TARGET_NAME ${TEST_TARGET_NAMES})
+        ament_add_gtest(${TEST_TARGET_NAME} test/${TEST_TARGET_NAME}.cpp)
+        target_compile_definitions(${TEST_TARGET_NAME} PRIVATE
+            ${COMMON_COMPILE_DEFINITIONS}
+            -DTARGET_NAME="${TEST_TARGET_NAME}"
+            -DTEST_DATA_DIR="${CMAKE_CURRENT_LIST_DIR}/cfg"
+        )
+        # OpenCV, PCL and Qt are PRIVATE dependencies of the library target and
+        # thus need to be linked explicitly.
+        target_link_libraries(${TEST_TARGET_NAME}
+            ${LIBRARY_TARGET_NAME}
+            ${OpenCV_LIBRARIES}
+            Qt${QT_VERSION_MAJOR}::Core
+        )
+    endforeach()
 endif()
 
 ament_package()

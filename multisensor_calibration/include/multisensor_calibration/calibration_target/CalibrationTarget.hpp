@@ -35,6 +35,7 @@
 
 // Eigen
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 // Boost
 #include <boost/filesystem.hpp>
