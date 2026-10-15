@@ -94,7 +94,7 @@ bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::onRequestRe
 
     RCLCPP_INFO(logger_, "%s", opRes->msg.c_str());
 
-    return true;
+    return opRes->is_accepted;
 }
 
 //==================================================================================================
