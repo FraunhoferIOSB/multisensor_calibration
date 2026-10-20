@@ -68,13 +68,12 @@ bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::onRequestRe
 {
     UNUSED_VAR(ipReq);
 
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
+
     //--- if there is a calibration to be removed, remove all observations from this iteration
     if (calibrationItrCnt_ > 1)
     {
-
-        //--- get ownership of mutex
-        std::lock_guard<std::mutex> guard(dataProcessingMutex_);
-
         calibrationItrCnt_--;
 
         pSrcDataProcessor_->removeCalibIteration(calibrationItrCnt_);
@@ -136,6 +135,9 @@ bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::onRequestCa
 
     if (!isInitialized_)
         return false;
+
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     opRes->calib_type = static_cast<int>(type_);
 
@@ -202,6 +204,9 @@ bool ExtrinsicCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::onRequestSe
   const std::shared_ptr<interf::srv::SensorExtrinsics::Request> ipReq,
   std::shared_ptr<interf::srv::SensorExtrinsics::Response> opRes)
 {
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
+
     //--- get empty or last sensor extrinsics and convert into tf2::Transform
     lib3d::Extrinsics extrinsics = (sensorExtrinsics_.empty())
                                      ? lib3d::Extrinsics()

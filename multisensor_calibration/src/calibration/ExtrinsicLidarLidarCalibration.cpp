@@ -334,6 +334,7 @@ bool ExtrinsicLidarLidarCalibration::initializeDataProcessors()
           logger_.get_name(), iSensorName, calibTargetFilePath_);
         if (iopProcessor)
         {
+            iopProcessor->setProcessingMutex(&dataProcessingMutex_);
             iopProcessor->initializeServices(this);
             iopProcessor->initializePublishers(this);
             iopProcessor->setParameters(lidarTargetDetectionParams_);
@@ -355,8 +356,10 @@ bool ExtrinsicLidarLidarCalibration::initializeDataProcessors()
 bool ExtrinsicLidarLidarCalibration::initializeSubscribers(rclcpp::Node* ipNode)
 {
     //--- subscribe to topics
-    srcCloudSubsc_.subscribe(*ipNode, srcTopicName_, rclcpp::SensorDataQoS());
-    refCloudSubsc_.subscribe(*ipNode, refTopicName_, rclcpp::SensorDataQoS());
+    srcCloudSubsc_.subscribe(*ipNode, srcTopicName_, rclcpp::SensorDataQoS(),
+                             sensorDataSubscriptionOptions());
+    refCloudSubsc_.subscribe(*ipNode, refTopicName_, rclcpp::SensorDataQoS(),
+                             sensorDataSubscriptionOptions());
 
     //--- initialize synchronizers
     if (useExactSync_)
@@ -410,6 +413,9 @@ bool ExtrinsicLidarLidarCalibration::onRequestRemoveObservation(
   const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
   std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes)
 {
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
+
     if (ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::onRequestRemoveObservation(ipReq, opRes))
         sensorExtrinsics_.pop_back();
     else
@@ -441,7 +447,7 @@ void ExtrinsicLidarLidarCalibration::onSensorDataReceived(
     }
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- convert input messages to data
     bool isConversionSuccessful = true;
@@ -818,7 +824,7 @@ bool ExtrinsicLidarLidarCalibration::shutdownSubscribers()
         return false;
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(CalibrationBase::dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(CalibrationBase::dataProcessingMutex_);
 
     //--- unsubscribe subscribers
     srcCloudSubsc_.unsubscribe();

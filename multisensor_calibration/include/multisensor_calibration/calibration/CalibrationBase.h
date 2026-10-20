@@ -169,6 +169,12 @@ class CalibrationBase
     virtual bool initializeWorkspaceObjects();
 
     /**
+     * @brief Get subscription options that assign the subscription to the sensor data callback
+     * group, which is separate from the service callbacks.
+     */
+    rclcpp::SubscriptionOptions sensorDataSubscriptionOptions() const;
+
+    /**
      * @brief Check if given frame ID is in URDF model.
      *
      * @return True, if frame ID is found in model. False, otherwise.
@@ -349,7 +355,11 @@ class CalibrationBase
     rclcpp::Logger logger_;
 
     /// Mutex guarding the data processing.
-    std::mutex dataProcessingMutex_;
+    std::recursive_mutex dataProcessingMutex_;
+
+    /// Callback group of the sensor data subscriptions. Keeps services responsive while sensor
+    /// data is being processed.
+    rclcpp::CallbackGroup::SharedPtr pSensorDataCbGroup_;
 
     /// Callback handle to adjust parameters
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr pParameterCallbackHandle_;

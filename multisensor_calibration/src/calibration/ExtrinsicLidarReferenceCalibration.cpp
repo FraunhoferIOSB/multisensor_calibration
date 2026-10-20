@@ -198,6 +198,7 @@ bool ExtrinsicLidarReferenceCalibration::initializeDataProcessors()
       logger_.get_name(), srcSensorName_, calibTargetFilePath_);
     if (pSrcDataProcessor_)
     {
+        pSrcDataProcessor_->setProcessingMutex(&dataProcessingMutex_);
         pSrcDataProcessor_->initializeServices(this);
         pSrcDataProcessor_->initializePublishers(this);
         pSrcDataProcessor_->setParameters(lidarTargetDetectionParams_);
@@ -212,6 +213,7 @@ bool ExtrinsicLidarReferenceCalibration::initializeDataProcessors()
       logger_.get_name(), refSensorName_, calibTargetFilePath_);
     if (pRefDataProcessor_)
     {
+        pRefDataProcessor_->setProcessingMutex(&dataProcessingMutex_);
         pRefDataProcessor_->initializeServices(this);
         pRefDataProcessor_->initializePublishers(this);
     }
@@ -231,7 +233,8 @@ bool ExtrinsicLidarReferenceCalibration::initializeSubscribers(rclcpp::Node* ipN
       ipNode->create_subscription<InputCloud_Message_T>(
         srcTopicName_, 1,
         std::bind(&ExtrinsicLidarReferenceCalibration::onSensorDataReceived, this,
-                  std::placeholders::_1));
+                  std::placeholders::_1),
+        sensorDataSubscriptionOptions());
 
     return true;
 }
@@ -282,7 +285,7 @@ void ExtrinsicLidarReferenceCalibration::onSensorDataReceived(
     }
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- convert input messages to data
     bool isConversionSuccessful = true;
@@ -562,7 +565,7 @@ bool ExtrinsicLidarReferenceCalibration::shutdownSubscribers()
         return false;
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- unsubscribe subscribers
     pSrcCloudSubsc_.reset();

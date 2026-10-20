@@ -157,6 +157,7 @@ bool ExtrinsicCameraReferenceCalibration::initializeDataProcessors()
     pSrcDataProcessor_->initializePublishers(this);
 
     //--- set data to reference data processor
+    pRefDataProcessor_->setProcessingMutex(&dataProcessingMutex_);
     pRefDataProcessor_->initializeServices(this);
     pRefDataProcessor_->initializePublishers(this);
 
@@ -188,7 +189,8 @@ bool ExtrinsicCameraReferenceCalibration::initializeSubscribers(rclcpp::Node* ip
     pImageSubsc_ = ipNode->create_subscription<sensor_msgs::msg::Image>(
       srcTopicName_,
       1,
-      std::bind(&ExtrinsicCameraReferenceCalibration::onSensorDataReceived, this, std::placeholders::_1));
+      std::bind(&ExtrinsicCameraReferenceCalibration::onSensorDataReceived, this, std::placeholders::_1),
+      sensorDataSubscriptionOptions());
 
     return true;
 }
@@ -223,6 +225,9 @@ bool ExtrinsicCameraReferenceCalibration::onRequestCameraIntrinsics(
   std::shared_ptr<interf::srv::CameraIntrinsics::Response> opRes)
 {
     UNUSED_VAR(ipReq);
+
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     lib3d::Intrinsics cameraIntr;
     if (!isInitialized_ || pSrcDataProcessor_ == nullptr)
@@ -277,7 +282,7 @@ void ExtrinsicCameraReferenceCalibration::onSensorDataReceived(
     }
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- convert input messages to data
     bool isConversionSuccessful = true;
@@ -526,7 +531,7 @@ bool ExtrinsicCameraReferenceCalibration::shutdownSubscribers()
         return false;
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- unsubscribe subscribers
     pImageSubsc_.reset();

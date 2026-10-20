@@ -187,7 +187,7 @@ class ExtrinsicLidarVehicleCalibration
 
     /// Mutex guarding the processing of sensor data.
     /// This is a reference to CalibrationBase::dataProcessingMutex_
-    std::mutex& sensorDataProcessingMutex_;
+    std::recursive_mutex& sensorDataProcessingMutex_;
 
     /// Mutex guarding the processing of reference data.
     std::mutex refDataProcessingMutex_;

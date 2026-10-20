@@ -57,6 +57,12 @@ void DataProcessor3d::setDataTransform(const std::shared_ptr<tf2::Transform>& pT
 }
 
 //==================================================================================================
+void DataProcessor3d::setProcessingMutex(std::recursive_mutex* ipMutex)
+{
+    pProcessingMutex_ = ipMutex;
+}
+
+//==================================================================================================
 std::vector<pcl::PointCloud<InputPointType>::Ptr>
 DataProcessor3d::getCalibrationTargetCloudPtrs() const
 {
@@ -332,6 +338,10 @@ bool DataProcessor3d::onAddMarkerObservations(
   const std::shared_ptr<multisensor_calibration_interface::srv::AddMarkerObservations::Request> iReq,
   std::shared_ptr<multisensor_calibration_interface::srv::AddMarkerObservations::Response> oRes)
 {
+    std::unique_lock<std::recursive_mutex> guard;
+    if (pProcessingMutex_)
+        guard = std::unique_lock<std::recursive_mutex>(*pProcessingMutex_);
+
     if (!isInitialized_)
     {
         oRes->is_accepted = false;
@@ -463,6 +473,10 @@ bool DataProcessor3d::onImportMarkerObservations(
   std::shared_ptr<multisensor_calibration_interface::srv::ImportMarkerObservations::Response> oRes)
 {
     using namespace multisensor_calibration_interface::srv;
+
+    std::unique_lock<std::recursive_mutex> guard;
+    if (pProcessingMutex_)
+        guard = std::unique_lock<std::recursive_mutex>(*pProcessingMutex_);
 
     //--- reset data processor
     this->reset();

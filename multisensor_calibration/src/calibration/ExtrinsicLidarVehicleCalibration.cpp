@@ -404,7 +404,7 @@ bool ExtrinsicLidarVehicleCalibration::onRequestAddRegionMarker(
     else if (ipReq->sensor_frame_id == srcFrameId_)
     {
         //--- get ownership of mutex
-        std::lock_guard<std::mutex> guard(sensorDataProcessingMutex_);
+        std::lock_guard<std::recursive_mutex> guard(sensorDataProcessingMutex_);
 
         srcRegionMarkers_.push_back(pnt);
         regionMarkerHistory_.push_back(srcFrameId_);
@@ -429,7 +429,7 @@ bool ExtrinsicLidarVehicleCalibration::onRequestRemoveObservation(
     UNUSED_VAR(ipReq);
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> srcGuard(sensorDataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> srcGuard(sensorDataProcessingMutex_);
     std::lock_guard<std::mutex> refGuard(refDataProcessingMutex_);
 
     //--- check in history list for last frame ID and remove from appropriate list.
@@ -574,7 +574,7 @@ void ExtrinsicLidarVehicleCalibration::onSensorDataReceived(
     }
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(sensorDataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(sensorDataProcessingMutex_);
 
     //--- set frame ids and initialize sensor extrinsics if applicable
     if (srcFrameId_ != ipSrcCloudMsg->header.frame_id)
@@ -734,7 +734,7 @@ bool ExtrinsicLidarVehicleCalibration::shutdownSubscribers()
         return false;
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> srcGuard(sensorDataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> srcGuard(sensorDataProcessingMutex_);
     std::lock_guard<std::mutex> refGuard(refDataProcessingMutex_);
 
     //--- unsubscribe subscribers

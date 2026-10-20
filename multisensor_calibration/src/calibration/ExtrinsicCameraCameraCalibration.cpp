@@ -289,16 +289,20 @@ bool ExtrinsicCameraCameraCalibration::initializeSubscribers(rclcpp::Node* ipNod
       srcCameraInfoTopic_, 1,
       std::bind(&ExtrinsicCameraCameraCalibration::onSrcCameraInfoReceived,
                 this,
-                std::placeholders::_1));
+                std::placeholders::_1),
+      sensorDataSubscriptionOptions());
     pRefCamInfoSubsc_ = ipNode->create_subscription<sensor_msgs::msg::CameraInfo>(
       refCameraInfoTopic_, 1,
       std::bind(&ExtrinsicCameraCameraCalibration::onRefCameraInfoReceived,
                 this,
-                std::placeholders::_1));
+                std::placeholders::_1),
+      sensorDataSubscriptionOptions());
 
     //--- subscribe to topics
-    srcImageSubsc_.subscribe(ipNode, srcTopicName_, "raw");
-    refImageSubsc_.subscribe(ipNode, refTopicName_, "raw");
+    srcImageSubsc_.subscribe(ipNode, srcTopicName_, "raw", rmw_qos_profile_default,
+                             sensorDataSubscriptionOptions());
+    refImageSubsc_.subscribe(ipNode, refTopicName_, "raw", rmw_qos_profile_default,
+                             sensorDataSubscriptionOptions());
 
     //--- initialize synchronizers
     if (useExactSync_)
@@ -371,6 +375,9 @@ bool ExtrinsicCameraCameraCalibration::onRequestCameraIntrinsics(
 {
     UNUSED_VAR(ipReq);
 
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
+
     lib3d::Intrinsics cameraIntr;
     if (!isInitialized_ || pSrcDataProcessor_ == nullptr)
         cameraIntr = lib3d::Intrinsics();
@@ -407,6 +414,9 @@ bool ExtrinsicCameraCameraCalibration::onRequestRemoveObservation(
   const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
   std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes)
 {
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
+
     if (ExtrinsicCalibrationBase<CameraDataProcessor, CameraDataProcessor>::onRequestRemoveObservation(ipReq, opRes))
         sensorExtrinsics_.pop_back();
     else
@@ -466,7 +476,7 @@ void ExtrinsicCameraCameraCalibration::onSensorDataReceived(
     }
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- convert input messages to data
     bool isConversionSuccessful = true;
@@ -819,7 +829,7 @@ bool ExtrinsicCameraCameraCalibration::shutdownSubscribers()
         return false;
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(CalibrationBase::dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(CalibrationBase::dataProcessingMutex_);
 
     //--- unsubscribe subscribers
     srcImageSubsc_.unsubscribe();

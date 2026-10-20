@@ -280,6 +280,7 @@ bool ExtrinsicCameraLidarCalibration::initializeDataProcessors()
     pSrcDataProcessor_->initializePublishers(this);
 
     //--- set data to lidar data processor
+    pRefDataProcessor_->setProcessingMutex(&dataProcessingMutex_);
     pRefDataProcessor_->initializeServices(this);
     pRefDataProcessor_->initializePublishers(this);
     pRefDataProcessor_->setParameters(lidarTargetDetectionParams_);
@@ -310,8 +311,10 @@ bool ExtrinsicCameraLidarCalibration::initializeSubscribers(rclcpp::Node* ipNode
         return false;
 
     //--- subscribe to topics
-    imageSubsc_.subscribe(ipNode, srcTopicName_, "raw");
-    cloudSubsc_.subscribe(*ipNode, refTopicName_, rclcpp::SensorDataQoS());
+    imageSubsc_.subscribe(ipNode, srcTopicName_, "raw", rmw_qos_profile_default,
+                          sensorDataSubscriptionOptions());
+    cloudSubsc_.subscribe(*ipNode, refTopicName_, rclcpp::SensorDataQoS(),
+                          sensorDataSubscriptionOptions());
 
     //--- initialize synchronizers
     if (useExactSync_)
@@ -367,6 +370,9 @@ bool ExtrinsicCameraLidarCalibration::onRequestCameraIntrinsics(
 {
     UNUSED_VAR(ipReq);
 
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
+
     lib3d::Intrinsics cameraIntr;
     if (!isInitialized_ || pSrcDataProcessor_ == nullptr)
         cameraIntr = lib3d::Intrinsics();
@@ -403,6 +409,8 @@ bool ExtrinsicCameraLidarCalibration::onRequestRemoveObservation(
   const std::shared_ptr<interf::srv::RemoveLastObservation::Request> ipReq,
   std::shared_ptr<interf::srv::RemoveLastObservation::Response> opRes)
 {
+    //--- get ownership of mutex
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     if (ExtrinsicCalibrationBase<CameraDataProcessor, LidarDataProcessor>::onRequestRemoveObservation(ipReq, opRes))
     {
@@ -443,7 +451,7 @@ void ExtrinsicCameraLidarCalibration::onSensorDataReceived(
     }
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- convert input messages to data
     bool isConversionSuccessful = true;
@@ -755,7 +763,7 @@ bool ExtrinsicCameraLidarCalibration::shutdownSubscribers()
         return false;
 
     //--- get ownership of mutex
-    std::lock_guard<std::mutex> guard(dataProcessingMutex_);
+    std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     //--- unsubscribe subscribers
     imageSubsc_.unsubscribe();

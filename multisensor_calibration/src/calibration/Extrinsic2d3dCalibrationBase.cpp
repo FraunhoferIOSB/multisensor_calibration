@@ -261,7 +261,8 @@ bool Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
     pLeftCamInfoSubsc_ = ipNode->create_subscription<sensor_msgs::msg::CameraInfo>(
       cameraInfoTopic_, 1,
       std::bind(&Extrinsic2d3dCalibrationBase::onLeftCameraInfoReceived, this,
-                std::placeholders::_1));
+                std::placeholders::_1),
+      this->sensorDataSubscriptionOptions());
 
     //--- left camera info message
     if (!rightCameraInfoTopic_.empty())
@@ -269,7 +270,8 @@ bool Extrinsic2d3dCalibrationBase<SrcDataProcessorT, RefDataProcessorT>::
         pRightCamInfoSubsc_ = ipNode->create_subscription<sensor_msgs::msg::CameraInfo>(
           rightCameraInfoTopic_, 1,
           std::bind(&Extrinsic2d3dCalibrationBase::onRightCameraInfoReceived, this,
-                    std::placeholders::_1));
+                    std::placeholders::_1),
+          this->sensorDataSubscriptionOptions());
     }
 
     return true;
