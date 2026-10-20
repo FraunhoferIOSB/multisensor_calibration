@@ -209,8 +209,8 @@ class PointCloud2PointCloudDistanceNode : public rclcpp::Node
     std::vector<PointCloudPublisher::SharedPtr> pubs_;
 
     /// Transform listener to look up transform between both input clouds. And necessary tf buffer
-    std::shared_ptr<tf2_ros::TransformListener> tfListener_{nullptr};
     std::unique_ptr<tf2_ros::Buffer> tfBuffer_;
+    std::shared_ptr<tf2_ros::TransformListener> tfListener_{nullptr};
 
     /// Pointers to received point clouds
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> pPointClouds_;
