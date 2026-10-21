@@ -421,6 +421,8 @@ bool ExtrinsicCameraLidarCalibration::onRequestRemoveObservation(
             pRefDataProcessor_->setPreprocFilter(pFrustumCullingFilters_.back());
         else if (pFrustumCullingFilters_.size() == 0 && pRefDataProcessor_)
             pRefDataProcessor_->setPreprocFilter(nullptr);
+
+        ExtrinsicCalibrationBase::publishLastCalibrationResult();
     }
     else
         return false;

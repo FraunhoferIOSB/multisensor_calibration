@@ -417,7 +417,10 @@ bool ExtrinsicLidarLidarCalibration::onRequestRemoveObservation(
     std::lock_guard<std::recursive_mutex> guard(dataProcessingMutex_);
 
     if (ExtrinsicCalibrationBase<LidarDataProcessor, LidarDataProcessor>::onRequestRemoveObservation(ipReq, opRes))
+    {
         sensorExtrinsics_.pop_back();
+        ExtrinsicCalibrationBase::publishLastCalibrationResult();
+    }
     else
         return false;
 
