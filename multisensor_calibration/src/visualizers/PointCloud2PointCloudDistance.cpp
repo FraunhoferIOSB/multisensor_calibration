@@ -478,9 +478,18 @@ void multisensor_calibration::visualizers::PointCloud2PointCloudDistanceNode::pr
         //--- publish colorized point cloud
         if (!pEnhancedSourceXyziCloud->empty())
         {
+            //--- with temporary transform, publish source cloud in frame of target cloud
+            size_t frameIdx = s;
+            if (useTemporaryTransform_ && s == 0)
+            {
+                pcl_ros::transformPointCloud(*pEnhancedSourceXyziCloud, *pEnhancedSourceXyziCloud,
+                                             temporaryTransform_.inverse());
+                frameIdx = 1;
+            }
+
             sensor_msgs::msg::PointCloud2 cloudMsg;
             pcl::toROSMsg(*pEnhancedSourceXyziCloud, cloudMsg);
-            cloudMsg.header = pointCloudMsgHeaders_[s];
+            cloudMsg.header = pointCloudMsgHeaders_[frameIdx];
             pubs_[s]->publish(cloudMsg);
         }
     }
