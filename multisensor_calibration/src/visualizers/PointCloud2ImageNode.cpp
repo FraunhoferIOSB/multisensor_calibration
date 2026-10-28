@@ -306,7 +306,7 @@ bool PointCloud2ImageNode::initializeSubscribers()
     rclcpp::QoS qos(rclcpp::KeepLast(1));
 
     imageSubsc_.subscribe(*this, INPUT_IMAGE_TOPIC_NAME, qos);
-    cloudSubsc_.subscribe(*this, INPUT_CLOUD_TOPIC_NAME, qos);
+    cloudSubsc_.subscribe(*this, INPUT_CLOUD_TOPIC_NAME, rclcpp::SensorDataQoS());
 
     //--- initialize synchronizers
     //--- choose synchronization model and message callback dependent on fusion mode

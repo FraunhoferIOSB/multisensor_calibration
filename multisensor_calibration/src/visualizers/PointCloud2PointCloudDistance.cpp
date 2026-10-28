@@ -154,7 +154,7 @@ void multisensor_calibration::visualizers::PointCloud2PointCloudDistanceNode::on
     {
         std::string topicName = INPUT_TOPIC_NAME_PREFIX + "_" + std::to_string(i);
 
-        cloudSubscrs_[i] = this->create_subscription<PointCloud>(topicName, 10,
+        cloudSubscrs_[i] = this->create_subscription<PointCloud>(topicName, rclcpp::SensorDataQoS(),
                                                                  [this, i](const PointCloud::ConstSharedPtr ipCloudMsg)
                                                                  {
                                                                      // Call your existing callback function with additional argument
