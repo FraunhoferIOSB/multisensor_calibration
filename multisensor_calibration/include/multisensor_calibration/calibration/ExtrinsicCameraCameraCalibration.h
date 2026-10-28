@@ -42,6 +42,7 @@
 
 // multisensor_calibration
 #include "Extrinsic2d2dCalibrationBase.h"
+#include "multisensor_calibration/common/LatestMessageSync.h"
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/config/CameraCameraRegistrationParameters.hpp"
 #include "multisensor_calibration/sensor_data_processing/CameraDataProcessor.h"
@@ -175,6 +176,9 @@ class ExtrinsicCameraCameraCalibration
 
     std::shared_ptr<message_filters::Synchronizer<ImageImageExactSync>> pImageImageExactSync_;
 
+    std::shared_ptr<LatestMessageSync<InputImage_Message_T, InputImage_Message_T>>
+      pImageImageLatestSync_;
+
     image_transport::SubscriberFilter srcImageSubsc_;
 
     image_transport::SubscriberFilter refImageSubsc_;
@@ -182,8 +186,8 @@ class ExtrinsicCameraCameraCalibration
     /// Queue size for synchronization of image messages
     int syncQueueSize_;
 
-    /// Flag to activate exact time synchronization
-    bool useExactSync_;
+    /// Synchronization policy of source and reference messages
+    ESyncPolicy syncPolicy_;
 
     /// State of images
     EImageState srcImageState_, refImageState_;

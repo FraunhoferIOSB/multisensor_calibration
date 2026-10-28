@@ -49,7 +49,7 @@ ExtrinsicCameraCameraCalibration::ExtrinsicCameraCameraCalibration(
     STEREO_CAMERA_CALIBRATION),
   rclcpp::Node(nodeName, options),
   syncQueueSize_(DEFAULT_SYNC_QUEUE_SIZE),
-  useExactSync_(false)
+  syncPolicy_(APPROXIMATE_SYNC)
 {
     CalibrationBase::init(this);
 }
@@ -69,6 +69,7 @@ ExtrinsicCameraCameraCalibration::~ExtrinsicCameraCameraCalibration()
 {
     pImageImageApproxSync_.reset();
     pImageImageExactSync_.reset();
+    pImageImageLatestSync_.reset();
     pSrcDataProcessor_.reset();
     pRefDataProcessor_.reset();
 }
@@ -305,7 +306,7 @@ bool ExtrinsicCameraCameraCalibration::initializeSubscribers(rclcpp::Node* ipNod
                              sensorDataSubscriptionOptions());
 
     //--- initialize synchronizers
-    if (useExactSync_)
+    if (syncPolicy_ == EXACT_SYNC)
     {
         pImageImageExactSync_ =
           std::make_shared<message_filters::Synchronizer<ImageImageExactSync>>(
@@ -313,6 +314,14 @@ bool ExtrinsicCameraCameraCalibration::initializeSubscribers(rclcpp::Node* ipNod
         pImageImageExactSync_->registerCallback(
           std::bind(&ExtrinsicCameraCameraCalibration::onSensorDataReceived, this,
                     std::placeholders::_1, std::placeholders::_2));
+    }
+    else if (syncPolicy_ == LATEST_SYNC)
+    {
+        pImageImageLatestSync_ =
+          std::make_shared<LatestMessageSync<InputImage_Message_T, InputImage_Message_T>>(
+            srcImageSubsc_, refImageSubsc_,
+            std::bind(&ExtrinsicCameraCameraCalibration::onSensorDataReceived, this,
+                      std::placeholders::_1, std::placeholders::_2));
     }
     else
     {
@@ -621,11 +630,8 @@ bool ExtrinsicCameraCameraCalibration::saveCalibrationSettingsToWorkspace()
     pCalibSettings->setValue("misc/sync_queue_size",
                              QVariant::fromValue(syncQueueSize_));
 
-    pCalibSettings->setValue("misc/use_exact_sync",
-                             QVariant::fromValue(useExactSync_));
-
-    pCalibSettings->setValue("misc/intrinsic_calibration",
-                             QVariant::fromValue(useExactSync_));
+    pCalibSettings->setValue("misc/sync_policy",
+                             QString::fromStdString(SYNC_POLICY_2_STR.at(syncPolicy_)));
 
     pCalibSettings->sync();
 
@@ -715,13 +721,15 @@ void ExtrinsicCameraCameraCalibration::setupLaunchParameters(rclcpp::Node* ipNod
     ipNode->declare_parameter<int>("sync_queue_size", DEFAULT_SYNC_QUEUE_SIZE,
                                    syncQueueDesc);
 
-    //--- exact sync
-    auto exactSyncDesc = rcl_interfaces::msg::ParameterDescriptor{};
-    exactSyncDesc.description =
-      "Set to true if an exact time synchronization between the camera image messages\n"
-      "Default: false";
-    syncQueueDesc.read_only = true;
-    ipNode->declare_parameter<bool>("use_exact_sync", false, exactSyncDesc);
+    //--- sync policy
+    auto syncPolicyDesc = rcl_interfaces::msg::ParameterDescriptor{};
+    syncPolicyDesc.description =
+      "Synchronization of the source and reference camera image messages: 'exact' (exact time), "
+      "'approximate' (approximate time) or 'latest' (no time synchronization, each source image "
+      "is paired with the latest reference image).\n"
+      "Default: approximate";
+    syncPolicyDesc.read_only = true;
+    ipNode->declare_parameter<std::string>("sync_policy", DEFAULT_SYNC_POLICY_STR, syncPolicyDesc);
 }
 
 //==================================================================================================
@@ -791,8 +799,8 @@ bool ExtrinsicCameraCameraCalibration::readLaunchParameters(const rclcpp::Node* 
     syncQueueSize_ = CalibrationBase::readNumericLaunchParameter<int>(
       ipNode, "sync_queue_size", DEFAULT_SYNC_QUEUE_SIZE, 1, INT_MAX);
 
-    //--- exact sync
-    useExactSync_ = ipNode->get_parameter("use_exact_sync").as_bool();
+    //--- sync policy
+    syncPolicy_ = CalibrationBase::readSyncPolicyLaunchParameter(ipNode);
 
     return true;
 }

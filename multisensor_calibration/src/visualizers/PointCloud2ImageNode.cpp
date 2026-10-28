@@ -47,6 +47,7 @@ PointCloud2ImageNode::PointCloud2ImageNode(rclcpp::NodeOptions iNodeOptions, std
   isInitialized_(false),
   pImgCloudApproxSync_(nullptr),
   pImgCloudExactSync_(nullptr),
+  pImgCloudLatestSync_(nullptr),
   tfBuffer_(this->get_clock()),
   tfListener_(tfBuffer_),
   imageState_(STR_2_IMG_STATE.at(DEFAULT_IMG_STATE_STR)),
@@ -55,7 +56,7 @@ PointCloud2ImageNode::PointCloud2ImageNode(rclcpp::NodeOptions iNodeOptions, std
   maxDepth_(DEFAULT_MAX_DEPTH),
   useTemporaryTransform_(false),
   syncQueueSize_(DEFAULT_SYNC_QUEUE_SIZE),
-  useExactSync_(false)
+  syncPolicy_(APPROXIMATE_SYNC)
 {
     std::setlocale(LC_ALL, "en_US.UTF-8");
     onInit();
@@ -68,6 +69,7 @@ PointCloud2ImageNode::~PointCloud2ImageNode()
     //--- disconnection of callbacks.
     pImgCloudApproxSync_.reset();
     pImgCloudExactSync_.reset();
+    pImgCloudLatestSync_.reset();
 }
 
 //==================================================================================================
@@ -308,12 +310,19 @@ bool PointCloud2ImageNode::initializeSubscribers()
 
     //--- initialize synchronizers
     //--- choose synchronization model and message callback dependent on fusion mode
-    if (useExactSync_)
+    if (syncPolicy_ == EXACT_SYNC)
     {
         pImgCloudExactSync_.reset(new message_filters::Synchronizer<ImgCloudExactSync>(
           ImgCloudExactSync(10), imageSubsc_, cloudSubsc_));
         pImgCloudExactSync_->registerCallback(
           std::bind(&PointCloud2ImageNode::onSensorDataReceived, this, std::placeholders::_1, std::placeholders::_2));
+    }
+    else if (syncPolicy_ == LATEST_SYNC)
+    {
+        pImgCloudLatestSync_.reset(
+          new LatestMessageSync<sensor_msgs::msg::Image, InputCloud_Message_T>(
+            imageSubsc_, cloudSubsc_,
+            std::bind(&PointCloud2ImageNode::onSensorDataReceived, this, std::placeholders::_1, std::placeholders::_2)));
     }
     else
     {
@@ -396,13 +405,14 @@ bool PointCloud2ImageNode::readLaunchParameters()
 {
     //--- read launch parameters
     std::string imageStateStr;
+    std::string syncPolicyStr;
     std::vector<double> tmpTransformCoeffs;
     imageStateStr    = this->declare_parameter<std::string>("image_state", DEFAULT_IMG_STATE_STR);
     cameraNamespace_ = this->declare_parameter<std::string>("camera_namespace", std::string(""));
     minDepth_        = this->declare_parameter<float>("min_depth", DEFAULT_MIN_DEPTH);
     maxDepth_        = this->declare_parameter<float>("max_depth", DEFAULT_MAX_DEPTH);
     syncQueueSize_   = this->declare_parameter<int>("sync_queue_size", DEFAULT_SYNC_QUEUE_SIZE);
-    useExactSync_    = this->declare_parameter<bool>("use_exact_sync", false);
+    syncPolicyStr    = this->declare_parameter<std::string>("sync_policy", DEFAULT_SYNC_POLICY_STR);
     tmpTransformCoeffs =
       this->declare_parameter<std::vector<double>>("temp_transform", std::vector<double>{});
     if (!tmpTransformCoeffs.empty())
@@ -442,6 +452,14 @@ bool PointCloud2ImageNode::readLaunchParameters()
     auto stateFindItr = STR_2_IMG_STATE.find(imageStateStr);
     if (stateFindItr != STR_2_IMG_STATE.end())
         imageState_ = stateFindItr->second;
+
+    //--- get synchronization policy from list
+    auto syncFindItr = STR_2_SYNC_POLICY.find(syncPolicyStr);
+    if (syncFindItr != STR_2_SYNC_POLICY.end())
+        syncPolicy_ = syncFindItr->second;
+    else
+        RCLCPP_WARN(this->get_logger(), "[%s] (sync_policy '%s' not valid). Setting synchronization policy to default: %s ",
+                    this->get_name(), syncPolicyStr.c_str(), DEFAULT_SYNC_POLICY_STR.c_str());
 
     //--- get temporary transform from tmpTransformStr
     if (useTemporaryTransform_)

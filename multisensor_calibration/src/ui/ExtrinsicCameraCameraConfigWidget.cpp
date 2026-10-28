@@ -130,8 +130,7 @@ ExtrinsicCameraCameraConfigWidget::getBoolTypedCalibrationOptions()
     return {
       {"is_stereo_camera", ui->calibrateIntrinsics->isChecked()},
       {"use_initial_guess", ui->initialGuessCheckBox->isChecked()},
-      {"save_observations", ui->observationsCheckBox->isChecked()},
-      {"use_exact_sync", (ui->syncPolicyComboBox->currentIndex() == 0)}};
+      {"save_observations", ui->observationsCheckBox->isChecked()}};
 }
 
 //==================================================================================================
@@ -171,6 +170,8 @@ ExtrinsicCameraCameraConfigWidget::getStringTypedCalibrationOptions()
                           : ""},
       {"target_config_file", path + "/cfg/" +
                                ui->calibTargetFileLineEdit->text().toStdString()},
+      {"sync_policy", SYNC_POLICY_2_STR.at(
+                        static_cast<ESyncPolicy>(ui->syncPolicyComboBox->currentIndex()))},
     };
 }
 

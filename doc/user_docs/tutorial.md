@@ -87,8 +87,13 @@ In the following the available options for the different calibration types are p
 - **Use initial guess from TF-Tree?** Use the data provided by the TF-Tree to extract an initial guess for the calibration.
 - **Save Observations?** Save the observations which have been used for the calibration into the calibration workspace.
 
-- **Message Synchronization Policy:** Select which type of time synchronization is to be used to synchronize the sensor messages.
-- **Synchronization Queue Size:** Queue size used for the time synchronization.
+- **Message Synchronization Policy:** Select how the messages of the source and reference sensor are paired:
+  - *Exact Time Synchronization:* Messages with identical time stamps.
+  - *Approximate Time Synchronization (default):* Messages with the closest time stamps.
+  - *Latest Message (No Time Synchronization):* Each source message is paired with the latest reference message, regardless of the time stamps.
+    Use this if the clocks of the sensors are not synchronized.
+    Keep the target and the sensors still while capturing, since the paired messages may be recorded at different times.
+- **Synchronization Queue Size:** Queue size used for the approximate time synchronization.
 
 **Extrinsic LiDAR-LiDAR Calibration**
 
@@ -111,8 +116,13 @@ If true, this also requires the frame ID of an upright frame in order to find th
 - **Use initial guess from TF-Tree?** Use the data provided by the TF-Tree to extract an initial guess for the calibration.
 - **Save Observations?** Save the observations which have been used for the calibration into the calibration workspace.
 
-- **Message Synchronization Policy:** Select which type of time synchronization is to be used to synchronize the sensor messages.
-- **Synchronization Queue Size:** Queue size used for the time synchronization.
+- **Message Synchronization Policy:** Select how the messages of the source and reference sensor are paired:
+  - *Exact Time Synchronization:* Messages with identical time stamps.
+  - *Approximate Time Synchronization (default):* Messages with the closest time stamps.
+  - *Latest Message (No Time Synchronization):* Each source message is paired with the latest reference message, regardless of the time stamps.
+    Use this if the clocks of the sensors are not synchronized.
+    Keep the target and the sensors still while capturing, since the paired messages may be recorded at different times.
+- **Synchronization Queue Size:** Queue size used for the approximate time synchronization.
 
 **Extrinsic Camera-Reference Calibration**
 

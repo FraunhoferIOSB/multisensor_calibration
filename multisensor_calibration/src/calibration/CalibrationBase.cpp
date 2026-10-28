@@ -385,6 +385,21 @@ std::string CalibrationBase::readStringLaunchParameter(const rclcpp::Node* ipNod
 }
 
 //==================================================================================================
+ESyncPolicy CalibrationBase::readSyncPolicyLaunchParameter(const rclcpp::Node* ipNode) const
+{
+    const std::string policyStr =
+      readStringLaunchParameter(ipNode, "sync_policy", DEFAULT_SYNC_POLICY_STR);
+    auto findItr = STR_2_SYNC_POLICY.find(policyStr);
+    if (findItr != STR_2_SYNC_POLICY.end())
+        return findItr->second;
+
+    RCLCPP_WARN(logger_, "String passed to 'sync_policy' is not valid (exact, approximate, latest). "
+                         "\nSetting 'sync_policy' to default: %s",
+                DEFAULT_SYNC_POLICY_STR.c_str());
+    return STR_2_SYNC_POLICY.at(DEFAULT_SYNC_POLICY_STR);
+}
+
+//==================================================================================================
 void CalibrationBase::reset()
 {
     calibrationItrCnt_ = 1;

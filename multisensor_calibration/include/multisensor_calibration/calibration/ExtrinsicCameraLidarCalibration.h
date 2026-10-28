@@ -49,6 +49,7 @@
 
 // multisensor_calibration
 #include "Extrinsic2d3dCalibrationBase.h"
+#include "multisensor_calibration/common/LatestMessageSync.h"
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/config/CameraLidarRegistrationParameters.hpp"
 #include "multisensor_calibration/config/LidarTargetDetectionParameters.hpp"
@@ -184,6 +185,10 @@ class ExtrinsicCameraLidarCalibration
     /// message filter for exact message synchronization for image and cloud message data
     std::shared_ptr<message_filters::Synchronizer<ImgCloudExactSync>> pImgCloudExactSync_;
 
+    /// pairing of each image with the latest cloud, without time synchronization
+    std::shared_ptr<LatestMessageSync<InputImage_Message_T, InputCloud_Message_T>>
+      pImgCloudLatestSync_;
+
     /// Subscriber to image topic
     image_transport::SubscriberFilter imageSubsc_;
 
@@ -193,8 +198,8 @@ class ExtrinsicCameraLidarCalibration
     /// Queue size for synchronization of image messages and point cloud
     int syncQueueSize_;
 
-    /// Flag to activate exact time synchronization
-    bool useExactSync_;
+    /// Synchronization policy of image and cloud messages
+    ESyncPolicy syncPolicy_;
 
     /// Vector of Pointers to FrustumCulling filter used for pre-processing of the lidar data.
     std::vector<pcl::FrustumCulling<InputPointType>::Ptr> pFrustumCullingFilters_;

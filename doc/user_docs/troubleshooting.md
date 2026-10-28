@@ -8,6 +8,8 @@ The failure in initialization of the calibration node typically arises if there 
 An error in reading the workspaces often comes from a misconfiguration or wrong file permissions.
 Failure in receiving the sensor data could arise from an error in the connection to the platform or a synchronization error in the data from the sensor.
 When using approximated synchronization when subscribing to the sensor data, try to increase the queue size.
+If the clocks of the sensors are not synchronized (e.g. time stamps that differ by seconds), no message pairs are found with exact or approximate synchronization.
+In this case, set the synchronization policy to *Latest Message* (`sync_policy: latest`), which pairs each source message with the latest reference message regardless of the time stamps.
 
 ## Is there a possibility to visually debug the result of the GICP
 

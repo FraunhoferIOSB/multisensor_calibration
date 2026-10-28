@@ -126,8 +126,7 @@ ExtrinsicCameraLidarConfigWidget::getBoolTypedCalibrationOptions()
     return {
       {"is_stereo_camera", ui->isStereoGroupBox->isChecked()},
       {"use_initial_guess", ui->initialGuessCheckBox->isChecked()},
-      {"save_observations", ui->observationsCheckBox->isChecked()},
-      {"use_exact_sync", (ui->syncPolicyComboBox->currentIndex() == 0)}};
+      {"save_observations", ui->observationsCheckBox->isChecked()}};
 }
 
 //==================================================================================================
@@ -166,6 +165,8 @@ ExtrinsicCameraLidarConfigWidget::getStringTypedCalibrationOptions()
                           : ""},
       {"target_config_file", path + "/cfg/" +
                                ui->calibTargetFileLineEdit->text().toStdString()},
+      {"sync_policy", SYNC_POLICY_2_STR.at(
+                        static_cast<ESyncPolicy>(ui->syncPolicyComboBox->currentIndex()))},
     };
 }
 
@@ -339,9 +340,17 @@ void ExtrinsicCameraLidarConfigWidget::setCalibrationOptionsFromSettings()
     ui->initialGuessCheckBox->setChecked(
       pSettings->value("calibration/use_initial_guess").toBool());
 
-    ui->syncPolicyComboBox->setCurrentIndex((pSettings->value("misc/use_exact_sync").toBool())
-                                              ? 0
-                                              : 1);
+    //--- fall back to 'use_exact_sync' of workspaces created before 'sync_policy' was introduced
+    const std::string syncPolicyStr =
+      pSettings->value("misc/sync_policy",
+                       QString::fromStdString(SYNC_POLICY_2_STR.at(
+                         pSettings->value("misc/use_exact_sync").toBool() ? EXACT_SYNC
+                                                                          : APPROXIMATE_SYNC)))
+        .toString()
+        .toStdString();
+    auto syncFindItr = STR_2_SYNC_POLICY.find(syncPolicyStr);
+    ui->syncPolicyComboBox->setCurrentIndex(
+      (syncFindItr != STR_2_SYNC_POLICY.end()) ? syncFindItr->second : APPROXIMATE_SYNC);
     ui->queueSizeSpinBox->setValue(pSettings->value("misc/sync_queue_size").toInt());
 }
 

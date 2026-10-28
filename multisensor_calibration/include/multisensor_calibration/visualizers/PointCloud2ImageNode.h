@@ -56,6 +56,7 @@
 // IOSB
 #include <multisensor_calibration/common/lib3D/core/camera.hpp>
 #include <multisensor_calibration/common/lib3D/core/image.hpp>
+#include <multisensor_calibration/common/LatestMessageSync.h>
 
 // multisensor_calibration
 #include "multisensor_calibration/common/common.h"
@@ -217,6 +218,10 @@ class PointCloud2ImageNode : public rclcpp::Node
     /// message filter for exact message synchronization for vis or nir image and point cloud
     std::shared_ptr<message_filters::Synchronizer<ImgCloudExactSync>> pImgCloudExactSync_;
 
+    /// pairing of each image with the latest point cloud, without time synchronization
+    std::shared_ptr<LatestMessageSync<sensor_msgs::msg::Image, InputCloud_Message_T>>
+      pImgCloudLatestSync_;
+
     /// subscriber to calibration result
     std::shared_ptr<rclcpp::Subscription<CalibrationResult_Message_T>> pCalibSub_;
 
@@ -257,8 +262,8 @@ class PointCloud2ImageNode : public rclcpp::Node
     /// Queue size for synchronization of image messages and point cloud
     int syncQueueSize_;
 
-    /// Flag to activate exact time synchronization
-    bool useExactSync_;
+    /// Synchronization policy of image and point cloud messages
+    ESyncPolicy syncPolicy_;
 };
 } // namespace visualizers
 } // namespace multisensor_calibration

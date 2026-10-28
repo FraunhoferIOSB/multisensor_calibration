@@ -41,6 +41,7 @@
 
 // multisensor_calibration
 #include "Extrinsic3d3dCalibrationBase.h"
+#include "multisensor_calibration/common/LatestMessageSync.h"
 #include "multisensor_calibration/common/common.h"
 #include "multisensor_calibration/config/LidarLidarRegistrationParameters.hpp"
 #include "multisensor_calibration/config/LidarTargetDetectionParameters.hpp"
@@ -156,6 +157,10 @@ class ExtrinsicLidarLidarCalibration
     /// message filter for exact message synchronization for cloud message data
     std::shared_ptr<message_filters::Synchronizer<CloudCloudExactSync>> pCloudCloudExactSync_;
 
+    /// pairing of each source cloud with the latest reference cloud, without time synchronization
+    std::shared_ptr<LatestMessageSync<InputCloud_Message_T, InputCloud_Message_T>>
+      pCloudCloudLatestSync_;
+
     /// Subscriber to point cloud from source sensor
     message_filters::Subscriber<InputCloud_Message_T> srcCloudSubsc_;
 
@@ -171,8 +176,8 @@ class ExtrinsicLidarLidarCalibration
     /// Queue size for synchronization of image messages and point cloud
     int syncQueueSize_;
 
-    /// Flag to activate exact time synchronization
-    bool useExactSync_;
+    /// Synchronization policy of source and reference messages
+    ESyncPolicy syncPolicy_;
 };
 
 } // namespace multisensor_calibration

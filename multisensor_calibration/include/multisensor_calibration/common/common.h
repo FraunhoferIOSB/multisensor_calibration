@@ -216,6 +216,9 @@ static const int DEFAULT_NUM_LIDAR_OBSERVATIONS = 1;
 /// Default size of message queue for approximated time synchronization
 static const int DEFAULT_SYNC_QUEUE_SIZE = 100;
 
+/// Default synchronization policy of the sensor messages.
+static const std::string DEFAULT_SYNC_POLICY_STR = "approximate";
+
 //--- ENUMS ---//
 
 /* XMacro: Reduces readability but improves the maintenance */
@@ -271,5 +274,26 @@ static const std::unordered_map<std::string, EImageState> STR_2_IMG_STATE{
   {"DISTORTED", DISTORTED},
   {"UNDISTORTED", UNDISTORTED},
   {"STEREO_RECTIFIED", STEREO_RECTIFIED}};
+
+/// Enum indicating how the messages of the source and reference sensor are synchronized.
+/// The order matches the items of the synchronization combo boxes in the configuration widgets.
+enum ESyncPolicy
+{
+    EXACT_SYNC = 0,   ///< Exact time synchronization.
+    APPROXIMATE_SYNC, ///< Approximate time synchronization.
+    LATEST_SYNC       ///< No time synchronization, each source message is paired with the latest reference message.
+};
+
+/// Map allowing to map a value inside the ESyncPolicy enum to a string.
+static const std::unordered_map<ESyncPolicy, std::string> SYNC_POLICY_2_STR{
+  {EXACT_SYNC, "exact"},
+  {APPROXIMATE_SYNC, "approximate"},
+  {LATEST_SYNC, "latest"}};
+
+/// Map allowing to map a string to value inside the ESyncPolicy enum.
+static const std::unordered_map<std::string, ESyncPolicy> STR_2_SYNC_POLICY{
+  {"exact", EXACT_SYNC},
+  {"approximate", APPROXIMATE_SYNC},
+  {"latest", LATEST_SYNC}};
 
 } // namespace multisensor_calibration

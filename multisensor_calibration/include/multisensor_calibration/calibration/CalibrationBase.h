@@ -264,6 +264,15 @@ class CalibrationBase
                                           const std::string& iDefaultVal = "") const;
 
     /**
+     * @brief Read the launch parameter 'sync_policy' (exact, approximate or latest).
+     *
+     * If the value is not valid, the default (approximate) is used.
+     *
+     * @return Synchronization policy.
+     */
+    ESyncPolicy readSyncPolicyLaunchParameter(const rclcpp::Node* ipNode) const;
+
+    /**
      * @brief Reset calibration
      */
     virtual void reset();

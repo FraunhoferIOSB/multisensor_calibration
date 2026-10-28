@@ -72,12 +72,12 @@ It comprises
  - ```save_observations```: Option to save recorded observations that have been used for the calibration to the workspace<br>
     *type: bool*<br>
     *Default: false*
- - ```sync_queue_size```: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+ - ```sync_queue_size```: Queue size used for the synchronization between the source and reference sensor messages. Only used with ```sync_policy: approximate```.<br>
     *Type: int*<br>
     *Default: 100*
- - ```use_exact_sync```: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
-    *Type: bool*<br>
-    *Default: false*
+ - ```sync_policy```: Synchronization of the source and reference sensor messages: ```exact``` (exact time), ```approximate``` (approximate time) or ```latest``` (no time synchronization, each source message is paired with the latest reference message, e.g. for sensors with unsynchronized clocks).<br>
+    *Type: String*<br>
+    *Default: "approximate"*
 
 <hr>
 
@@ -122,12 +122,12 @@ It comprises
  - ```save_observations```: Option to save recorded observations that have been used for the calibration to the workspace<br>
     *type: bool*<br>
     *Default: false*
- - ```sync_queue_size```: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+ - ```sync_queue_size```: Queue size used for the synchronization between the source and reference sensor messages. Only used with ```sync_policy: approximate```.<br>
     *Type: int*<br>
     *Default: 100*
- - ```use_exact_sync```: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
-    *Type: bool*<br>
-    *Default: false*
+ - ```sync_policy```: Synchronization of the source and reference sensor messages: ```exact``` (exact time), ```approximate``` (approximate time) or ```latest``` (no time synchronization, each source message is paired with the latest reference message, e.g. for sensors with unsynchronized clocks).<br>
+    *Type: String*<br>
+    *Default: "approximate"*
 
 <hr>
 
@@ -406,12 +406,12 @@ NOTE: For a good final calibration a typical mean reprojection error is between 
  - ```save_observations```: Option to save recorded observations that have been used for the calibration to the workspace<br>
     *type: bool*<br>
     *Default: false*
- - ```sync_queue_size```: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+ - ```sync_queue_size```: Queue size used for the synchronization between the source and reference sensor messages. Only used with ```sync_policy: approximate```.<br>
     *Type: int*<br>
     *Default: 100*
- - ```use_exact_sync```: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
-    *Type: bool*<br>
-    *Default: false*
+ - ```sync_policy```: Synchronization of the source and reference sensor messages: ```exact``` (exact time), ```approximate``` (approximate time) or ```latest``` (no time synchronization, each source message is paired with the latest reference message, e.g. for sensors with unsynchronized clocks).<br>
+    *Type: String*<br>
+    *Default: "approximate"*
   
 **Topics Published:**
 
@@ -503,12 +503,12 @@ NOTE: For a good final calibration a typical mean reprojection error is between 
  - ```save_observations```: Option to save recorded observations that have been used for the calibration to the workspace<br>
     *type: bool*<br>
     *Default: false*
- - ```sync_queue_size```: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+ - ```sync_queue_size```: Queue size used for the synchronization between the source and reference sensor messages. Only used with ```sync_policy: approximate```.<br>
     *Type: int*<br>
     *Default: 100*
- - ```use_exact_sync```: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
-    *Type: bool*<br>
-    *Default: false*
+ - ```sync_policy```: Synchronization of the source and reference sensor messages: ```exact``` (exact time), ```approximate``` (approximate time) or ```latest``` (no time synchronization, each source message is paired with the latest reference message, e.g. for sensors with unsynchronized clocks).<br>
+    *Type: String*<br>
+    *Default: "approximate"*
   
 **Topics Published:**
 
@@ -582,12 +582,12 @@ Nodelet to perform extrinsic LiDAR-LiDAR calibration without any ui or guidance.
  - ```save_observations```: Option to save recorded observations that have been used for the calibration to the workspace<br>
     *type: bool*<br>
     *Default: false*
- - ```sync_queue_size```: Queue size used for the synchronization between the messages of the camera images and the LiDAR clouds<br>
+ - ```sync_queue_size```: Queue size used for the synchronization between the source and reference sensor messages. Only used with ```sync_policy: approximate```.<br>
     *Type: int*<br>
     *Default: 100*
- - ```use_exact_sync```: Set to true if an exact time synchronization between the camera image messages and the LiDAR cloud messages.<br>
-    *Type: bool*<br>
-    *Default: false*
+ - ```sync_policy```: Synchronization of the source and reference sensor messages: ```exact``` (exact time), ```approximate``` (approximate time) or ```latest``` (no time synchronization, each source message is paired with the latest reference message, e.g. for sensors with unsynchronized clocks).<br>
+    *Type: String*<br>
+    *Default: "approximate"*
   
 **Topics Published:**
 
@@ -865,9 +865,9 @@ In this, the projected points from the point cloud are colorized based on their 
 - ```sync_queue_size`: Queue size for the data synchronization using the method approximated time synchronization. Not evaluated when using exact time synchronization.<br>
   *Type: int*<br>
   *Default: 100*
-- ```use_exact_sync```: Flag to activate method for exact time synchronization.<br>
-  *Type: bool*
-  *Default: *false*
+- ```sync_policy```: Synchronization of the image and cloud messages: ```exact``` (exact time), ```approximate``` (approximate time) or ```latest``` (no time synchronization, each image is paired with the latest cloud).<br>
+  *Type: String*<br>
+  *Default: "approximate"*
 - `temp_transform`: Temporary transform of camera with respect to LiDAR given in the form of XYZ and RPY. The values are to be given as string list separated by whitespace. If left empty or omitted the transformation will be extracted from the TF-tree by using the frame IDs of the images and the clouds.<br>
   *Type: String*
   *Default: ""*

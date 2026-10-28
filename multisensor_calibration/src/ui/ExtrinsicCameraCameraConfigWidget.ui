@@ -432,6 +432,11 @@
           <string>Approximate Time Synchronization</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Latest Message (No Time Synchronization)</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item row="1" column="0">

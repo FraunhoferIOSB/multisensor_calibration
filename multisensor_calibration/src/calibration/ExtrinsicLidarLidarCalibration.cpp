@@ -44,10 +44,11 @@ ExtrinsicLidarLidarCalibration::
   rclcpp::Node(nodeName, options),
   pCloudCloudApproxSync_(nullptr),
   pCloudCloudExactSync_(nullptr),
+  pCloudCloudLatestSync_(nullptr),
   alignGroundPlanes_(false),
   uprightFrameId_(""),
   syncQueueSize_(DEFAULT_SYNC_QUEUE_SIZE),
-  useExactSync_(false)
+  syncPolicy_(APPROXIMATE_SYNC)
 {
     CalibrationBase::init(this);
 }
@@ -67,6 +68,7 @@ ExtrinsicLidarLidarCalibration::~ExtrinsicLidarLidarCalibration()
     //--- disconnection of callbacks.
     pCloudCloudApproxSync_.reset();
     pCloudCloudExactSync_.reset();
+    pCloudCloudLatestSync_.reset();
     pSrcDataProcessor_.reset();
     pRefDataProcessor_.reset();
 }
@@ -362,7 +364,7 @@ bool ExtrinsicLidarLidarCalibration::initializeSubscribers(rclcpp::Node* ipNode)
                              sensorDataSubscriptionOptions());
 
     //--- initialize synchronizers
-    if (useExactSync_)
+    if (syncPolicy_ == EXACT_SYNC)
     {
         pCloudCloudExactSync_ =
           std::make_shared<message_filters::Synchronizer<CloudCloudExactSync>>(
@@ -370,6 +372,14 @@ bool ExtrinsicLidarLidarCalibration::initializeSubscribers(rclcpp::Node* ipNode)
         pCloudCloudExactSync_->registerCallback(
           std::bind(&ExtrinsicLidarLidarCalibration::onSensorDataReceived, this,
                     std::placeholders::_1, std::placeholders::_2));
+    }
+    else if (syncPolicy_ == LATEST_SYNC)
+    {
+        pCloudCloudLatestSync_ =
+          std::make_shared<LatestMessageSync<InputCloud_Message_T, InputCloud_Message_T>>(
+            srcCloudSubsc_, refCloudSubsc_,
+            std::bind(&ExtrinsicLidarLidarCalibration::onSensorDataReceived, this,
+                      std::placeholders::_1, std::placeholders::_2));
     }
     else
     {
@@ -644,8 +654,8 @@ bool ExtrinsicLidarLidarCalibration::saveCalibrationSettingsToWorkspace()
                              QVariant::fromValue(syncQueueSize_));
 
     //--- exact sync
-    pCalibSettings->setValue("misc/use_exact_sync",
-                             QVariant::fromValue(useExactSync_));
+    pCalibSettings->setValue("misc/sync_policy",
+                             QString::fromStdString(SYNC_POLICY_2_STR.at(syncPolicy_)));
 
     //--- sync settings file
     pCalibSettings->sync();
@@ -724,14 +734,15 @@ void ExtrinsicLidarLidarCalibration::setupLaunchParameters(rclcpp::Node* ipNode)
     ipNode->declare_parameter<int>("sync_queue_size", DEFAULT_SYNC_QUEUE_SIZE,
                                    syncQueueDesc);
 
-    //--- exact sync
-    auto exactSyncDesc = rcl_interfaces::msg::ParameterDescriptor{};
-    exactSyncDesc.description =
-      "Set to true if an exact time synchronization between the camera image messages and the "
-      "LiDAR cloud messages.\n"
-      "Default: false";
-    syncQueueDesc.read_only = true;
-    ipNode->declare_parameter<bool>("use_exact_sync", false, exactSyncDesc);
+    //--- sync policy
+    auto syncPolicyDesc = rcl_interfaces::msg::ParameterDescriptor{};
+    syncPolicyDesc.description =
+      "Synchronization of the source and reference LiDAR cloud messages: 'exact' (exact time), "
+      "'approximate' (approximate time) or 'latest' (no time synchronization, each source cloud is "
+      "paired with the latest reference cloud).\n"
+      "Default: approximate";
+    syncPolicyDesc.read_only = true;
+    ipNode->declare_parameter<std::string>("sync_policy", DEFAULT_SYNC_POLICY_STR, syncPolicyDesc);
 }
 
 //==================================================================================================
@@ -779,8 +790,8 @@ bool ExtrinsicLidarLidarCalibration::readLaunchParameters(const rclcpp::Node* ip
     syncQueueSize_ = CalibrationBase::readNumericLaunchParameter<int>(
       ipNode, "sync_queue_size", DEFAULT_SYNC_QUEUE_SIZE, 1, INT_MAX);
 
-    //--- exact sync
-    useExactSync_ = ipNode->get_parameter("use_exact_sync").as_bool();
+    //--- sync policy
+    syncPolicy_ = CalibrationBase::readSyncPolicyLaunchParameter(ipNode);
 
     return true;
 }
