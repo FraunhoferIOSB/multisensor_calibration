@@ -164,15 +164,28 @@ void CameraLidarCalibrationGui::loadVisualizer()
               extrinsicPose.orientation.y, extrinsicPose.orientation.z,
               extrinsicPose.orientation.w};
 
-            rclcpp::NodeOptions options;
-
-            options.parameter_overrides({
+            std::vector<rclcpp::Parameter> parameters = {
               rclcpp::Parameter("image_state",
                                 intrinsicResponse.get()->image_state),
               rclcpp::Parameter("min_depth", 0.5),
               rclcpp::Parameter("max_depth", 10.0),
               rclcpp::Parameter("temp_transform", temporaryTransformCoeffs),
-            });
+            };
+
+            //--- use same sync as the calibration node
+            auto paramsClient = std::make_shared<rclcpp::AsyncParametersClient>(pNode_, calibratorNodeName_);
+            auto syncParams   = paramsClient->get_parameters({"sync_policy", "sync_queue_size"});
+            if (utils::doWhileWaiting(pExecutor_, syncParams, [&]()
+                                      { QCoreApplication::processEvents(); }, 100) ==
+                rclcpp::FutureReturnCode::SUCCESS)
+            {
+                for (const auto& param : syncParams.get())
+                    if (param.get_type() != rclcpp::ParameterType::PARAMETER_NOT_SET)
+                        parameters.push_back(param);
+            }
+
+            rclcpp::NodeOptions options;
+            options.parameter_overrides(parameters);
             options.use_intra_process_comms(true);
             std::vector<std::string> remapping_arguments = {
               //   "--ros-args", "--remap",
