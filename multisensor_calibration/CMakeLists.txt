@@ -121,7 +121,7 @@ find_package(urdf REQUIRED)
 ament_index_has_resource(RVIZ_COMMON_PREFIX packages rviz_common)
 file(STRINGS "${RVIZ_COMMON_PREFIX}/share/rviz_common/cmake/ament_cmake_export_dependencies-extras.cmake"
      RVIZ_COMMON_EXPORTS REGEX "_exported_dependencies")
-if(RVIZ_COMMON_EXPORTS MATCHES "[\";]Qt6[\";]")
+if(RVIZ_COMMON_EXPORTS MATCHES "Qt6")
     set(QT_VERSION_MAJOR 6)
 else()
     set(QT_VERSION_MAJOR 5)
