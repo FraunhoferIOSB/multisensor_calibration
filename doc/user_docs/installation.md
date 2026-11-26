@@ -11,6 +11,13 @@ In addition to the official release, `multisensor_calibration` can also be [buil
 sudo apt install ros-$ROS_DISTRO-multisensor-calibration
 ```
 
+The source code for each ROS 2 distribution is maintained on the following branches:
+
+| ROS 2 distribution | Branch |
+| ------------------ | ------ |
+| Lyrical, Kilted    | `main` |
+| Jazzy              | `jazzy` |
+
 ## Build from Source
 
 ### ROS 1
@@ -93,6 +100,14 @@ Clone repository:
 cd calibration_ws/src
 git clone https://github.com/FraunhoferIOSB/multisensor_calibration.git
 ```
+
+For ROS 2 Jazzy, check out the `jazzy` branch:
+
+```bash
+cd multisensor_calibration
+git checkout jazzy
+cd ../../
+```
 </li>
 
 <li>
@@ -135,7 +150,7 @@ colcon build --symlink-install --packages-up-to multisensor_calibration
 
 ### Requirements
 
-Apart from the basic catkin requirements, `multisensor_calibration` depends on the following third party libraries.
+Apart from the basic ROS requirements, `multisensor_calibration` depends on the following third party libraries.
 
 - [**PCL**](https://pointclouds.org/)
 - [**OpenCV**](https://opencv.org/)

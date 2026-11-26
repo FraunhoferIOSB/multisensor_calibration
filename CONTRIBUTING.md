@@ -18,6 +18,14 @@ Create a feature branch:
 6. **Push**
 7. Create a **pull request** (targeting `devel`)
 
+To run the tests, call the following from the root of the ROS workspace:
+
+```bash
+colcon build --packages-up-to multisensor_calibration
+colcon test --packages-select multisensor_calibration
+colcon test-result --verbose
+```
+
 <hr>
 
 ## Branching Recommendations

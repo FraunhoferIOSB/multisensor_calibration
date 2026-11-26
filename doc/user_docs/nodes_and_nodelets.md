@@ -226,7 +226,22 @@ It comprises
 
 <hr>
 
-### publish_pointcloud
+### extrinsic_camera_camera_calibration
+
+The node for the extrinsic calibration between two cameras (e.g. a stereo camera) with a user-friendly UI.
+
+It comprises
+
+- the [ExtrinsicCameraCameraCalibration(Nodelet)](#extrinsiccameracameracalibrationnodelet) performing the actual calibration, as well as
+- an instance of 'CameraCameraCalibrationGui' as a graphical user interface.
+
+**Launch-Parameters:**
+
+The launch parameters are the same as those of the [ExtrinsicCameraCameraCalibration(Nodelet)](#extrinsiccameracameracalibrationnodelet).
+
+<hr>
+
+### publish_point_cloud
 
 Node to load a point cloud from a specified PLY file and publish it on the given topic with the given frame_id.
 
@@ -243,6 +258,27 @@ Node to load a point cloud from a specified PLY file and publish it on the given
  - ```frame_id```: Frame ID at which to publish the point cloud.<br>
     *Type: String*<br>
     *Default: ""*
+
+<hr>
+
+### accumulate_point_cloud
+
+Node to accumulate a number of point clouds from a given topic into one cloud.
+After `num_messages` clouds have been received, the accumulated cloud is published on `<input_topic>_accumulated` and the accumulation starts anew.
+The accumulated cloud has the header of the last received cloud.
+
+```bash
+ros2 run multisensor_calibration accumulate_point_cloud --ros-args -p input_topic:=/lidar/cloud -p num_messages:=10
+```
+
+**Launch-Parameters:**
+
+ - ```input_topic```: Topic name of the point clouds to accumulate. Required.<br>
+    *Type: String*<br>
+    *Default: ""*
+ - ```num_messages```: Number of point clouds to accumulate before publishing.<br>
+    *Type: int*<br>
+    *Default: 10*
 
 <hr>
 
@@ -265,6 +301,35 @@ Node to [initialize a non-existing robot workspace](workspaces.md#initialize-new
 <hr>
 
 ## Composable Nodes / Nodelets
+
+In ROS 2, the following nodes are registered as components and can be loaded into a component container, e.g. with `ros2 component load` or a `ComposableNodeContainer` in a launch file:
+
+| Component (plugin name) | Description |
+| ----------------------- | ----------- |
+| `multisensor_calibration::ExtrinsicCameraLidarCalibration` | [Extrinsic camera-LiDAR calibration](#extrinsiccameralidarcalibrationnodelet) |
+| `multisensor_calibration::ExtrinsicCameraReferenceCalibration` | [Extrinsic camera-reference calibration](#extrinsiccamerareferencecalibrationnodelet) |
+| `multisensor_calibration::ExtrinsicLidarLidarCalibration` | [Extrinsic LiDAR-LiDAR calibration](#extrinsiclidarlidarcalibrationnodelet) |
+| `multisensor_calibration::ExtrinsicLidarReferenceCalibration` | [Extrinsic LiDAR-reference calibration](#extrinsiclidarreferencecalibrationnodelet) |
+| `multisensor_calibration::ExtrinsicCameraCameraCalibration` | [Extrinsic camera-camera calibration](#extrinsiccameracameracalibrationnodelet) |
+| `multisensor_calibration::GuidedCameraLidarTargetPlacementNode` | [Guided target placement for camera-LiDAR calibration](#guidedcameralidartargetplacementnodelet) |
+| `multisensor_calibration::GuidedLidarLidarTargetPlacementNode` | [Guided target placement for LiDAR-LiDAR calibration](#guidedlidarlidartargetplacementnodelet) |
+| `multisensor_calibration::visualizers::PointCloud2ImageNode` | [Projection of a point cloud into a camera image](#pointcloud2imagenodelet) |
+| `multisensor_calibration::visualizers::PointCloud2PointCloudDistanceNode` | [Distance between point clouds](#pointcloud2pointclouddistancenodelet) |
+
+The guidance nodes get their configuration from the calibration node. Set their parameter `calibrator_node_name` to the name of the calibration node.
+
+### Calibration without GUI
+
+The launch file `launch/headless/extrinsic_camera_lidar_calibration.launch.py` starts the camera-LiDAR calibration and its guidance node as components in one container, without the Qt GUI.
+The calibration is then controlled via the [services of the calibration node](#extrinsiccameralidarcalibrationnodelet), e.g. `~/capture_target` and `~/finalize_calibration`.
+The launch arguments correspond to the launch parameters of [extrinsic_camera_lidar_calibration](#extrinsic_camera_lidar_calibration), plus `namespace` (default: `calibration`) and `use_sim_time`.
+
+```bash
+ros2 launch multisensor_calibration extrinsic_camera_lidar_calibration.launch.py \
+  robot_ws_path:=<robot_ws_path> camera_image_topic:=<image_topic> lidar_cloud_topic:=<cloud_topic>
+```
+
+<hr>
 
 ### CameraTargetDetection / CameraDataProcessingNodelet
 
@@ -472,7 +537,7 @@ NOTE: For a good final calibration a typical mean reprojection error is between 
    info topic name is constructed from the specified ```camera_image_topic```.<br>
    *Type: String*<br>
    *Default: ""*
-  - ```image_state```: State of the camera images used.<br>
+  - ```src_image_state```: State of the source camera images used.<br>
     *Type: String*<br>
     *Default: 'DISTORTED'*<br>
     *Possible values:*<br>
@@ -487,7 +552,7 @@ NOTE: For a good final calibration a typical mean reprojection error is between 
    info topic name is constructed from the specified ```camera_image_topic```.<br>
    *Type: String*<br>
    *Default: ""*
-  - ```image_state```: State of the camera images used.<br>
+  - ```ref_image_state```: State of the reference camera images used.<br>
     *Type: String*<br>
     *Default: 'DISTORTED'*<br>
     *Possible values:*<br>

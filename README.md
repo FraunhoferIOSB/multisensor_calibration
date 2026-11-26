@@ -43,6 +43,8 @@ sudo apt install ros-$ROS_DISTRO-multisensor-calibration
 
 Or manually. If you want to compile and use locally, see [Getting Started](#getting-started).
 
+The branch `main` targets ROS 2 Lyrical and Kilted. For ROS 2 Jazzy, use the branch [jazzy](https://github.com/FraunhoferIOSB/multisensor_calibration/tree/jazzy).
+
 Since ROS 1 is soon end-of-life, there will be no official release for ROS 1.
 However, there is a version of the source code available for ROS 1 under the branch [noetic](https://github.com/FraunhoferIOSB/multisensor_calibration/tree/noetic).
 

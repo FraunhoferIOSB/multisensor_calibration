@@ -11,6 +11,11 @@ When using approximated synchronization when subscribing to the sensor data, try
 If the clocks of the sensors are not synchronized (e.g. time stamps that differ by seconds), no message pairs are found with exact or approximate synchronization.
 In this case, set the synchronization policy to *Latest Message* (`sync_policy: latest`), which pairs each source message with the latest reference message regardless of the time stamps.
 
+## The GUI runs with X11 (XWayland) on a Wayland session
+
+On a Wayland session, the calibration GUIs start with the Qt platform `xcb` (i.e. via XWayland).
+To use a different Qt platform, set the environment variable `QT_QPA_PLATFORM` (e.g. `QT_QPA_PLATFORM=wayland`) or pass `-platform <name>` as argument.
+
 ## Is there a possibility to visually debug the result of the GICP
 
 The are a number of debug visualizations within the source code that are currently deactivated using the preprocessor defines `#if 0`.
