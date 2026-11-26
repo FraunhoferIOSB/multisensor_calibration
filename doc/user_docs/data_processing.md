@@ -72,6 +72,7 @@ An overview of these parameters is given blow:
 - `ransac_distance_thresh`: Distance threshold (in m) from model for points to count as inliers during RANSAC.
 - `ransac_rotation_variance`: Maximum angle in rotation (in degrees) to be sampled when computing the new coefficients within RANSAC.
 - `ransac_translation_variance`: Maximum distance in translation (in m) to be sampled when computing the new coefficients within RANSAC.
+- `ransac_max_iterations`: Maximum number of iterations of the RANSAC detecting the calibration target.
 - `ransac_optimize_coefficients`: Option to activate the optimization of the coefficients by means of ICP.
 - `target_icp_variant`: Select ICP variant to use to optimize coefficients. (0 = ICP, 1 = PlaneICP, 2 = GICP)
 - `target_icp_max_correspondence_distance`: Maximum distance for ICP to search for point correspondences. Given as ratio with respect to shorter side of calibration target.

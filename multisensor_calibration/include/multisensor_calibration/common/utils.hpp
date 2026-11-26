@@ -36,6 +36,7 @@
 #include <cmath>
 #include <filesystem>
 #include <functional>
+#include <random>
 
 // Eigen
 #include <Eigen/SVD>
@@ -1030,9 +1031,8 @@ inline void cvtTfTransform2GeometryTransform(const tf2::Transform& iTransform,
 inline float drawRandomFloat()
 {
     //--- draw a random float number in the range of 0,1 (inclusively)
-    std::srand(time(NULL));
-    float rand_float = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
-    return rand_float;
+    static thread_local std::mt19937 generator(std::random_device{}());
+    return std::uniform_real_distribution<float>(0.f, 1.f)(generator);
 }
 /************************************************************************************************/
 /**

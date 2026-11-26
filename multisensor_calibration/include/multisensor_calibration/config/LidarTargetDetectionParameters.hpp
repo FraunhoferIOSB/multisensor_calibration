@@ -58,7 +58,7 @@ struct LidarTargetDetectionParameters
 
     DynamicParameter<double>
       max_range = DynamicParameter<double>(
-        6.0,
+        11.0,
         "Maximum range at which to filter the incomming point cloud prior to any processing. "
         "Any point with a range (absolute distance from sensor) larger than max_range will be "
         "discarded. Turn to 0 to switch off.",
@@ -86,7 +86,7 @@ struct LidarTargetDetectionParameters
     // region growing minimum cluster size
     DynamicParameter<int>
       region_growing_cluster_size_min = DynamicParameter<int>(
-        100,
+        130,
         "Minimum number of points a cluster needs to contain in order to be considered as "
         "valid inside the region growing.",
         10, 999);
@@ -94,7 +94,7 @@ struct LidarTargetDetectionParameters
     // region growing maximum cluster size
     DynamicParameter<int>
       region_growing_cluster_size_max = DynamicParameter<int>(
-        10000,
+        30000,
         "Maximum number of points a cluster needs to contain in order to be considered as "
         "valid inside the region growing.",
         1000, 999999);
@@ -109,7 +109,7 @@ struct LidarTargetDetectionParameters
     // region growing angle threshold
     DynamicParameter<double>
       region_growing_angle_thresh = DynamicParameter<double>(
-        1.8,
+        3.0,
         "Angle in degrees used as the allowable range for the normals deviation. "
         "If the deviation between points normals is less than the smoothness threshold "
         "then they are suggested to be in the same cluster.",
@@ -178,6 +178,13 @@ struct LidarTargetDetectionParameters
         "coefficients within RANSAC.",
         0.01, 1.0);
 
+    // ransac maximum iterations
+    DynamicParameter<int>
+      ransac_max_iterations = DynamicParameter<int>(
+        200,
+        "Maximum number of iterations of the RANSAC detecting the calibration target.",
+        1, 1000);
+
     // ransac optimize coefficients
     DynamicParameter<bool>
       ransac_optimize_coefficients = DynamicParameter<bool>(
@@ -243,6 +250,7 @@ struct LidarTargetDetectionParameters
         DECLARE_PARAMETER(ransac_distance_thresh, ipNode)
         DECLARE_PARAMETER(ransac_rotation_variance, ipNode)
         DECLARE_PARAMETER(ransac_translation_variance, ipNode)
+        DECLARE_PARAMETER(ransac_max_iterations, ipNode)
         DECLARE_PARAMETER(ransac_optimize_coefficients, ipNode)
 
         DECLARE_PARAMETER(target_icp_variant, ipNode)
@@ -280,6 +288,7 @@ struct LidarTargetDetectionParameters
         SET_PARAMETER_FROM_RCLCPP_PARAM(ransac_distance_thresh, iParameter)
         SET_PARAMETER_FROM_RCLCPP_PARAM(ransac_rotation_variance, iParameter)
         SET_PARAMETER_FROM_RCLCPP_PARAM(ransac_translation_variance, iParameter)
+        SET_PARAMETER_FROM_RCLCPP_PARAM(ransac_max_iterations, iParameter)
         SET_PARAMETER_FROM_RCLCPP_PARAM(ransac_optimize_coefficients, iParameter)
 
         SET_PARAMETER_FROM_RCLCPP_PARAM(target_icp_variant, iParameter)

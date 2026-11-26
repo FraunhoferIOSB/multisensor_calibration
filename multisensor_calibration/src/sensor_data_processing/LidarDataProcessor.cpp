@@ -492,6 +492,7 @@ bool LidarDataProcessor::detectCalibrationTargetInCluster(
     // RANSAC to detect calibration target
     pcl::RandomSampleConsensus<InputPointType> targetRansac(pCalibTargetSacModel_);
     targetRansac.setDistanceThreshold(targetDetectionParams_.ransac_distance_thresh.value);
+    targetRansac.setMaxIterations(targetDetectionParams_.ransac_max_iterations.value);
 
     bool isSuccessful = targetRansac.computeModel();
     if (!isSuccessful)
