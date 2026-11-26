@@ -2,8 +2,8 @@
 Changelog for package multisensor_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.1 (2026-11-26)
+------------------
 * fix: build failure on Lyrical when rviz_common and VTK use different Qt versions
 * Contributors: Miguel Granero
 
