@@ -2,6 +2,11 @@
 Changelog for package multisensor_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix: build failure on Lyrical when rviz_common and VTK use different Qt versions
+* Contributors: Miguel Granero
+
 2.2.0 (2026-11-26)
 ------------------
 * feat: support ROS 2 Kilted and Lyrical (Qt6, OpenCV and rclcpp API updates)
