@@ -101,10 +101,32 @@ endif()
 
 find_package(pcl_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
+
+# WORKAROUND: PCL passes on VTK's Qt support, which may be built against another Qt version than
+# rviz_common (e.g. Lyrical on Ubuntu resolute). It is not used, so drop its Qt dependency to avoid
+# mixing both.
+# TODO: Remove once rviz_common and VTK use the same Qt version on all target platforms
+# (see https://github.com/ros/rosdistro/pull/54906, which maps Qt to Qt5 on Ubuntu resolute).
+if(TARGET VTK::GUISupportQt)
+    set_property(TARGET VTK::GUISupportQt PROPERTY INTERFACE_LINK_LIBRARIES "")
+endif()
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tinyxml2 REQUIRED)
 find_package(urdf REQUIRED)
+
+# WORKAROUND: rviz_common exports its Qt dependency without components, which only works if that Qt
+# is already found. Thus, find the Qt version rviz_common was built against beforehand.
+# TODO: Simplify once rviz_common exports its Qt dependency with components.
+ament_index_has_resource(RVIZ_COMMON_PREFIX packages rviz_common)
+file(STRINGS "${RVIZ_COMMON_PREFIX}/share/rviz_common/cmake/ament_cmake_export_dependencies-extras.cmake"
+     RVIZ_COMMON_EXPORTS REGEX "_exported_dependencies")
+if(RVIZ_COMMON_EXPORTS MATCHES "[\";]Qt6[\";]")
+    set(QT_VERSION_MAJOR 6)
+else()
+    set(QT_VERSION_MAJOR 5)
+endif()
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 find_package(rviz_common REQUIRED)
 
 find_package(std_msgs REQUIRED)
@@ -123,18 +145,6 @@ find_package(small_gicp REQUIRED)
 
 
 find_package(OpenMP)
-
-# Use the same Qt major version that rviz_common (and the rest of the ROS stack)
-# was compiled against — avoids mixing Qt5 and Qt6 targets in the same binary.
-if(TARGET Qt6::Core)
-    set(QT_VERSION_MAJOR 6)
-elseif(TARGET Qt5::Core)
-    set(QT_VERSION_MAJOR 5)
-else()
-    # Nothing loaded Qt yet; fall back to the normal detection order
-    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
-endif()
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
 # setup qt
 set(CMAKE_AUTOUIC ON) # The AUTOGEN_BUILD_DIR is automatically added to the target's INCLUDE_DIRECTORIES.
