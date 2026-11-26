@@ -2,8 +2,8 @@
 Changelog for package multisensor_calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2026-11-26)
+------------------
 * feat: support ROS 2 Kilted and Lyrical (Qt6, OpenCV and rclcpp API updates)
 * feat: register calibration and guidance nodes as components and add headless camera-LiDAR launch
 * feat: add 'latest' sync policy (no time synchronization)
